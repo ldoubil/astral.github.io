@@ -1,4 +1,4 @@
-# Starlight Starter Kit: Basics
+# Starlight Starter Kit: Basics1
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
