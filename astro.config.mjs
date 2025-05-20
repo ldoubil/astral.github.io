@@ -11,6 +11,7 @@ export default defineConfig({
 			editLink: {
 				baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
 			},
+			lastUpdated:true,
 			sidebar: [
 				{
 					label: 'Guides',
