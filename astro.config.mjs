@@ -8,6 +8,9 @@ export default defineConfig({
 		starlight({
 			title: 'Astral',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ldoubil/astral'  }],
+			editLink: {
+				baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
+			},
 			sidebar: [
 				{
 					label: 'Guides',
