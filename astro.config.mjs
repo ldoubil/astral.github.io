@@ -19,15 +19,16 @@ export default defineConfig({
 			lastUpdated:true,
 			sidebar: [
 				{
-					label: 'Guides',
+					label: '开始',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: '简介', slug: '开始/简介' },
+						{ label: '下载', slug: '开始/下载' },
+						{ label: '安装', slug: '开始/安装' },
 					],
 				},
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: '指南',
+					autogenerate: { directory: '指南' },
 				},
 			],
 		}),
