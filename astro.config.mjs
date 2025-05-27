@@ -30,6 +30,10 @@ export default defineConfig({
 					label: '指南',
 					autogenerate: { directory: '指南' },
 				},
+				{
+					label: '支持',
+					autogenerate: { directory: '支持' },
+				},
 			],
 		}),
 	],
