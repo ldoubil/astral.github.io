@@ -12,11 +12,11 @@ export default defineConfig({
 				dark: './src/assets/暗色.svg',
 				replacesTitle: true,
 			},
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ldoubil/astral'  }],
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ldoubil/astral' }],
 			editLink: {
 				baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
 			},
-			lastUpdated:true,
+			lastUpdated: true,
 			sidebar: [
 				{
 					label: '开始',
@@ -30,10 +30,7 @@ export default defineConfig({
 					label: '指南',
 					autogenerate: { directory: '指南' },
 				},
-				{
-					label: '支持',
-					autogenerate: { directory: '支持' },
-				},
+			
 			],
 		}),
 	],
