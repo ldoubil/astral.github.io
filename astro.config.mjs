@@ -30,6 +30,14 @@ export default defineConfig({
 					label: '指南',
 					autogenerate: { directory: '指南' },
 				},
+				{
+					label: '公共服务器',
+					autogenerate: { directory: '公共服务器' },
+				},
+				{
+					label: '常见问题',
+					autogenerate: { directory: '常见问题' },
+				},
 			
 			],
 		}),

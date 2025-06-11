@@ -1,0 +1,13 @@
+---
+import fs from 'fs';
+const servers = JSON.parse(fs.readFileSync('./public/server.json', 'utf-8'));
+---
+
+<ul>
+  {servers.map((server: { name: unknown; url: unknown; }) => (
+    <li>
+      <strong>{server.name}</strong><br />
+      地址: <code>{server.url}</code>
+    </li>
+  ))}
+</ul>
