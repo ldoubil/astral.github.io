@@ -7,6 +7,9 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Astral',
+			components:{
+				SocialIcons: './src/components/EmailLink.astro',
+			},
 			logo: {
 				light: './src/assets/亮色.svg',
 				dark: './src/assets/暗色.svg',
