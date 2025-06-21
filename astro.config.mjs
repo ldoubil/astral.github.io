@@ -22,8 +22,8 @@ export default defineConfig({
 					label: '开始',
 					items: [
 						{ label: '简介', slug: '开始/简介' },
-						{ label: '下载', slug: '开始/下载' },
 						{ label: '安装', slug: '开始/安装' },
+						{ label: '使用', slug: '开始/使用' },
 					],
 				},
 				{
