@@ -221,32 +221,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     }
   }
 
-  // 优化的页签切换函数
-  const createTabSwitcher = (container, tabs, contents) => {
-    const switchTab = (index) => {
-      // 移除所有活动状态
-      tabs.forEach(tab => tab.classList.remove('active'))
-      contents.forEach(content => content.classList.remove('active'))
-      
-      // 添加活动状态到选中的页签
-      tabs[index].classList.add('active')
-      contents[index].classList.add('active')
-      
-      // 添加切换动画
-      contents[index].style.animation = 'none'
-      contents[index].offsetHeight // 触发重排
-      contents[index].style.animation = 'tabSlideIn 0.3s ease-out'
-    }
-
-    // 为每个页签添加点击事件
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => switchTab(index))
-    })
-
-    // 默认显示第一个页签
-    switchTab(0)
-  }
-
   const populateDownloadList = () => {
     for (const div of divList) {
       const version = div.getAttribute('data-version')
@@ -282,61 +256,23 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         const downloadButtons = document.createElement('div')
         downloadButtons.className = 'download-buttons'
         
-        // 创建页签容器
-        const tabContainer = document.createElement('div')
-        tabContainer.className = 'tab-container'
-        
-        // 创建页签按钮
-        const tabButtons = document.createElement('div')
-        tabButtons.className = 'tab-buttons'
-        
-        // 原始下载页签
-        const originalTab = document.createElement('button')
-        originalTab.className = 'tab-btn'
-        originalTab.innerHTML = '<span class="tab-icon">📥</span><span class="tab-text">原始下载</span>'
-        tabButtons.appendChild(originalTab)
-        
-        // 加速下载页签
-        const acceleratedTab = document.createElement('button')
-        acceleratedTab.className = 'tab-btn'
-        acceleratedTab.innerHTML = '<span class="tab-icon">⚡</span><span class="tab-text">加速下载</span>'
-        tabButtons.appendChild(acceleratedTab)
-        
-        // 创建内容区域
-        const tabContent = document.createElement('div')
-        tabContent.className = 'tab-content'
-        
-        // 原始下载内容
-        const originalContent = document.createElement('div')
-        originalContent.className = 'tab-pane'
+        // 原始下载按钮
         const originalBtn = document.createElement('a')
         originalBtn.href = url
         originalBtn.download = name
         originalBtn.className = 'download-btn primary'
-        originalBtn.innerHTML = '<span class="btn-icon">📥</span><span class="btn-text">立即下载</span>'
-        originalContent.appendChild(originalBtn)
+        originalBtn.innerHTML = '<span class="btn-icon">📥</span><span class="btn-text">原始下载</span>'
+        downloadButtons.appendChild(originalBtn)
         
-        // 加速下载内容
-        const acceleratedContent = document.createElement('div')
-        acceleratedContent.className = 'tab-pane'
+        // 加速下载按钮
         acceleratedLinks.forEach((acceleratorUrl, index) => {
           const acceleratedBtn = document.createElement('a')
           acceleratedBtn.href = acceleratorUrl + url
           acceleratedBtn.download = name
           acceleratedBtn.className = 'download-btn secondary'
           acceleratedBtn.innerHTML = `<span class="btn-icon">⚡</span><span class="btn-text">加速下载 ${index + 1}</span>`
-          acceleratedContent.appendChild(acceleratedBtn)
+          downloadButtons.appendChild(acceleratedBtn)
         })
-        
-        // 组装页签结构
-        tabContent.appendChild(originalContent)
-        tabContent.appendChild(acceleratedContent)
-        tabContainer.appendChild(tabButtons)
-        tabContainer.appendChild(tabContent)
-        downloadButtons.appendChild(tabContainer)
-        
-        // 使用优化的页签切换函数
-        createTabSwitcher(tabContainer, [originalTab, acceleratedTab], [originalContent, acceleratedContent])
         
         downloadItem.appendChild(fileInfo)
         downloadItem.appendChild(downloadButtons)
@@ -668,9 +604,9 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
-  align-items: center;
 }
 
+/* 下载按钮样式 */
 .download-btn {
   display: inline-flex;
   align-items: center;
@@ -936,25 +872,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   .github-icon {
     font-size: 1rem;
   }
-  
-  /* 页签移动端优化 */
-  .tab-buttons {
-    gap: 0.25rem;
-  }
-  
-  .tab-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-  
-  .tab-icon {
-    font-size: 0.9rem;
-  }
-  
-  .tab-pane.active {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
 }
 
 /* 深色模式优化 */
@@ -969,6 +886,19 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   
   .download-category {
     background: var(--sl-color-gray-6);
+  }
+}
+
+/* 无障碍优化 */
+.download-btn:focus {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .download-btn {
+    border-width: 2px;
   }
 }
 
@@ -992,86 +922,4 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
 .download-section:nth-child(2) { animation-delay: 0.2s; }
 .download-section:nth-child(3) { animation-delay: 0.3s; }
 .download-section:nth-child(4) { animation-delay: 0.4s; }
-
-/* 页签切换样式 */
-.tab-container {
-  width: 100%;
-}
-
-.tab-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--sl-color-gray-4);
-  padding-bottom: 0.5rem;
-}
-
-.tab-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: transparent;
-  border: none;
-  border-radius: 8px 8px 0 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--sl-color-text-accent);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.tab-btn:hover {
-  color: var(--sl-color-text);
-  background: var(--sl-color-gray-6);
-}
-
-.tab-btn.active {
-  color: var(--sl-color-accent);
-  background: var(--sl-color-accent-low);
-  font-weight: 700;
-}
-
-.tab-btn.active::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--sl-color-accent);
-  border-radius: 1px;
-}
-
-.tab-icon {
-  font-size: 1rem;
-}
-
-.tab-content {
-  position: relative;
-  min-height: 60px;
-}
-
-.tab-pane {
-  display: none;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.tab-pane.active {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 </style> 
