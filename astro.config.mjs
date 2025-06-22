@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import giscusIntegration from './src/integrations/giscus-integration.js';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,9 +18,6 @@ export default defineConfig({
 				baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
 			},
 			lastUpdated: true,
-			components: {
-				PageBottom: './src/components/Giscus.astro',
-			},
 			sidebar: [
 				{
 					label: '开始',
@@ -45,5 +43,6 @@ export default defineConfig({
 			
 			],
 		}),
+		giscusIntegration(),
 	],
 });
