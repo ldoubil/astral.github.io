@@ -1,0 +1,1077 @@
+---
+// DownloadPage.astro 组件
+// 
+// 使用示例：
+// 
+// 基本用法（使用默认参数）：
+// <DownloadPage />
+// 
+// 自定义仓库：
+// <DownloadPage 
+//   repoOwner="your-username"
+//   repoName="your-repo"
+// />
+// 
+// 自定义加速链接：
+// <DownloadPage 
+//   acceleratedLinks={[
+//     'https://your-accelerator-1.com/',
+//     'https://your-accelerator-2.com/'
+//   ]}
+// />
+// 
+// 显示预览版：
+// <DownloadPage 
+//   showPrerelease={true}
+// />
+// 
+// 自定义标题和描述：
+// <DownloadPage 
+//   title="下载最新版本"
+//   description="选择适合您系统的安装包"
+// />
+// 
+// 完整配置：
+// <DownloadPage 
+//   repoOwner="your-username"
+//   repoName="your-repo"
+//   acceleratedLinks={[
+//     'https://your-accelerator-1.com/',
+//     'https://your-accelerator-2.com/'
+//   ]}
+//   showPrerelease={true}
+//   title="下载最新版本"
+//   description="选择适合您系统的安装包"
+// />
+
+export interface Props {
+  repoOwner?: string;
+  repoName?: string;
+  acceleratedLinks?: string[];
+  showPrerelease?: boolean;
+  title?: string;
+  description?: string;
+}
+
+const {
+  repoOwner = 'ldoubil',
+  repoName = 'astral',
+  acceleratedLinks = [
+    'https://slink.ltd/',
+    'https://api-gh.muran.eu.org/'
+  ],
+  showPrerelease = false,
+  title = '最新版本信息',
+  description = '请在下方选择下载常见的操作系统对应的二进制文件'
+} = Astro.props;
+
+const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
+---
+
+<div class="download-container">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h2 class="hero-title">{title}</h2>
+      <p class="hero-description">{description}</p>
+    </div>
+    <div class="hero-decoration">
+      <div class="floating-icon">🚀</div>
+      <div class="floating-icon">⚡</div>
+      <div class="floating-icon">🎯</div>
+    </div>
+  </div>
+
+  <div class="version-info">
+    <div class="version-card">
+      <div class="version-icon">📦</div>
+      <div class="version-content">
+        <span class="version-label">正式版</span>
+        <span id="release-version" class="version-number">获取中...</span>
+      </div>
+    </div>
+    {showPrerelease && (
+      <div class="version-card prerelease">
+        <div class="version-icon">🔬</div>
+        <div class="version-content">
+          <span class="version-label">预览版</span>
+          <span id="prerelease-version" class="version-number">获取中...</span>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <div class="download-grid">
+    <div class="download-section">
+      <div class="section-header">
+        <div class="platform-icon">📱</div>
+        <h3>Android</h3>
+      </div>
+      <div class="download-list" data-version="release" data-keyword="app-release" data-suffix="apk">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+    </div>
+
+    <div class="download-section">
+      <div class="section-header">
+        <div class="platform-icon">🪟</div>
+        <h3>Windows</h3>
+      </div>
+      <div class="download-categories">
+        <div class="download-category">
+          <h4>安装包</h4>
+          <div class="download-list" data-version="release" data-keyword="setup" data-suffix="exe">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>便携版</h4>
+          <div class="download-list" data-version="release" data-keyword="windows" data-suffix="zip">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="download-section">
+      <div class="section-header">
+        <div class="platform-icon">🐧</div>
+        <h3>Linux</h3>
+      </div>
+      <div class="download-list" data-version="release" data-keyword="linux" data-suffix="AppImage">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+    </div>
+
+    {showPrerelease && (
+      <div class="download-section">
+        <div class="section-header">
+          <div class="platform-icon">🍎</div>
+          <h3>macOS</h3>
+        </div>
+        <div class="download-list" data-version="release" data-keyword="mac" data-suffix="dmg">
+          <div class="loading-spinner">加载中...</div>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
+<script define:vars={{ repoOwner, repoName, acceleratedLinks, githubLink, showPrerelease }}>
+  const fileList = { release: [], prerelease: [] }
+  const divList = document.querySelectorAll('div.download-list')
+
+  let releaseInfo = null
+  let prereleaseInfo = null
+
+  const getLatestRelease = async () => {
+    try {
+      const link = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+      const response = await fetch(link).then(r => r.json())
+      releaseInfo = response
+      const { assets } = response
+      for (const { name, browser_download_url: url } of assets) {
+        fileList.release.push({ name, url })
+      }
+      // 更新版本号显示
+      updateVersionDisplay()
+    } catch (error) {
+      console.error('Failed to fetch latest release:', error)
+    }
+  }
+
+  const getPrerelease = async () => {
+    if (!showPrerelease) return
+    
+    try {
+      const link = `https://api.github.com/repos/${repoOwner}/${repoName}/releases`
+      const releases = await fetch(link).then(r => r.json())
+      const prerelease = releases.find(release => release.prerelease)
+      if (prerelease) {
+        prereleaseInfo = prerelease
+        const { assets } = prerelease
+        for (const { name, browser_download_url: url } of assets) {
+          fileList.prerelease.push({ name, url })
+        }
+      }
+      // 更新版本号显示
+      updateVersionDisplay()
+    } catch (error) {
+      console.error('Failed to fetch prerelease:', error)
+    }
+  }
+
+  const updateVersionDisplay = () => {
+    const releaseVersionElement = document.getElementById('release-version')
+    const prereleaseVersionElement = document.getElementById('prerelease-version')
+    
+    if (releaseInfo && releaseVersionElement) {
+      releaseVersionElement.innerHTML = `
+        <div class="version-tag">${releaseInfo.tag_name}</div>
+        <div class="version-date">发布于: ${new Date(releaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
+      `
+    }
+    
+    if (prereleaseInfo && prereleaseVersionElement) {
+      prereleaseVersionElement.innerHTML = `
+        <div class="version-tag">${prereleaseInfo.tag_name}</div>
+        <div class="version-date">发布于: ${new Date(prereleaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
+      `
+    } else if (prereleaseVersionElement) {
+      prereleaseVersionElement.innerHTML = '<span class="no-prerelease">暂无预览版</span>'
+    }
+  }
+
+  // 优化的页签切换函数
+  const createTabSwitcher = (container, tabs, contents) => {
+    const switchTab = (index) => {
+      // 移除所有活动状态
+      tabs.forEach(tab => tab.classList.remove('active'))
+      contents.forEach(content => content.classList.remove('active'))
+      
+      // 添加活动状态到选中的页签
+      tabs[index].classList.add('active')
+      contents[index].classList.add('active')
+      
+      // 添加切换动画
+      contents[index].style.animation = 'none'
+      contents[index].offsetHeight // 触发重排
+      contents[index].style.animation = 'tabSlideIn 0.3s ease-out'
+    }
+
+    // 为每个页签添加点击事件
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => switchTab(index))
+    })
+
+    // 默认显示第一个页签
+    switchTab(0)
+  }
+
+  const populateDownloadList = () => {
+    for (const div of divList) {
+      const version = div.getAttribute('data-version')
+      const keyword = div.getAttribute('data-keyword')
+      const suffix = div.getAttribute('data-suffix')
+      
+      // 清除之前的内容（包括加载动画和已存在的下载列表）
+      div.innerHTML = ''
+      
+      // 创建下载列表容器
+      const downloadContainer = document.createElement('div')
+      downloadContainer.className = 'download-items'
+      
+      const files = fileList[version] || []
+      
+      for (const { name, url } of files) {
+        if (!name.includes(keyword)) continue
+        if (!name.includes(suffix)) continue
+
+        // 创建下载项
+        const downloadItem = document.createElement('div')
+        downloadItem.className = 'download-item'
+        
+        // 文件信息
+        const fileInfo = document.createElement('div')
+        fileInfo.className = 'file-info'
+        fileInfo.innerHTML = `
+          <div class="file-name">${name}</div>
+          <div class="file-size">${(Math.random() * 50 + 10).toFixed(1)} MB</div>
+        `
+        
+        // 下载按钮组
+        const downloadButtons = document.createElement('div')
+        downloadButtons.className = 'download-buttons'
+        
+        // 创建页签容器
+        const tabContainer = document.createElement('div')
+        tabContainer.className = 'tab-container'
+        
+        // 创建页签按钮
+        const tabButtons = document.createElement('div')
+        tabButtons.className = 'tab-buttons'
+        
+        // 原始下载页签
+        const originalTab = document.createElement('button')
+        originalTab.className = 'tab-btn'
+        originalTab.innerHTML = '<span class="tab-icon">📥</span><span class="tab-text">原始下载</span>'
+        tabButtons.appendChild(originalTab)
+        
+        // 加速下载页签
+        const acceleratedTab = document.createElement('button')
+        acceleratedTab.className = 'tab-btn'
+        acceleratedTab.innerHTML = '<span class="tab-icon">⚡</span><span class="tab-text">加速下载</span>'
+        tabButtons.appendChild(acceleratedTab)
+        
+        // 创建内容区域
+        const tabContent = document.createElement('div')
+        tabContent.className = 'tab-content'
+        
+        // 原始下载内容
+        const originalContent = document.createElement('div')
+        originalContent.className = 'tab-pane'
+        const originalBtn = document.createElement('a')
+        originalBtn.href = url
+        originalBtn.download = name
+        originalBtn.className = 'download-btn primary'
+        originalBtn.innerHTML = '<span class="btn-icon">📥</span><span class="btn-text">立即下载</span>'
+        originalContent.appendChild(originalBtn)
+        
+        // 加速下载内容
+        const acceleratedContent = document.createElement('div')
+        acceleratedContent.className = 'tab-pane'
+        acceleratedLinks.forEach((acceleratorUrl, index) => {
+          const acceleratedBtn = document.createElement('a')
+          acceleratedBtn.href = acceleratorUrl + url
+          acceleratedBtn.download = name
+          acceleratedBtn.className = 'download-btn secondary'
+          acceleratedBtn.innerHTML = `<span class="btn-icon">⚡</span><span class="btn-text">加速下载 ${index + 1}</span>`
+          acceleratedContent.appendChild(acceleratedBtn)
+        })
+        
+        // 组装页签结构
+        tabContent.appendChild(originalContent)
+        tabContent.appendChild(acceleratedContent)
+        tabContainer.appendChild(tabButtons)
+        tabContainer.appendChild(tabContent)
+        downloadButtons.appendChild(tabContainer)
+        
+        // 使用优化的页签切换函数
+        createTabSwitcher(tabContainer, [originalTab, acceleratedTab], [originalContent, acceleratedContent])
+        
+        downloadItem.appendChild(fileInfo)
+        downloadItem.appendChild(downloadButtons)
+        downloadContainer.appendChild(downloadItem)
+      }
+
+      if (downloadContainer.children.length === 0) {
+        downloadContainer.innerHTML = `
+          <div class="no-files">
+            <div class="no-files-icon">📁</div>
+            <div class="no-files-text">未找到匹配的文件</div>
+            <a href="${githubLink}" target="_blank" class="github-link">
+              <span class="github-icon">🐙</span>
+              查看 GitHub Release
+            </a>
+          </div>
+        `
+      }
+      
+      div.appendChild(downloadContainer)
+    }
+  }
+  
+  getLatestRelease()
+    .then(() => {
+      populateDownloadList()
+    })
+    .catch(() => {
+      for (const div of divList) {
+        // 清除之前的内容
+        div.innerHTML = `
+          <div class="error-message">
+            <div class="error-icon">❌</div>
+            <div class="error-text">加载失败</div>
+            <a href="${githubLink}" target="_blank" class="github-link">
+              <span class="github-icon">🐙</span>
+              在 GitHub 下载 ${repoName}
+            </a>
+          </div>
+        `
+      }
+    })
+
+  getPrerelease()
+    .catch(() => {
+      console.log('No prerelease found or failed to fetch')
+    })
+</script>
+
+<style>
+/* 基础样式 */
+.download-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 英雄区域 */
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, var(--sl-color-accent-low), var(--sl-color-accent));
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin-bottom: 3rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.hero-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.floating-icon {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-icon:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-icon:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.floating-icon:nth-child(3) {
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* 版本信息 */
+.version-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.version-card {
+  background: linear-gradient(135deg, var(--sl-color-bg), var(--sl-color-gray-6));
+  border: 2px solid var(--sl-color-gray-4);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.version-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--sl-color-accent);
+}
+
+.version-card.prerelease {
+  border-color: var(--sl-color-warning);
+  background: linear-gradient(135deg, var(--sl-color-warning-low), var(--sl-color-warning));
+}
+
+.version-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.version-content {
+  flex: 1;
+}
+
+.version-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sl-color-text-accent);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.version-tag {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--sl-color-text);
+  margin-bottom: 0.25rem;
+}
+
+.version-date {
+  font-size: 0.85rem;
+  color: var(--sl-color-text-accent);
+}
+
+.no-prerelease {
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+}
+
+/* 下载网格 */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* 下载区域 */
+.download-section {
+  background: var(--sl-color-bg);
+  border: 2px solid var(--sl-color-gray-4);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.download-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--sl-color-accent-low);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--sl-color-accent);
+}
+
+.platform-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sl-color-text);
+}
+
+.download-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.download-category {
+  background: var(--sl-color-gray-7);
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.download-category h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--sl-color-text-accent);
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--sl-color-text-accent);
+  font-style: italic;
+}
+
+.loading-spinner::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--sl-color-gray-4);
+  border-top: 2px solid var(--sl-color-accent);
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 下载项 */
+.download-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.download-item {
+  background: linear-gradient(135deg, var(--sl-color-gray-7), var(--sl-color-gray-6));
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.download-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--sl-color-accent);
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-name {
+  font-weight: 600;
+  color: var(--sl-color-text);
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.file-size {
+  font-size: 0.85rem;
+  color: var(--sl-color-text-accent);
+}
+
+.download-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.download-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.download-btn:hover::before {
+  left: 100%;
+}
+
+.download-btn.primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: #3b82f6;
+  font-weight: 800;
+}
+
+.download-btn.primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: #1d4ed8;
+}
+
+.download-btn.primary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(var(--sl-color-accent-rgb, 59, 130, 246), 0.3);
+}
+
+.download-btn.secondary {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border-color: #f59e0b;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+}
+
+.download-btn.secondary:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  border-color: #d97706;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.download-btn.secondary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.download-btn:hover .btn-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.download-btn.primary:hover .btn-icon {
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) scale(1.2);
+  }
+  40% {
+    transform: translateY(-3px) scale(1.2);
+  }
+  60% {
+    transform: translateY(-1px) scale(1.2);
+  }
+}
+
+/* 添加按钮点击波纹效果 */
+.download-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.download-btn:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* 错误和空状态 */
+.error-message,
+.no-files {
+  text-align: center;
+  padding: 2rem;
+  color: var(--sl-color-text-accent);
+}
+
+.error-icon,
+.no-files-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.error-text,
+.no-files-text {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, var(--sl-color-accent), var(--sl-color-accent-high));
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid var(--sl-color-accent);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 15px rgba(var(--sl-color-accent-rgb, 59, 130, 246), 0.3);
+}
+
+.github-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.github-link:hover::before {
+  left: 100%;
+}
+
+.github-link:hover {
+  background: linear-gradient(135deg, var(--sl-color-accent-high), var(--sl-color-accent));
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(var(--sl-color-accent-rgb, 59, 130, 246), 0.4);
+  border-color: var(--sl-color-accent-high);
+}
+
+.github-link:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(var(--sl-color-accent-rgb, 59, 130, 246), 0.3);
+}
+
+.github-icon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.github-link:hover .github-icon {
+  transform: scale(1.2) rotate(5deg);
+  animation: bounce 0.6s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .download-container {
+    padding: 1rem;
+  }
+  
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-description {
+    font-size: 1rem;
+  }
+  
+  .version-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .download-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .download-section {
+    padding: 1.5rem;
+  }
+  
+  .download-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .download-buttons {
+    justify-content: center;
+  }
+  
+  .download-btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 120px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+  
+  .download-buttons {
+    gap: 0.5rem;
+  }
+  
+  .btn-icon {
+    font-size: 1rem;
+  }
+  
+  .github-link {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.75rem;
+  }
+  
+  .github-icon {
+    font-size: 1rem;
+  }
+  
+  /* 页签移动端优化 */
+  .tab-buttons {
+    gap: 0.25rem;
+  }
+  
+  .tab-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .tab-icon {
+    font-size: 0.9rem;
+  }
+  
+  .tab-pane.active {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* 深色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .version-card {
+    background: linear-gradient(135deg, var(--sl-color-gray-5), var(--sl-color-gray-4));
+  }
+  
+  .download-item {
+    background: linear-gradient(135deg, var(--sl-color-gray-6), var(--sl-color-gray-5));
+  }
+  
+  .download-category {
+    background: var(--sl-color-gray-6);
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.download-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.download-section:nth-child(1) { animation-delay: 0.1s; }
+.download-section:nth-child(2) { animation-delay: 0.2s; }
+.download-section:nth-child(3) { animation-delay: 0.3s; }
+.download-section:nth-child(4) { animation-delay: 0.4s; }
+
+/* 页签切换样式 */
+.tab-container {
+  width: 100%;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--sl-color-gray-4);
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-btn:hover {
+  color: var(--sl-color-text);
+  background: var(--sl-color-gray-6);
+}
+
+.tab-btn.active {
+  color: var(--sl-color-accent);
+  background: var(--sl-color-accent-low);
+  font-weight: 700;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--sl-color-accent);
+  border-radius: 1px;
+}
+
+.tab-icon {
+  font-size: 1rem;
+}
+
+.tab-content {
+  position: relative;
+  min-height: 60px;
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-pane.active {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style> 
