@@ -17,6 +17,9 @@ export default defineConfig({
 				baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
 			},
 			lastUpdated: true,
+			components: {
+				PageBottom: './src/components/Giscus.astro',
+			},
 			sidebar: [
 				{
 					label: '开始',
