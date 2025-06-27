@@ -15,7 +15,13 @@ export default defineConfig({
            repo: 'ldoubil/astral.github.io',
            repoId: 'R_kgDOOsZWXQ',
            category: 'Announcements',
-           categoryId: 'DIC_kwDOOsZWXc4Cr1fo'
+           categoryId: 'DIC_kwDOOsZWXc4Cr1fo',
+		mapping:"pathname",
+		reactions:true,
+		inputPosition:"top",
+		
+		
+
        })
      ],
 			title: 'Astral',
