@@ -2,11 +2,19 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import giscusIntegration from './src/integrations/giscus-integration.js';
-
+import starlightGiscus from 'starlight-giscus'
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
 		starlight({
+			 plugins: [
+       starlightGiscus({
+           repo: 'ldoubil/astral.github.io',
+           repoId: 'R_kgDOOsZWXQ',
+           category: 'Announcements',
+           categoryId: 'DIC_kwDOOsZWXc4Cr1fo'
+       })
+     ],
 			title: 'Astral',
 			logo: {
 				light: './src/assets/亮色.svg',
