@@ -3,11 +3,13 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import giscusIntegration from './src/integrations/giscus-integration.js';
 import starlightGiscus from 'starlight-giscus'
+import starlightSiteGraph from 'starlight-site-graph'
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
 		starlight({
 			 plugins: [
+				starlightSiteGraph({  }),
        starlightGiscus({
            repo: 'ldoubil/astral.github.io',
            repoId: 'R_kgDOOsZWXQ',
