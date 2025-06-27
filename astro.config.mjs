@@ -9,7 +9,8 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			 plugins: [
-				starlightSiteGraph({  }),
+				starlightSiteGraph({  
+				}),
        starlightGiscus({
            repo: 'ldoubil/astral.github.io',
            repoId: 'R_kgDOOsZWXQ',
