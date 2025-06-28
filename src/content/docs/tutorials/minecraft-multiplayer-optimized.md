@@ -1,5 +1,5 @@
 ---
-title: Minecraft 联机教程（整理版）
+title: Minecraft 联机教程
 description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ---
 
@@ -13,7 +13,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 - 🔧 常见问题排查与解决
 
 **适用平台：** Windows、Android  
-**支持版本：** Minecraft Java Edition 全版本
+**支持版本：** Minecraft Java Edition（JAVA版）
 
 ---
 
@@ -470,7 +470,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 - 📖 [Astral 安装指南](/quick-start/download-install/)
 - 🔍 [NAT 类型说明](/troubleshooting/nat-types/)
-- ❓ [常见问题解答](/troubleshooting/)
+- ❓ [常见问题解答](/troubleshooting/connection-issues/)
 - 💬 **技术支持：** 加入官方交流群获取帮助
 
 ---
@@ -481,7 +481,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 本教程涵盖了使用 Astral 进行 Minecraft 跨平台联机的完整流程。如果您在使用过程中遇到问题：
 
-1. **首先参考：** [常见问题排查](/troubleshooting/)
+1. **首先参考：** [常见问题排查](/troubleshooting/connection-issues/)
 2. **深入了解：** 查阅相关技术文档
 3. **寻求帮助：** 在官方交流群中礼貌提问
 
