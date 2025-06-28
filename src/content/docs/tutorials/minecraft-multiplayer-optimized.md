@@ -33,19 +33,19 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 在页面中检查是否有您需要的：
 - MC 游戏版本
-- 对应的模组加载器（Forge/Fabric）
+- 对应的模组加载器（Forge/Fabric/neoforge）
 
 如需了解如何查看游戏版本，请参考：[版本查看指南](#版本查看指南)
 
 #### 3. 下载与安装流程
 
-**Step 1：** 点击 CurseForge 下载链接
+**Step 1：** 记得检查该模组是否有你需要的MC版本，随后点击 CurseForge 下载链接
 ![下载页面](/images/MC联机/MC联机-1.png)
 
 **Step 2：** 切换到 "Files" 标签页
 ![Files 标签](/images/MC联机/MC联机-2.png)
 
-**Step 3：** 选择对应版本
+**Step 3：** 在两个方框中选择对应版本和模组加载器
 > 示例：选择 1.12.4-forge 版本
 ![选择版本](/images/MC联机/MC联机-3.png)
 
@@ -55,7 +55,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 **Step 5：** 安装到启动器
 - 将下载的 `.jar` 文件拖入启动器
-- 确认版本名称设置
+- 确认版本名称是否为你需要联机的，如果不是请先在启动器左下角手动选择
 - 启动游戏测试
 
 ![安装流程](/images/MC联机/MC联机-7.png)
@@ -64,7 +64,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 - **玩家名称规范：** 禁用中文、特殊符号
 - **唯一性要求：** 每个玩家使用不同的用户名
-- **兼容性提醒：** 房主与房员需使用相同版本
+- **兼容性提醒：** 房主与房员需使用相同版本且模组和配置文件相同
 
 ---
 
@@ -93,7 +93,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 ## 第二步：电脑端配置
 
-> 📋 **前置要求：** 已安装 Astral（[安装教程](/开始/安装/)）
+> 📋 **前置要求：** 已安装 Astral（[安装教程](/quick-start/download-install/)）
 
 ### 🏠 房主配置流程
 
@@ -120,7 +120,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 ![选择服务器](/images/MC联机/MC联机-12.png)
 
-> 🎯 **选择建议：** 以广州服务器为例，实际应根据您的地理位置选择延迟最低的服务器
+> 🎯 **选择建议：** 以广州服务器为例，实际应根据您的地理位置和网络环境选择延迟最低的服务器
 
 **Step 3：** 启用服务器
 在房间页面确保服务器状态为"启用"
@@ -140,7 +140,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 **Step 1：** 房间创建
 - 进入房间页面
-- 设置房间名称（建议使用易记名称）
+- 设置房间名称
 - **重要：** 点击选中您创建的房间
 
 ![创建房间](/images/MC联机/MC联机-17.png)
@@ -165,14 +165,14 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![对局域网开放](/images/MC联机/MC联机-20.png)
 
 **Step 2：** 配置参数
-- 保持默认端口设置
+- 保持默认下图中红色方框部分
 - 根据需要调整其他选项
 - 点击"创建局域网世界"
 
 ![创建局域网](/images/MC联机/MC联机-21.png)
 
 **Step 3：** 记录端口信息
-系统将显示端口号（默认：25565）
+聊天栏将显示端口号（默认：25565）
 
 ![端口提醒](/images/MC联机/MC联机-22.png)
 
@@ -242,7 +242,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 **房员视角连接信息：**
 ![房员连接状态](/images/MC联机/MC联机-26.png)
 
-> 📖 **补充说明：** NAT 类型详情请参考：[NAT 类型说明文档](/FAQ/Nat)
+> 📖 **补充说明：** NAT 类型详情请参考：[NAT 类型说明文档](/troubleshooting/nat-types/)
 
 #### 6. Minecraft 游戏连接
 
@@ -280,7 +280,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 ## 第三步：手机端配置
 
-> 📋 **前置要求：** 已安装 Astral（[安装教程](/开始/安装/)）
+> 📋 **前置要求：** 已安装 Astral（[安装教程](/quick-start/download-install/)）
 
 ### 📱 手机端加入电脑房间
 
@@ -289,11 +289,9 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 **基础设置：**
 - 打开 Astral 应用
 - 设置用户名
-- 🚨 **关键步骤：** 将虚拟网 IP 设为手动模式：`10.0.0.1`
+- 🚨 **关键步骤：** 将虚拟网 IP 设为手动模式并设置IP为：`10.0.0.1`
 
 ![手机端基础设置](/images/MC联机/MC联机-41.png)
-
-> ⚠️ **重要区别：** 手机端必须手动设置虚拟网 IP，电脑端无需此操作
 
 **VPN 网段配置：**
 设置页面 → "自定义 VPN 网段" → 添加 `10.0.0.0/24`
@@ -301,6 +299,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![VPN 设置](/images/MC联机/MC联机-42.png)
 ![添加网段](/images/MC联机/MC联机-43.png)
 
+> ⚠️ **重要区别：** 手机端必须手动设置虚拟网 IP和网段，电脑端无需此操作
 **网络优化：**
 "网络设置" → 启用"延迟优先"
 
@@ -315,6 +314,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 **Step 2：** 匹配房主服务器
 > 🚨 **关键要求：** 必须选择与房主完全相同的服务器
+> 💡 **识别方法：** 通过服务器地址信息进行比对确认
 
 ![选择服务器](/images/MC联机/MC联机-46.png)
 
@@ -352,7 +352,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 **房员视角：**
 ![房员连接状态](/images/MC联机/MC联机-53.png)
 
-> 📖 **参考资料：** [NAT 类型详细说明](/FAQ/Nat)
+> 📖 **参考资料：** [NAT 类型详细说明](/troubleshooting/nat-types/)
 
 #### 5. 手机端 Minecraft 配置
 
@@ -384,7 +384,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 > ⚠️ **兼容性提醒：**
 > - 手机端运行 Java 版通过转译实现，可能存在模组兼容问题
 > - 建议寻找专门的移植版本
-> - 房主与房员必须使用完全相同的整合包
+> - 房主与房员必须使用完全相同的游戏版本和模组或者整合包
 
 **Step 2：** 选择安装版本
 ![选择版本](/images/MC联机/MC联机-34.png)
@@ -397,7 +397,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![渲染器设置](/images/MC联机/MC联机-35.png)
 
 **Step 2：** 选择最新渲染器
-选择 MobileGlues 渲染器
+选择 MobileGlues 渲染器，该渲染器需要另外手动安装
 
 ![选择渲染器](/images/MC联机/MC联机-36.png)
 
@@ -468,9 +468,9 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 ### 📚 相关文档
 
-- 📖 [Astral 安装指南](/开始/安装/)
-- 🔍 [NAT 类型说明](/FAQ/Nat)
-- ❓ [常见问题解答](/FAQ/)
+- 📖 [Astral 安装指南](/quick-start/download-install/)
+- 🔍 [NAT 类型说明](/troubleshooting/nat-types/)
+- ❓ [常见问题解答](/troubleshooting/)
 - 💬 **技术支持：** 加入官方交流群获取帮助
 
 ---
@@ -481,7 +481,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 本教程涵盖了使用 Astral 进行 Minecraft 跨平台联机的完整流程。如果您在使用过程中遇到问题：
 
-1. **首先参考：** [常见问题排查](#常见问题排查)
+1. **首先参考：** [常见问题排查](/troubleshooting/)
 2. **深入了解：** 查阅相关技术文档
 3. **寻求帮助：** 在官方交流群中礼貌提问
 
