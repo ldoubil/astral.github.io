@@ -61,6 +61,11 @@ export default defineConfig({
 					label: '🎯 进阶教程',
 					items: [
 						{ label: '游戏联机指南', slug: 'advanced/game-multiplayer' },
+					],
+				},
+				{
+					label: '🎮 游戏联机教程',
+					items: [
 						{ label: '我的世界联机教程', slug: 'tutorials/minecraft-multiplayer' },
 					],
 				},
