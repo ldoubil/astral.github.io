@@ -66,7 +66,7 @@ export default defineConfig({
 				{
 					label: '🎮 游戏联机教程',
 					items: [
-						{ label: 'Minecraft 联机教程, slug: 'tutorials/minecraft-multiplayer-optimized' },
+						{ label: 'Minecraft 联机教程', slug: 'tutorials/minecraft-multiplayer-optimized' },
 					],
 				},
 				{
