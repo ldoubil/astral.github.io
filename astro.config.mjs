@@ -61,14 +61,12 @@ export default defineConfig({
 					label: '🎯 进阶教程',
 					items: [
 						{ label: '游戏联机指南', slug: 'advanced/game-multiplayer' },
-						{ label: '远程办公应用', slug: 'advanced/remote-work' },
 					],
 				},
 				{
 					label: '🌐 服务器配置',
 					items: [
 						{ label: '服务器列表', slug: 'server-config/server-list' },
-						{ label: '搭建指南', slug: 'server-config/setup-guide' },
 					],
 				},
 				{
