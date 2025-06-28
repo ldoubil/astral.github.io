@@ -1,0 +1,155 @@
+---
+title: 下载与安装
+description: 获取 Astral 应用并完成安装
+sidebar:
+  order: 2
+---
+
+import DownloadPage from '../../../components/DownloadPage.astro';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# 📥 下载与安装
+
+选择适合您操作系统的版本，按照相应的安装指南完成安装。
+
+## 🔽 下载最新版本
+
+<DownloadPage 
+  repoOwner="ldoubil"
+  repoName="astral"
+  acceleratedLinks={[
+    'https://slink.ltd/',
+    'https://api-gh.muran.eu.org/'
+  ]}
+  showPrerelease={false}
+  title="选择您的平台"
+  description="下载适合您设备的安装包"
+/>
+
+## 📱 安装指南
+
+<Tabs>
+  <TabItem label="Android">
+    ### Android 安装步骤
+
+    1. **下载 APK 文件**
+       - 从上方下载页面获取 Android 安装包
+       
+    2. **允许未知来源安装**
+       - 在设置中开启"允许安装未知来源的应用"
+       
+    3. **安装应用**
+       - 点击下载的 APK 文件
+       - 按照提示完成安装
+       
+    ![Android安装示意图](/images/安装-1.png)
+
+    :::tip[温馨提示]
+    如果遇到安装问题，请检查设备的安全设置，确保允许从第三方来源安装应用。
+    :::
+  </TabItem>
+
+  <TabItem label="Windows">
+    ### Windows 安装步骤
+
+    #### 方式一：使用安装包（推荐）
+
+    1. **下载安装包**
+       - 从上方下载 `.exe` 安装包
+       
+    2. **运行安装程序**
+       - 双击下载的安装包
+       - 连续点击 "Next" 完成安装
+       
+    ![Windows安装包](/images/安装-3.png)
+
+    #### 方式二：使用便携版
+
+    1. **下载压缩包**
+       - 下载 Windows 便携版 `.zip` 文件
+       
+    2. **解压缩文件**
+       - 右键选择"解压到当前文件夹"
+       - **重要**：不要在压缩包内直接运行程序
+       
+    3. **运行程序**
+       - 进入解压后的文件夹
+       - 双击 `astral.exe` 启动应用
+       
+    ![Windows便携版](/images/安装-4.png)
+    ![解压缩](/images/安装-5.png)
+    ![运行程序](/images/安装-6.png)
+
+    :::caution[重要提醒]
+    - 请务必完全解压缩后再运行程序
+    - 如果没有解压软件，请先安装 WinRAR 或 7-Zip
+    :::
+  </TabItem>
+
+  <TabItem label="Linux">
+    ### Linux 安装步骤
+
+    1. **下载 AppImage 文件**
+       - 从上方下载页面获取 Linux 版本
+       
+    2. **添加执行权限**
+       ```bash
+       chmod +x astral-*.AppImage
+       ```
+       
+    3. **运行应用**
+       ```bash
+       ./astral-*.AppImage
+       ```
+
+    :::note[开发状态]
+    Linux 版本正在持续优化中，如遇问题请及时反馈。
+    :::
+  </TabItem>
+
+  <TabItem label="macOS">
+    ### macOS 安装步骤
+
+    :::note[开发中]
+    macOS 版本正在开发中，敬请期待。
+    
+    您可以关注我们的 [GitHub 仓库](https://github.com/ldoubil/astral) 获取最新开发进展。
+    :::
+  </TabItem>
+
+  <TabItem label="iOS">
+    ### iOS 安装步骤
+
+    :::note[开发中]
+    iOS 版本正在开发中，敬请期待。
+    
+    您可以关注我们的 [GitHub 仓库](https://github.com/ldoubil/astral) 获取最新开发进展。
+    :::
+  </TabItem>
+</Tabs>
+
+## ✅ 安装验证
+
+安装完成后，启动 Astral 应用，您应该能看到：
+
+- 📱 清晰的用户界面
+- 🌐 服务器连接选项
+- 🏠 房间管理功能
+
+如果应用无法正常启动，请查看 [故障排除](../../故障排除/安装问题) 部分。
+
+## 🔄 更新应用
+
+Astral 会定期发布更新版本：
+
+- **Windows**：支持自动更新提醒
+- **Android**：需要手动下载新版本 APK
+- **Linux**：下载新的 AppImage 文件
+
+建议定期检查更新，以获得最新功能和安全修复。
+
+---
+
+## 🎯 下一步
+
+安装完成后，继续阅读 [基础设置](./基础设置) 来配置您的第一个网络连接。

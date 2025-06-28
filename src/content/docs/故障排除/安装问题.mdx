@@ -1,0 +1,392 @@
+---
+title: 安装问题
+description: 解决 Astral 安装过程中遇到的各种问题
+sidebar:
+  order: 1
+---
+
+import { Steps, Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
+
+# 🔧 安装问题排除
+
+安装 Astral 时可能遇到的常见问题及解决方案。
+
+## 🚨 常见安装错误
+
+<CardGrid>
+  <Card title="📱 Android 安装失败" icon="warning">
+    APK 文件无法安装或安装中断
+  </Card>
+  <Card title="🪟 Windows 安装阻止" icon="shield">
+    系统安全软件阻止安装
+  </Card>
+  <Card title="🐧 Linux 权限问题" icon="lock">
+    AppImage 文件无执行权限
+  </Card>
+  <Card title="🔒 数字签名验证失败" icon="certificate">
+    文件完整性检查失败
+  </Card>
+</CardGrid>
+
+## 📱 Android 安装问题
+
+### 问题1：无法安装 APK
+
+<Tabs>
+  <TabItem label="症状描述">
+    - 点击 APK 文件没有反应
+    - 提示"出于安全考虑，您的手机已设置为阻止安装未知来源的应用"
+    - 安装过程中出现错误
+  </TabItem>
+
+  <TabItem label="解决方案">
+    <Steps>
+    1. **启用未知来源安装**
+       - 打开"设置" → "安全"
+       - 找到"未知来源"选项并启用
+       - 或者在安装时选择"仍要安装"
+
+    2. **检查存储空间**
+       - 确保设备有足够的存储空间
+       - 清理不必要的文件和应用
+
+    3. **重新下载 APK**
+       - 删除已下载的 APK 文件
+       - 从官方渠道重新下载
+       - 检查文件完整性
+
+    4. **重启设备**
+       - 完全关机后重新启动
+       - 清理系统缓存
+    </Steps>
+  </TabItem>
+</Tabs>
+
+### 问题2：安装后无法启动
+
+**症状**：应用安装成功但点击图标无反应
+
+**解决方案**：
+- 📋 **检查系统版本**：确保 Android 版本兼容（建议 Android 7.0+）
+- 🔄 **清除应用数据**：设置 → 应用管理 → Astral → 存储 → 清除数据
+- 🛡️ **检查权限设置**：确保应用有必要的网络和存储权限
+- 🔋 **电池优化**：将 Astral 添加到电池优化白名单
+
+### 问题3：特定设备兼容性
+
+**华为/荣耀设备**：
+- 关闭"纯净模式"
+- 在应用管理中允许安装
+- 添加到受保护应用列表
+
+**小米设备**：
+- 关闭 MIUI 优化
+- 在安全中心允许安装未知应用
+- 设置自启动权限
+
+**OPPO/OnePlus 设备**：
+- 开启"允许安装未知应用"
+- 关闭应用冻结功能
+- 设置后台运行权限
+
+## 🪟 Windows 安装问题
+
+### 问题1：Windows Defender 拦截
+
+<Tabs>
+  <TabItem label="症状">
+    - 下载时提示"此文件可能对您的设备有害"
+    - 安装时被 Windows Defender 阻止
+    - 提示"应用已被管理员阻止"
+  </TabItem>
+
+  <TabItem label="解决方案">
+    <Steps>
+    1. **临时关闭实时保护**
+       - 打开 Windows 安全中心
+       - 病毒和威胁防护 → 管理设置
+       - 临时关闭实时保护
+
+    2. **添加到排除列表**
+       - 病毒和威胁防护 → 管理设置
+       - 添加或删除排除项
+       - 添加文件或文件夹排除
+
+    3. **从下载历史恢复**
+       - 打开 Edge 或 Chrome 下载历史
+       - 找到被拦截的文件
+       - 选择"保留"或"恢复"
+    </Steps>
+  </TabItem>
+</Tabs>
+
+### 问题2：数字签名验证失败
+
+**症状**：安装时提示"发布者不受信任"
+
+**解决方案**：
+- 🔍 **验证文件来源**：确保从官方渠道下载
+- 📋 **检查文件哈希**：对比官方提供的文件哈希值
+- ⚙️ **降低安全级别**：暂时降低 UAC 设置级别
+- 🔄 **重新下载**：使用不同的下载源或网络
+
+### 问题3：兼容性问题
+
+**Windows 版本要求**：
+- **最低要求**：Windows 10 version 1903
+- **推荐版本**：Windows 10 version 2004 或更高
+- **不支持**：Windows 7、Windows 8.1
+
+**解决步骤**：
+```powershell
+# 检查 Windows 版本
+winver
+
+# 检查系统架构
+systeminfo | findstr "系统类型"
+
+# 更新 Windows
+Get-WindowsUpdate -Install -AcceptAll
+```
+
+### 问题4：便携版运行问题
+
+**症状**：解压后双击 exe 文件无反应
+
+**解决方案**：
+- 📁 **完整解压**：确保完全解压，不要在压缩包内直接运行
+- 🛡️ **管理员权限**：右键选择"以管理员身份运行"
+- 🔐 **文件权限**：检查文件是否被标记为"阻止"
+- 📁 **路径问题**：避免放在包含中文或特殊字符的路径下
+
+## 🐧 Linux 安装问题
+
+### 问题1：AppImage 无法执行
+
+<Tabs>
+  <TabItem label="权限问题">
+    **症状**：双击 AppImage 文件没有反应
+
+    **解决方案**：
+    ```bash
+    # 添加执行权限
+    chmod +x astral-*.AppImage
+
+    # 运行应用
+    ./astral-*.AppImage
+
+    # 如果还有问题，尝试
+    sudo ./astral-*.AppImage
+    ```
+  </TabItem>
+
+  <TabItem label="依赖缺失">
+    **症状**：运行时提示缺少库文件
+
+    **Ubuntu/Debian**：
+    ```bash
+    # 更新包管理器
+    sudo apt update
+
+    # 安装基础依赖
+    sudo apt install libglib2.0-0 libxcb-xinerama0 libgl1-mesa-glx
+
+    # 安装 GTK 依赖
+    sudo apt install libgtk-3-0 libgdk-pixbuf2.0-0
+
+    # 安装网络库
+    sudo apt install libssl1.1 libcurl4
+    ```
+
+    **CentOS/RHEL**：
+    ```bash
+    # 启用 EPEL 仓库
+    sudo yum install epel-release
+
+    # 安装依赖
+    sudo yum install glib2 libxcb gtk3 openssl-libs libcurl
+    ```
+  </TabItem>
+</Tabs>
+
+### 问题2：系统集成问题
+
+**创建桌面快捷方式**：
+```bash
+# 创建 .desktop 文件
+cat > ~/.local/share/applications/astral.desktop << EOF
+[Desktop Entry]
+Name=Astral
+Comment=P2P Network Tool
+Exec=/path/to/astral.AppImage
+Icon=/path/to/astral-icon.png
+Type=Application
+Categories=Network;
+EOF
+
+# 更新桌面数据库
+update-desktop-database ~/.local/share/applications/
+```
+
+**系统服务安装**：
+```bash
+# 创建系统服务文件
+sudo cat > /etc/systemd/system/astral.service << EOF
+[Unit]
+Description=Astral P2P Network Service
+After=network.target
+
+[Service]
+Type=simple
+User=astral
+ExecStart=/opt/astral/astral.AppImage --daemon
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 启用服务
+sudo systemctl enable astral
+sudo systemctl start astral
+```
+
+## 🔍 高级故障排除
+
+### 网络连接测试
+
+**检查网络连通性**：
+```bash
+# 测试基本网络连接
+ping 8.8.8.8
+
+# 测试 DNS 解析
+nslookup github.com
+
+# 检查端口连通性
+telnet github.com 443
+
+# 测试 HTTP/HTTPS 连接
+curl -I https://github.com/ldoubil/astral/releases/latest
+```
+
+### 系统日志分析
+
+<Tabs>
+  <TabItem label="Windows">
+    ```powershell
+    # 查看事件日志
+    Get-EventLog -LogName Application -Source "Astral" -Newest 50
+
+    # 查看系统错误
+    Get-EventLog -LogName System -EntryType Error -Newest 10
+
+    # 查看安全日志
+    Get-EventLog -LogName Security -Newest 20
+    ```
+  </TabItem>
+
+  <TabItem label="Linux">
+    ```bash
+    # 查看系统日志
+    journalctl -u astral -f
+
+    # 查看内核日志
+    dmesg | grep -i error
+
+    # 查看应用日志
+    tail -f ~/.local/share/astral/logs/astral.log
+    ```
+  </TabItem>
+
+  <TabItem label="Android">
+    **使用 ADB 调试**：
+    ```bash
+    # 启用开发者选项和 USB 调试
+    # 连接设备后执行：
+
+    # 查看应用日志
+    adb logcat | grep -i astral
+
+    # 查看安装日志
+    adb logcat | grep -i packagemanager
+
+    # 获取设备信息
+    adb shell getprop
+    ```
+  </TabItem>
+</Tabs>
+
+### 文件完整性验证
+
+**验证下载文件**：
+```bash
+# Windows (PowerShell)
+Get-FileHash -Algorithm SHA256 astral-setup.exe
+
+# Linux/macOS
+sha256sum astral.AppImage
+
+# 对比官方哈希值
+echo "expected_hash  filename" | sha256sum -c
+```
+
+## 🛡️ 安全软件兼容性
+
+### 常见安全软件设置
+
+<CardGrid>
+  <Card title="🔒 360 安全卫士" icon="shield">
+    - 信任与阻止 → 信任列表 → 添加 Astral
+    - 关闭"下载保护"中的过度拦截
+  </Card>
+  
+  <Card title="🛡️ 腾讯电脑管家" icon="shield">
+    - 病毒查杀 → 信任区 → 添加文件/文件夹
+    - 实时防护 → 自定义白名单
+  </Card>
+  
+  <Card title="🔐 卡巴斯基" icon="shield">
+    - 威胁和排除项 → 排除项 → 添加排除项
+    - 网络攻击防护 → 应用程序网络活动
+  </Card>
+  
+  <Card title="🛡️ McAfee" icon="shield">
+    - 实时扫描 → 排除的文件和文件夹
+    - 防火墙 → 程序权限 → 允许 Astral
+  </Card>
+</CardGrid>
+
+## 📞 获取进一步帮助
+
+如果以上方法都无法解决问题：
+
+1. **🔍 搜索已知问题**
+   - 查看 GitHub Issues
+   - 搜索社区讨论
+
+2. **📋 收集诊断信息**
+   - 操作系统版本
+   - 设备型号和配置
+   - 错误信息截图
+   - 操作步骤记录
+
+3. **💬 寻求社区帮助**
+   - 加入 QQ 群：[链接]
+   - 在 GitHub 提交 Issue
+   - 在社区论坛发帖求助
+
+4. **📝 提供详细信息**
+   - 问题重现步骤
+   - 期望的结果
+   - 实际发生的情况
+   - 已尝试的解决方法
+
+---
+
+<Aside type="tip" title="预防建议">
+- 从官方渠道下载软件
+- 定期更新操作系统
+- 配置适当的安全软件白名单
+- 保留安装包以备重新安装
+</Aside>

@@ -1,0 +1,545 @@
+---
+title: 搭建指南
+description: 学习如何搭建自己的 Astral 服务器
+sidebar:
+  order: 2
+---
+
+import AstralServer from '../../../components/AstralServer.astro';
+import { Steps, Aside, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+# 🏗️ 服务器搭建指南
+
+搭建自己的 Astral 服务器可以获得更好的控制权、隐私保护和性能表现。
+
+## 🎯 搭建服务器的优势
+
+<CardGrid>
+  <Card title="🔒 完全控制" icon="shield">
+    完全掌控服务器配置、用户管理和安全策略
+  </Card>
+  <Card title="🚀 更好性能" icon="rocket">
+    专属资源，无需与其他用户共享带宽
+  </Card>
+  <Card title="🛡️ 隐私保护" icon="lock">
+    数据不经过第三方，确保企业数据安全
+  </Card>
+  <Card title="🎯 定制化" icon="star">
+    根据具体需求优化配置和功能
+  </Card>
+</CardGrid>
+
+## 🖥️ 系统要求
+
+### 最低配置
+
+| 组件 | 最低要求 | 推荐配置 |
+|------|----------|----------|
+| **CPU** | 1 核心 | 2+ 核心 |
+| **内存** | 512MB | 2GB+ |
+| **存储** | 10GB | 50GB+ SSD |
+| **网络** | 10Mbps | 100Mbps+ |
+| **系统** | Linux/Windows | Ubuntu 20.04+ |
+
+### 网络要求
+
+- 🌐 **公网 IP**：固定或动态公网 IP 地址
+- 🔓 **端口开放**：默认端口 11010（可自定义）
+- 🛡️ **防火墙配置**：允许指定端口的 TCP/UDP 流量
+- ⚡ **带宽充足**：上下行带宽满足用户需求
+
+## 🚀 快速开始
+
+### 自动化部署脚本
+
+<AstralServer />
+
+### Docker 部署方式
+
+<Tabs>
+  <TabItem label="Docker Compose">
+    **创建 docker-compose.yml 文件**：
+
+    ```yaml
+    version: '3.8'
+    services:
+      astral-server:
+        image: easytier/easytier:latest
+        container_name: astral-server
+        restart: unless-stopped
+        ports:
+          - "11010:11010/tcp"
+          - "11010:11010/udp"
+        volumes:
+          - ./config:/app/config
+          - ./logs:/app/logs
+        environment:
+          - EASYTIER_CONFIG_FILE=/app/config/config.toml
+        command: >
+          easytier-core
+          --config-file /app/config/config.toml
+          --multi-thread
+    ```
+
+    **启动服务**：
+    ```bash
+    # 创建必要目录
+    mkdir -p config logs
+
+    # 启动服务
+    docker-compose up -d
+
+    # 查看日志
+    docker-compose logs -f
+    ```
+  </TabItem>
+
+  <TabItem label="Docker 命令">
+    **直接使用 Docker 命令**：
+
+    ```bash
+    # 拉取镜像
+    docker pull easytier/easytier:latest
+
+    # 创建配置目录
+    mkdir -p /opt/astral/{config,logs}
+
+    # 运行容器
+    docker run -d \
+      --name astral-server \
+      --restart unless-stopped \
+      -p 11010:11010/tcp \
+      -p 11010:11010/udp \
+      -v /opt/astral/config:/app/config \
+      -v /opt/astral/logs:/app/logs \
+      easytier/easytier:latest \
+      easytier-core --config-file /app/config/config.toml
+    ```
+  </TabItem>
+</Tabs>
+
+## ⚙️ 详细配置
+
+### 服务器配置文件
+
+创建 `config.toml` 配置文件：
+
+```toml
+# 服务器基本配置
+[server]
+# 监听地址和端口
+listen_addr = "0.0.0.0:11010"
+
+# 启用的协议
+protocols = ["tcp", "udp"]
+
+# 最大连接数
+max_connections = 1000
+
+# 连接超时时间（秒）
+connection_timeout = 300
+
+# 网络配置
+[network]
+# 虚拟网络地址段
+network_cidr = "10.126.126.0/24"
+
+# 启用 NAT 穿透
+enable_nat_traversal = true
+
+# 启用端口映射
+enable_port_mapping = true
+
+# 性能优化
+[performance]
+# 启用多线程
+enable_multi_thread = true
+
+# 缓冲区大小（KB）
+buffer_size = 64
+
+# 启用压缩
+enable_compression = true
+
+# 安全配置
+[security]
+# 启用加密
+enable_encryption = true
+
+# 加密算法
+encryption_algorithm = "aes-256-gcm"
+
+# 最大房间数
+max_rooms = 100
+
+# 日志配置
+[logging]
+# 日志级别：debug, info, warn, error
+log_level = "info"
+
+# 日志文件路径
+log_file = "/app/logs/server.log"
+
+# 启用日志轮转
+enable_log_rotation = true
+
+# 最大日志文件大小（MB）
+max_log_size = 100
+```
+
+### 防火墙配置
+
+<Tabs>
+  <TabItem label="Ubuntu/Debian">
+    ```bash
+    # 安装 ufw
+    sudo apt update
+    sudo apt install ufw
+
+    # 开放 SSH 端口（重要！）
+    sudo ufw allow ssh
+
+    # 开放 Astral 端口
+    sudo ufw allow 11010/tcp
+    sudo ufw allow 11010/udp
+
+    # 启用防火墙
+    sudo ufw enable
+
+    # 查看状态
+    sudo ufw status
+    ```
+  </TabItem>
+
+  <TabItem label="CentOS/RHEL">
+    ```bash
+    # 安装 firewalld
+    sudo yum install firewalld
+    sudo systemctl start firewalld
+    sudo systemctl enable firewalld
+
+    # 开放端口
+    sudo firewall-cmd --permanent --add-port=11010/tcp
+    sudo firewall-cmd --permanent --add-port=11010/udp
+
+    # 重载配置
+    sudo firewall-cmd --reload
+
+    # 查看状态
+    sudo firewall-cmd --list-all
+    ```
+  </TabItem>
+
+  <TabItem label="Windows">
+    **使用 Windows 防火墙**：
+
+    <Steps>
+    1. 打开"Windows 安全中心"
+    2. 选择"防火墙和网络保护"
+    3. 点击"高级设置"
+    4. 创建新的入站规则：
+       - 规则类型：端口
+       - 协议：TCP 和 UDP
+       - 端口：11010
+       - 操作：允许连接
+    5. 创建对应的出站规则
+    </Steps>
+  </TabItem>
+</Tabs>
+
+## 🔧 高级配置
+
+### 负载均衡设置
+
+对于高并发场景，可以配置多个服务器实例：
+
+```yaml
+# nginx 负载均衡配置
+upstream astral_backend {
+    least_conn;
+    server 127.0.0.1:11010 weight=3;
+    server 127.0.0.1:11011 weight=2;
+    server 127.0.0.1:11012 weight=1;
+}
+
+server {
+    listen 80;
+    server_name astral.yourdomain.com;
+    
+    location / {
+        proxy_pass http://astral_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_connect_timeout 300s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
+    }
+}
+```
+
+### SSL/TLS 加密
+
+为服务器启用 HTTPS 支持：
+
+```bash
+# 使用 Let's Encrypt 获取证书
+sudo apt install certbot
+sudo certbot certonly --standalone -d astral.yourdomain.com
+
+# 更新 nginx 配置
+server {
+    listen 443 ssl http2;
+    server_name astral.yourdomain.com;
+    
+    ssl_certificate /etc/letsencrypt/live/astral.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/astral.yourdomain.com/privkey.pem;
+    
+    # SSL 安全配置
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+}
+```
+
+### 数据库集成
+
+对于企业级部署，可以集成数据库存储用户和会话信息：
+
+```sql
+-- 创建用户表
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- 创建房间表
+CREATE TABLE rooms (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    room_id VARCHAR(50) UNIQUE NOT NULL,
+    room_name VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255),
+    owner_id INT,
+    max_members INT DEFAULT 20,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+
+-- 创建会话表
+CREATE TABLE sessions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    room_id INT,
+    ip_address VARCHAR(45),
+    connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    disconnected_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
+```
+
+## 📊 监控和维护
+
+### 系统监控
+
+**使用 Prometheus + Grafana**：
+
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'astral-server'
+    static_configs:
+      - targets: ['localhost:11010']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+```
+
+**监控指标**：
+- 📊 **连接数量**：当前活跃连接数
+- ⏱️ **响应时间**：服务器响应延迟
+- 💾 **资源使用**：CPU、内存、网络使用率
+- 🔄 **错误率**：连接失败和错误统计
+
+### 日志管理
+
+```bash
+# 配置 logrotate
+sudo vim /etc/logrotate.d/astral
+
+# 内容如下：
+/opt/astral/logs/*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 644 astral astral
+    postrotate
+        docker restart astral-server > /dev/null 2>&1 || true
+    endscript
+}
+```
+
+### 自动化运维
+
+**健康检查脚本**：
+
+```bash
+#!/bin/bash
+# astral-health-check.sh
+
+ASTRAL_HOST="localhost"
+ASTRAL_PORT="11010"
+LOG_FILE="/var/log/astral-health.log"
+
+# 检查端口是否开放
+if nc -z $ASTRAL_HOST $ASTRAL_PORT; then
+    echo "$(date): Astral server is healthy" >> $LOG_FILE
+else
+    echo "$(date): Astral server is down, restarting..." >> $LOG_FILE
+    docker restart astral-server
+    
+    # 发送告警邮件
+    echo "Astral server on $HOSTNAME is down and has been restarted" | \
+    mail -s "Astral Server Alert" admin@yourdomain.com
+fi
+```
+
+**设置定时任务**：
+```bash
+# 添加到 crontab
+crontab -e
+
+# 每5分钟检查一次
+*/5 * * * * /opt/astral/scripts/health-check.sh
+```
+
+## 🚨 故障排除
+
+### 常见问题解决
+
+<Tabs>
+  <TabItem label="连接问题">
+    **服务器无法连接**：
+
+    1. **检查端口开放**：
+       ```bash
+       # 检查端口监听
+       netstat -tlnp | grep 11010
+       
+       # 测试端口连通性
+       telnet localhost 11010
+       ```
+
+    2. **检查防火墙规则**：
+       ```bash
+       # Ubuntu
+       sudo ufw status
+       
+       # CentOS
+       sudo firewall-cmd --list-all
+       ```
+
+    3. **查看服务日志**：
+       ```bash
+       # Docker 容器日志
+       docker logs astral-server
+       
+       # 系统服务日志
+       journalctl -u astral-server
+       ```
+  </TabItem>
+
+  <TabItem label="性能问题">
+    **服务器性能差**：
+
+    1. **检查系统资源**：
+       ```bash
+       # CPU 和内存使用
+       top
+       htop
+       
+       # 网络流量
+       iftop
+       nethogs
+       
+       # 磁盘 I/O
+       iotop
+       ```
+
+    2. **优化配置**：
+       - 增加缓冲区大小
+       - 启用多线程处理
+       - 调整连接超时时间
+       - 启用压缩传输
+
+    3. **扩容资源**：
+       - 升级服务器配置
+       - 增加带宽
+       - 使用 SSD 存储
+  </TabItem>
+</Tabs>
+
+### 备份和恢复
+
+**配置备份**：
+```bash
+#!/bin/bash
+# backup-config.sh
+
+BACKUP_DIR="/opt/astral/backups"
+DATE=$(date +%Y%m%d_%H%M%S)
+
+# 创建备份目录
+mkdir -p $BACKUP_DIR
+
+# 备份配置文件
+tar -czf $BACKUP_DIR/astral-config-$DATE.tar.gz \
+    /opt/astral/config/ \
+    /opt/astral/logs/ \
+    /etc/docker/compose/astral/
+
+# 保留最近30天的备份
+find $BACKUP_DIR -name "astral-config-*.tar.gz" -mtime +30 -delete
+```
+
+**数据恢复**：
+```bash
+#!/bin/bash
+# restore-config.sh
+
+BACKUP_FILE=$1
+
+if [ -z "$BACKUP_FILE" ]; then
+    echo "Usage: $0 <backup-file>"
+    exit 1
+fi
+
+# 停止服务
+docker-compose down
+
+# 恢复配置
+tar -xzf $BACKUP_FILE -C /
+
+# 重启服务
+docker-compose up -d
+```
+
+---
+
+<Aside type="caution" title="安全提醒">
+- 定期更新服务器系统和软件
+- 使用强密码和密钥认证
+- 配置适当的防火墙规则
+- 定期备份重要配置和数据
+- 监控服务器安全日志
+</Aside>
