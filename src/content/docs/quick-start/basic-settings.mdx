@@ -14,16 +14,13 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 ## 🔥 重要：关闭防火墙
 
 <Aside type="caution" title="必须执行">
-**这是最重要的步骤！** 大部分无法联机的问题都是由防火墙引起的。
-</Aside>
+**这是最重要的步骤！** 虽然这并不好，但是大部分无法联机的问题都是由防火墙引起的。
 
 ### Windows 防火墙设置
 
 <Steps>
-1. 打开 Windows 设置（Win + I）
-2. 选择"更新和安全" → "Windows 安全中心"
-3. 点击"防火墙和网络保护"
-4. **临时关闭**专用网络和公用网络的防火墙
+1. 打开 Astral 软件
+2. 点击下图红色方框中的按钮，**临时关闭**防火墙
 </Steps>
 
 ![关闭防火墙](/images/食用-1.png)
@@ -43,22 +40,19 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 启动 Astral 应用后：
 
 <Steps>
-1. 在主界面找到**名称设置**区域
+1. 在主界面找到**用户信息**区域
 2. 输入一个**唯一的用户名**
 3. 确保名称符合以下要求：
-   - ✅ 使用英文字母和数字
-   - ✅ 避免特殊符号
    - ✅ 与其他用户不重复
+   - ✅ 能区分出房主和房员
 </Steps>
 
 ![用户名设置](/images/食用-6.png)
 
 <Aside type="caution" title="命名规则">
-- ❌ 不要使用中文字符
-- ❌ 不要使用特殊符号
 - ❌ 不要与房间内其他用户重名
 
-违反这些规则可能导致无法连接或功能异常。
+违反这规则可能导致无法连接或功能异常。
 </Aside>
 
 ## 📡 选择服务器
@@ -66,9 +60,9 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 <Steps>
 1. 点击左侧菜单的**"服务器"**选项
 2. 点击右下角的**地球图标**🌍
-3. 从列表中选择一个服务器
+3. 选择列表中最上方的三个服务器
 4. 点击**"启用"**按钮
-5. 点击**"编辑"**，确保勾选 **TCP** 和 **UDP** 协议
+5. 点击“启用”按钮右边的**"编辑服务器"**，确保勾选 **TCP** 和 **UDP** 协议
 </Steps>
 
 ![服务器选择](/images/食用-2.png)
@@ -78,7 +72,9 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 
 - 🏃‍♂️ **延迟优先**：选择延迟最低的服务器
 - 🌍 **地理位置**：选择离您最近的服务器
-- 👥 **与朋友同步**：确保所有用户选择相同的服务器
+
+<Aside type="caution" title="必须相同">
+- 👥 **与朋友同步**：确保所有用户选择相同的服务器，否则无法正常连接。
 
 ## 🔧 网络优化设置
 
@@ -88,7 +84,7 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 3. 开启**"延迟优先"**选项
 </Steps>
 
-![网络设置](/images/食用-5.png)
+![网络设置](/images/MC联机/MC联机-15.png)
 
 这个设置可以：
 - ⚡ 优化网络路由
@@ -100,7 +96,7 @@ import { Steps, Aside } from '@astrojs/starlight/components';
 完成以上设置后，检查：
 
 - [ ] 防火墙已关闭
-- [ ] 用户名已设置且符合规范
+- [ ] 用户名已设置且能区分房主和房员
 - [ ] 服务器已选择并启用
 - [ ] TCP/UDP 协议已启用
 - [ ] 延迟优先已开启
