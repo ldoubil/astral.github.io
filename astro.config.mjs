@@ -1,11 +1,29 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-
+import giscusIntegration from './src/integrations/giscus-integration.js';
+import starlightGiscus from 'starlight-giscus'
+import starlightSiteGraph from 'starlight-site-graph'
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
 		starlight({
+			 plugins: [
+				starlightSiteGraph({  
+				}),
+       starlightGiscus({
+           repo: 'ldoubil/astral.github.io',
+           repoId: 'R_kgDOOsZWXQ',
+           category: 'Announcements',
+           categoryId: 'DIC_kwDOOsZWXc4Cr1fo',
+		mapping:"pathname",
+		reactions:true,
+		inputPosition:"top",
+		
+		
+
+       })
+     ],
 			title: 'Astral',
 			components:{
 				SocialIcons: './src/components/EmailLink.astro',
@@ -27,11 +45,16 @@ export default defineConfig({
 						{ label: '简介', slug: '开始/简介' },
 						{ label: '下载', slug: '开始/下载' },
 						{ label: '安装', slug: '开始/安装' },
+						{ label: '使用', slug: '开始/使用' },
 					],
 				},
 				{
 					label: '指南',
 					autogenerate: { directory: '指南' },
+				},
+{
+					label: '教程',
+					autogenerate: { directory: '教程' },
 				},
 				{
 					label: '公共服务器',

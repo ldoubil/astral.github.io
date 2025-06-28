@@ -1,7 +1,18 @@
 ---
 title: 下载
-description: 下载 Astral 最新预发布版
+description: 下载 Astral 最新正式版
 ---
 
-[下载 Pre-release最新版](https://github.com/ldoubil/astral/releases/download/v2.1.0/app-release-arm64-v8a.apk)
+import DownloadPage from '../../../components/DownloadPage.astro';
 
+<DownloadPage 
+  repoOwner="ldoubil"
+  repoName="astral"
+  acceleratedLinks={[
+    'https://slink.ltd/',
+    'https://api-gh.muran.eu.org/'
+  ]}
+  showPrerelease={false}
+  title="最新版本信息"
+  description="请在下方选择下载常见的操作系统对应的二进制文件"
+/>
