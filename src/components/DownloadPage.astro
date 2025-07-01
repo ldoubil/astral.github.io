@@ -106,8 +106,31 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         <div class="platform-icon">📱</div>
         <h3>Android</h3>
       </div>
-      <div class="download-list" data-version="release" data-keyword="app-release" data-suffix="apk">
-        <div class="loading-spinner">加载中...</div>
+      <div class="download-categories">
+        <div class="download-category">
+          <h4>通用版 (推荐)</h4>
+          <div class="download-list" data-version="release" data-keyword="universal" data-suffix="apk">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>ARM64</h4>
+          <div class="download-list" data-version="release" data-keyword="arm64-v8a" data-suffix="apk">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>ARM32</h4>
+          <div class="download-list" data-version="release" data-keyword="armeabi-v7a" data-suffix="apk">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>x86_64</h4>
+          <div class="download-list" data-version="release" data-keyword="x86_64" data-suffix="apk">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -119,13 +142,13 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
       <div class="download-categories">
         <div class="download-category">
           <h4>安装包</h4>
-          <div class="download-list" data-version="release" data-keyword="setup" data-suffix="exe">
+          <div class="download-list" data-version="release" data-keyword="windows-x64-setup" data-suffix="exe">
             <div class="loading-spinner">加载中...</div>
           </div>
         </div>
         <div class="download-category">
           <h4>便携版</h4>
-          <div class="download-list" data-version="release" data-keyword="windows" data-suffix="zip">
+          <div class="download-list" data-version="release" data-keyword="windows-x64-zip" data-suffix="zip">
             <div class="loading-spinner">加载中...</div>
           </div>
         </div>
@@ -137,22 +160,27 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         <div class="platform-icon">🐧</div>
         <h3>Linux</h3>
       </div>
-      <div class="download-list" data-version="release" data-keyword="linux" data-suffix="AppImage">
-        <div class="loading-spinner">加载中...</div>
+      <div class="download-categories">
+        <div class="download-category">
+          <h4>DEB 包</h4>
+          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="deb">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>RPM 包</h4>
+          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="rpm">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
+        <div class="download-category">
+          <h4>TAR.GZ 包</h4>
+          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="tar.gz">
+            <div class="loading-spinner">加载中...</div>
+          </div>
+        </div>
       </div>
     </div>
-
-    {showPrerelease && (
-      <div class="download-section">
-        <div class="section-header">
-          <div class="platform-icon">🍎</div>
-          <h3>macOS</h3>
-        </div>
-        <div class="download-list" data-version="release" data-keyword="mac" data-suffix="dmg">
-          <div class="loading-spinner">加载中...</div>
-        </div>
-      </div>
-    )}
   </div>
 </div>
 
@@ -165,12 +193,13 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
 
   const getLatestRelease = async () => {
     try {
-      const link = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`
+      // 使用固定的 API 地址
+      const link = `https://api.github.com/repos/ldoubil/astral/releases/latest`
       const response = await fetch(link).then(r => r.json())
       releaseInfo = response
       const { assets } = response
-      for (const { name, browser_download_url: url } of assets) {
-        fileList.release.push({ name, url })
+      for (const { name, browser_download_url: url, size } of assets) {
+        fileList.release.push({ name, url, size })
       }
       // 更新版本号显示
       updateVersionDisplay()
@@ -183,14 +212,15 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     if (!showPrerelease) return
     
     try {
-      const link = `https://api.github.com/repos/${repoOwner}/${repoName}/releases`
+      // 使用固定的 API 地址
+      const link = `https://api.github.com/repos/ldoubil/astral/releases`
       const releases = await fetch(link).then(r => r.json())
       const prerelease = releases.find(release => release.prerelease)
       if (prerelease) {
         prereleaseInfo = prerelease
         const { assets } = prerelease
-        for (const { name, browser_download_url: url } of assets) {
-          fileList.prerelease.push({ name, url })
+        for (const { name, browser_download_url: url, size } of assets) {
+          fileList.prerelease.push({ name, url, size })
         }
       }
       // 更新版本号显示
@@ -200,20 +230,35 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     }
   }
 
+  const formatVersion = (tagName) => {
+    // 处理 v2.1.8 格式，确保显示时总是有 'v' 前缀
+    return tagName.startsWith('v') ? tagName : `v${tagName}`
+  }
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '未知大小'
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    if (bytes === 0) return '0 B'
+    const i = Math.floor(Math.log(bytes) / Math.log(1024))
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i]
+  }
+
   const updateVersionDisplay = () => {
     const releaseVersionElement = document.getElementById('release-version')
     const prereleaseVersionElement = document.getElementById('prerelease-version')
     
     if (releaseInfo && releaseVersionElement) {
+      const formattedVersion = formatVersion(releaseInfo.tag_name)
       releaseVersionElement.innerHTML = `
-        <div class="version-tag">${releaseInfo.tag_name}</div>
+        <div class="version-tag">${formattedVersion}</div>
         <div class="version-date">发布于: ${new Date(releaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
       `
     }
     
     if (prereleaseInfo && prereleaseVersionElement) {
+      const formattedVersion = formatVersion(prereleaseInfo.tag_name)
       prereleaseVersionElement.innerHTML = `
-        <div class="version-tag">${prereleaseInfo.tag_name}</div>
+        <div class="version-tag">${formattedVersion}</div>
         <div class="version-date">发布于: ${new Date(prereleaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
       `
     } else if (prereleaseVersionElement) {
@@ -236,9 +281,9 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
       
       const files = fileList[version] || []
       
-      for (const { name, url } of files) {
+      for (const { name, url, size } of files) {
         if (!name.includes(keyword)) continue
-        if (!name.includes(suffix)) continue
+        if (!name.endsWith(suffix)) continue
 
         // 创建下载项
         const downloadItem = document.createElement('div')
@@ -249,7 +294,7 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         fileInfo.className = 'file-info'
         fileInfo.innerHTML = `
           <div class="file-name">${name}</div>
-          <div class="file-size">${(Math.random() * 50 + 10).toFixed(1)} MB</div>
+          <div class="file-size">${formatFileSize(size)}</div>
         `
         
         // 下载按钮组
