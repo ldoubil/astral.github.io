@@ -6,14 +6,12 @@ import starlightGiscus from 'starlight-giscus'
 import starlightSiteGraph from 'starlight-site-graph'
 import starlightImageZoom from 'starlight-image-zoom'
 import sitemap from '@astrojs/sitemap';
-import SpeedInsights from '@vercel/speed-insights/astro';
 // https://astro.build/config
 export default defineConfig({
 	site:'https://astral.fan',
 	integrations: [starlight({
 		plugins: [
 			starlightImageZoom(),
-			SpeedInsights({}),
 			starlightSiteGraph({
 			}),
 			starlightGiscus({
