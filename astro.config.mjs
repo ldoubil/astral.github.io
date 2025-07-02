@@ -13,6 +13,9 @@ export default defineConfig({
 		plugins: [
 			starlightImageZoom(),
 			starlightSiteGraph({
+				// 站点图配置选项
+				graph: true,
+				backlinks: true,
 			}),
 			starlightGiscus({
 				repo: 'ldoubil/astral.github.io',
@@ -22,15 +25,13 @@ export default defineConfig({
 				mapping: "pathname",
 				reactions: true,
 				inputPosition: "top",
-
-
-
 			})
 		],
 		
 		title: 'Astral',
 		components: {
 			SocialIcons: './src/components/EmailLink.astro',
+			PageSidebar: './src/components/PageSidebar.astro',
 		},
 		logo: {
 			light: './src/assets/亮色.svg',

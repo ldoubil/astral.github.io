@@ -2,20 +2,20 @@
 title: Astral
 template: splash
 head:
-    - tag: title
-      content: Astral|游戏联机
-    - tag: meta
-      attrs:
-        property: og:description
-        content: "跨平台 P2P 网络工具，轻松实现 Minecraft、Terraria 等游戏联机，突破地理限制，低延迟体验。"
-    - tag: meta
-      attrs:
-        property: description
-        content: "跨平台 P2P 网络工具，轻松实现 Minecraft、Terraria 等游戏联机，突破地理限制，低延迟体验。"
-    - tag: meta
-      attrs:
-        name: msvalidate.01
-        content: F4A0EB96F45EB42EDE966F47E40F3E1C    
+  - tag: title
+    content: Astral|游戏联机
+  - tag: meta
+    attrs:
+      name: description
+      content: "Astral 是一个基于 EasyTier 的跨平台 P2P 网络工具，支持 Minecraft、Terraria 等游戏联机，智能家居远程管理，文件快速共享。提供端到端加密传输，简单易用的现代化界面，几分钟即可完成配置，突破地理限制享受低延迟网络体验。"
+  - tag: meta
+    attrs:
+      property: og:description
+      content: "跨平台 P2P 网络工具，轻松实现 Minecraft、Terraria 等游戏联机，突破地理限制，低延迟体验。"
+  - tag: meta
+    attrs:
+      name: msvalidate.01
+      content: F4A0EB96F45EB42EDE966F47E40F3E1C
 hero:
   image:
     light: ../../assets/亮色.svg
@@ -33,6 +33,7 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import VisitorCounterCard from '../../components/VisitorCounterCard.astro';
 import '../../styles/platform-tag.css';
 
 ## 🎮 主要应用场景
@@ -104,3 +105,5 @@ import '../../styles/platform-tag.css';
 - 🎨 **现代化界面** - 基于 Flutter 的美观直观用户界面
 - ⚡ **高性能架构** - Rust 后端确保高效的网络处理
 - 🔧 **简单易用** - 几分钟即可完成配置，轻松创建虚拟网络
+
+<VisitorCounterCard name="astral-home" title="Astral首页" />

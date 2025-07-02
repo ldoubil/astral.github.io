@@ -1,0 +1,36 @@
+---
+// 自定义页面侧边栏组件，集成所有 Starlight 插件功能
+import Default from "@astrojs/starlight/components/PageSidebar.astro";
+import VisitorCounterCard from "./VisitorCounterCard.astro";
+
+// 导入 starlight-site-graph 插件组件
+import { PageGraph, PageBacklinks } from "starlight-site-graph/components";
+
+// 获取当前页面信息以生成唯一的统计标识
+const { entry } = Astro.props;
+const pageSlug = entry?.slug || "unknown";
+const pageTitle = entry?.data?.title || "文档页面";
+---
+
+<!-- 页面图谱组件 -->
+<PageGraph class="right-sidebar-panel graph-panel">
+    <h2 slot="title">{Astro.locals.t('starlight-site-graph.graph')}</h2>
+</PageGraph>
+
+<!-- 使用默认的 PageSidebar 组件并传递所有插槽和属性 -->
+<Default {...Astro.props}>
+    <!-- 传递原始插槽内容，确保所有插件功能正常工作 -->
+    <slot />
+</Default>
+
+<!-- 页面反向链接组件 -->
+<PageBacklinks class="right-sidebar-panel backlinks-panel">
+    <h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>
+</PageBacklinks>
+
+<!-- 访问统计卡片 -->
+<VisitorCounterCard
+    name={`astral-docs-${pageSlug}`}
+    title={`${pageTitle}访问统计`}
+    theme="auto"
+/>

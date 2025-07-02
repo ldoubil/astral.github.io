@@ -1,0 +1,56 @@
+---
+// VisitorCounter.astro - 访问统计图片卡片组件
+//
+// 使用示例：
+// <VisitorCounter />  // 使用默认名称
+// <VisitorCounter name="home" />  // 自定义名称
+// <VisitorCounter name="home" theme="asoul" />  // 自定义主题
+
+export interface Props {
+    name?: string;
+    theme?: string;
+    padding?: number;
+    offset?: number;
+    align?: "top" | "center" | "bottom";
+    scale?: number;
+    pixelated?: number;
+    darkmode?: "auto" | "light" | "dark";
+    title?: string;
+}
+
+const {
+    name,
+    theme = "rule34",
+    padding = 7,
+    offset = 0,
+    align = "top",
+    scale = 1,
+    pixelated = 1,
+    darkmode = "auto",
+    title,
+} = Astro.props;
+
+// 如果没有提供 name，则使用 title 或默认值
+const counterName = name || title || "astral";
+
+// 构建图片 URL
+const baseUrl = "https://count.getloli.com/@astral";
+const params = new URLSearchParams();
+params.set("name", counterName);
+params.set("theme", theme);
+params.set("padding", padding.toString());
+params.set("offset", offset.toString());
+params.set("align", align);
+params.set("scale", scale.toString());
+params.set("pixelated", pixelated.toString());
+params.set("darkmode", darkmode);
+
+const imageUrl = `${baseUrl}?${params.toString()}`;
+---
+
+<img
+    src={imageUrl}
+    alt={`${counterName} 页面访问统计`}
+    loading="lazy"
+    class="counter-img"
+/>
