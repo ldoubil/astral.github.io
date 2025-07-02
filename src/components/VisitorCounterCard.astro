@@ -20,7 +20,7 @@ export interface Props {
 
 const {
     name,
-    theme = "rule34",
+    theme = "original-new",
     padding = 7,
     offset = 0,
     align = "top",
@@ -37,7 +37,7 @@ const counterName = name || title || "astral";
 const baseUrl = "https://count.getloli.com/@astral";
 const params = new URLSearchParams();
 params.set("name", counterName);
-params.set("theme", "original-new");
+params.set("theme", theme);
 params.set("padding", padding.toString());
 params.set("offset", offset.toString());
 params.set("align", align);
