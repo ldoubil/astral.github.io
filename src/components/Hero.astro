@@ -1,0 +1,30 @@
+---
+import InteractiveHero from './InteractiveHero.astro';
+
+// 使用 Astro 现代的 props 处理方式
+const { entry } = Astro.props;
+
+// 获取 hero 配置，支持嵌套的 data 结构
+const hero = entry?.data?.hero;
+
+// 定义 hero 的类型（内联类型定义）
+type HeroConfig = {
+  title?: string;
+  tagline?: string;
+  actions?: Array<{
+    text: string;
+    link: string;
+    variant?: 'primary' | 'secondary';
+  }>;
+};
+---
+
+{hero ? (
+  <InteractiveHero 
+    title={hero.title}
+    tagline={hero.tagline}
+    actions={hero.actions}
+  />
+) : (
+  <InteractiveHero />
+)}

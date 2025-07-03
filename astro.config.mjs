@@ -32,6 +32,7 @@ export default defineConfig({
 		components: {
 			SocialIcons: './src/components/EmailLink.astro',
 			PageSidebar: './src/components/PageSidebar.astro',
+			Hero: './src/components/Hero.astro',
 		},
 		logo: {
 			light: './src/assets/亮色.svg',

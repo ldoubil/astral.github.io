@@ -1,0 +1,753 @@
+---
+export interface Props {
+  title?: string;
+  tagline?: string;
+  actions?: Array<{
+    text: string;
+    link: string;
+    variant?: 'primary' | 'secondary';
+    icon?: string;
+  }>;
+}
+
+const { title = 'Astral', tagline, actions } = Astro.props;
+
+const defaultActions = [
+  {
+    text: '快速开始',
+    link: '/quick-start/what-is-astral/',
+    variant: 'primary' as const
+  },
+  {
+    text: '下载应用', 
+    link: '/quick-start/download-install/',
+    variant: 'secondary' as const
+  },
+  {
+    text: 'GitHub',
+    link: 'https://github.com/ldoubil/astral',
+    variant: 'secondary' as const
+  }
+];
+
+const heroActions = actions || defaultActions;
+
+// 为按钮添加默认图标
+const actionsWithIcons = heroActions.map((action, index) => {
+  const defaultIcons = ['→', '⬇', '⚡'];
+  return {
+    ...action,
+    icon: defaultIcons[index] || '•'
+  };
+});
+---
+
+<div id="interactive-hero" class="hero-container">
+  <div class="hero-left">
+    <div class="astral-logo">
+      <div class="logo-circles">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+      </div>
+      <div class="logo-content">
+        <canvas id="astral-canvas" class="logo-text-canvas"></canvas>
+        {tagline && <div class="logo-tagline">{tagline}</div>}
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-actions">
+      {actionsWithIcons.map((action) => (
+        <a 
+          href={action.link} 
+          class={`action-button ${action.variant || 'secondary'}`}
+          target={action.link.startsWith('http') ? '_blank' : undefined}
+          rel={action.link.startsWith('http') ? 'noopener' : undefined}
+        >
+          {action.icon && <span class="button-icon">{action.icon}</span>}
+          <span>{action.text}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+// @ts-nocheck
+class StardustText {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.particles = [];
+    this.text = 'Astral';
+    this.mouse = { x: 0, y: 0 };
+    this.isHovering = false;
+    this.init();
+    this.animate();
+    this.setupResize();
+    this.setupMouseInteraction();
+  }
+  
+  setupMouseInteraction() {
+    const canvasRect = this.canvas.getBoundingClientRect();
+    
+    // 鼠标移动事件
+    this.canvas.addEventListener('mousemove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.mouse.x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+      this.mouse.y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+      this.isHovering = true;
+    });
+    
+    // 鼠标进入
+    this.canvas.addEventListener('mouseenter', () => {
+      this.isHovering = true;
+      this.canvas.style.cursor = 'pointer';
+    });
+    
+    // 鼠标离开
+    this.canvas.addEventListener('mouseleave', () => {
+      this.isHovering = false;
+      this.canvas.style.cursor = 'default';
+    });
+    
+    // 点击事件 - 粒子爆炸效果
+    this.canvas.addEventListener('click', () => {
+      this.createExplosion();
+    });
+  }
+  
+  createExplosion() {
+    // 为每个粒子添加爆炸效果
+    this.particles.forEach(particle => {
+      const dx = particle.x - this.mouse.x;
+      const dy = particle.y - this.mouse.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const force = Math.max(0, 150 - distance) / 150;
+      
+      particle.vx += (dx / distance) * force * 5;
+      particle.vy += (dy / distance) * force * 5;
+      particle.size += force * 2;
+      particle.explosionTime = Date.now();
+    });
+  }
+  
+  setupResize() {
+    // 监听窗口大小变化
+    window.addEventListener('resize', () => {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => {
+        this.init();
+      }, 200);
+    });
+  }
+  
+  getCanvasDimensions() {
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    // 根据屏幕尺寸调整
+    let width = 400;
+    let height = 120;
+    let fontSize = 80;
+    
+    if (window.innerWidth <= 480) {
+      width = 250;
+      height = 75;
+      fontSize = 50;
+    } else if (window.innerWidth <= 768) {
+      width = 300;
+      height = 90;
+      fontSize = 60;
+    } else if (window.innerWidth <= 1024) {
+      width = 350;
+      height = 105;
+      fontSize = 70;
+    }
+    
+    return { width, height, fontSize, dpr };
+  }
+  
+  init() {
+    const { width, height, fontSize, dpr } = this.getCanvasDimensions();
+    
+    // 设置 canvas 实际尺寸
+    this.canvas.width = width * dpr;
+    this.canvas.height = height * dpr;
+    this.canvas.style.width = width + 'px';
+    this.canvas.style.height = height + 'px';
+    
+    // 缩放上下文以适应设备像素比
+    this.ctx.scale(dpr, dpr);
+    
+    // 创建临时 canvas 来获取文字像素数据
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    
+    // 绘制文字
+    tempCtx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
+    tempCtx.fillStyle = '#ffffff';
+    tempCtx.textAlign = 'center';
+    tempCtx.textBaseline = 'middle';
+    tempCtx.fillText(this.text, width / 2, height / 2);
+    
+    // 获取像素数据
+    const imageData = tempCtx.getImageData(0, 0, width, height);
+    const pixels = imageData.data;
+    
+    // 根据像素数据创建粒子
+    this.particles = [];
+    const gap = Math.max(2, Math.floor(width / 120)); // 动态调整粒子密度
+    
+    for (let y = 0; y < height; y += gap) {
+      for (let x = 0; x < width; x += gap) {
+        const index = (y * width + x) * 4;
+        const alpha = pixels[index + 3];
+        
+        if (alpha > 128) { // 如果像素不透明
+          this.particles.push(new Particle(x, y, width));
+        }
+      }
+    }
+  }
+  
+  animate() {
+    const { width, height } = this.getCanvasDimensions();
+    this.ctx.clearRect(0, 0, width, height);
+    
+    // 更新和绘制粒子
+    this.particles.forEach(particle => {
+      particle.update(this.mouse, this.isHovering);
+      particle.draw(this.ctx);
+    });
+    
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+class Particle {
+  constructor(targetX, targetY, canvasWidth) {
+    this.targetX = targetX;
+    this.targetY = targetY;
+    this.originalX = targetX;
+    this.originalY = targetY;
+    this.x = targetX + (Math.random() - 0.5) * Math.min(100, canvasWidth * 0.3);
+    this.y = targetY + (Math.random() - 0.5) * 100;
+    this.vx = 0;
+    this.vy = 0;
+    this.size = Math.random() * 1.5 + 0.8;
+    this.originalSize = this.size;
+    this.alpha = Math.random() * 0.4 + 0.6;
+    this.baseAlpha = this.alpha;
+    this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+    this.twinkleOffset = Math.random() * Math.PI * 2;
+    this.explosionTime = 0;
+    
+    // 彩色效果
+    this.hue = Math.random() * 60 + 200; // 蓝紫色范围
+    this.saturation = Math.random() * 30 + 70;
+    this.lightness = Math.random() * 20 + 70;
+  }
+  
+  update(mouse, isHovering) {
+    // 鼠标交互效果
+    if (isHovering) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const maxDistance = 80;
+      
+      if (distance < maxDistance) {
+        const force = (maxDistance - distance) / maxDistance;
+        const angle = Math.atan2(dy, dx);
+        
+        // 鼠标吸引效果
+        this.vx += Math.cos(angle) * force * 0.3;
+        this.vy += Math.sin(angle) * force * 0.3;
+        
+        // 增大粒子尺寸
+        this.size = this.originalSize * (1 + force * 0.5);
+        this.alpha = this.baseAlpha * (1 + force * 0.3);
+      } else {
+        this.size = this.originalSize;
+        this.alpha = this.baseAlpha;
+      }
+    }
+    
+    // 爆炸效果恢复
+    if (this.explosionTime > 0) {
+      const elapsed = Date.now() - this.explosionTime;
+      if (elapsed > 1000) {
+        this.explosionTime = 0;
+      } else {
+        const recovery = elapsed / 1000;
+        this.size = Math.max(this.originalSize, this.size * (1 - recovery * 0.1));
+      }
+    }
+    
+    // 向目标位置移动
+    const dx = this.targetX - this.x;
+    const dy = this.targetY - this.y;
+    
+    this.vx += dx * 0.015;
+    this.vy += dy * 0.015;
+    
+    this.vx *= 0.85;
+    this.vy *= 0.85;
+    
+    this.x += this.vx;
+    this.y += this.vy;
+    
+    // 闪烁效果
+    const twinkle = Math.sin(Date.now() * this.twinkleSpeed + this.twinkleOffset) * 0.25;
+    this.alpha = Math.max(0.1, this.baseAlpha + twinkle);
+  }
+  
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    
+    // 检查是否为暗色主题
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    
+    // 创建渐变
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
+    
+    if (isDark) {
+      gradient.addColorStop(0, `hsla(${this.hue + 20}, ${this.saturation}%, ${this.lightness + 10}%, 1)`);
+      gradient.addColorStop(0.5, `hsla(${this.hue + 20}, ${this.saturation}%, ${this.lightness}%, 0.7)`);
+      gradient.addColorStop(1, `hsla(${this.hue + 20}, ${this.saturation}%, ${this.lightness}%, 0)`);
+    } else {
+      gradient.addColorStop(0, `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, 1)`);
+      gradient.addColorStop(0.5, `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, 0.8)`);
+      gradient.addColorStop(1, `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, 0)`);
+    }
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // 添加亮点
+    ctx.globalAlpha = this.alpha * 0.9;
+    ctx.fillStyle = isDark ? '#ffffff' : '#f0f8ff';
+    ctx.beginPath();
+    ctx.arc(this.x - this.size * 0.25, this.y - this.size * 0.25, this.size * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+  const textCanvas = document.getElementById('astral-canvas');
+  
+  if (textCanvas) {
+    new StardustText(textCanvas);
+  }
+});
+
+// 主题切换时重新初始化
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+      const textCanvas = document.getElementById('astral-canvas');
+      
+      if (textCanvas) {
+        setTimeout(() => {
+          new StardustText(textCanvas);
+        }, 100);
+      }
+    }
+  });
+});
+
+// 监听文档主题变化
+observer.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['data-theme']
+});
+</script>
+
+<style>
+  .hero-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+    gap: 4rem;
+  }
+
+  .hero-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .astral-logo {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .logo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .astral-logo:hover {
+    transform: scale(1.02);
+  }
+
+  .logo-circles {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.5s ease;
+    animation: float 8s ease-in-out infinite;
+    box-shadow: 
+      0 8px 32px rgba(102, 126, 234, 0.2),
+      0 4px 16px rgba(102, 126, 234, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  [data-theme='dark'] .circle {
+    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
+    box-shadow: 
+      0 8px 32px rgba(168, 181, 255, 0.15),
+      0 4px 16px rgba(168, 181, 255, 0.1);
+    border: 1px solid rgba(168, 181, 255, 0.2);
+  }
+
+  .circle-1 {
+    width: 100px;
+    height: 100px;
+    top: 10px;
+    left: 10px;
+    animation-delay: 0s;
+  }
+
+  .circle-2 {
+    width: 60px;
+    height: 60px;
+    top: 30px;
+    right: -20px;
+    animation-delay: 2.5s;
+  }
+
+  .circle-3 {
+    width: 40px;
+    height: 40px;
+    bottom: -10px;
+    left: 20px;
+    animation-delay: 5s;
+  }
+
+  .logo-text-canvas {
+    width: 400px;
+    height: 120px;
+    max-width: 100%;
+    display: block;
+    filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+    animation: canvasGlow 3s ease-in-out infinite alternate;
+  }
+
+  [data-theme='dark'] .logo-text-canvas {
+    filter: drop-shadow(0 0 8px rgba(168, 181, 255, 0.4));
+    animation: canvasGlowDark 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes canvasGlow {
+    from {
+      filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+    }
+    to {
+      filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
+    }
+  }
+
+  @keyframes canvasGlowDark {
+    from {
+      filter: drop-shadow(0 0 8px rgba(168, 181, 255, 0.4));
+    }
+    to {
+      filter: drop-shadow(0 0 20px rgba(168, 181, 255, 0.6));
+    }
+  }
+
+  .logo-tagline {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--sl-color-text-accent);
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
+  [data-theme='dark'] .logo-tagline {
+    color: var(--sl-color-text-accent);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.2rem 2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .action-button:hover::before {
+    left: 100%;
+  }
+
+  .action-button.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 
+      0 8px 32px rgba(102, 126, 234, 0.3),
+      0 4px 16px rgba(102, 126, 234, 0.2);
+  }
+
+  .action-button.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 12px 40px rgba(102, 126, 234, 0.4),
+      0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .action-button.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--sl-color-text);
+    border-color: rgba(102, 126, 234, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .action-button.secondary:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  }
+
+  [data-theme='dark'] .action-button.primary {
+    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
+    color: var(--sl-color-black);
+    box-shadow: 
+      0 8px 32px rgba(168, 181, 255, 0.25),
+      0 4px 16px rgba(168, 181, 255, 0.15);
+  }
+
+  [data-theme='dark'] .action-button.primary:hover {
+    box-shadow: 
+      0 12px 40px rgba(168, 181, 255, 0.35),
+      0 6px 20px rgba(168, 181, 255, 0.25);
+  }
+
+  [data-theme='dark'] .action-button.secondary {
+    background: rgba(168, 181, 255, 0.05);
+    border-color: rgba(168, 181, 255, 0.2);
+  }
+
+  [data-theme='dark'] .action-button.secondary:hover {
+    background: rgba(168, 181, 255, 0.1);
+    border-color: rgba(168, 181, 255, 0.4);
+    box-shadow: 0 8px 24px rgba(168, 181, 255, 0.1);
+  }
+
+  .button-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+    transition: transform 0.3s ease;
+  }
+
+  .action-button:hover .button-icon {
+    transform: scale(1.1);
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-15px) rotate(120deg);
+    }
+    66% {
+      transform: translateY(-8px) rotate(240deg);
+    }
+  }
+
+  /* 平板响应式 */
+  @media (max-width: 1024px) {
+    .hero-container {
+      min-height: 350px;
+      padding: 2rem 1.5rem;
+      gap: 3rem;
+    }
+
+    .logo-text-canvas {
+      width: 350px;
+      height: 105px;
+    }
+
+    .logo-circles {
+      width: 100px;
+      height: 100px;
+    }
+
+    .circle-1 {
+      width: 85px;
+      height: 85px;
+    }
+
+    .circle-2 {
+      width: 50px;
+      height: 50px;
+    }
+
+    .circle-3 {
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  /* 手机响应式 */
+  @media (max-width: 768px) {
+    .hero-container {
+      min-height: 400px;
+      padding: 2rem 1rem;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .hero-left, .hero-right {
+      flex: none;
+    }
+
+    .astral-logo {
+      flex-direction: column;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .logo-content {
+      align-items: center;
+    }
+
+    .logo-text-canvas {
+      width: 300px;
+      height: 90px;
+    }
+
+    .hero-actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+      max-width: none;
+    }
+
+    .action-button {
+      flex: 1;
+      min-width: 140px;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .logo-circles {
+      width: 100px;
+      height: 100px;
+    }
+
+    .circle-1 {
+      width: 80px;
+      height: 80px;
+      top: 10px;
+      left: 10px;
+    }
+
+    .circle-2 {
+      width: 50px;
+      height: 50px;
+      top: 25px;
+      right: -10px;
+    }
+
+    .circle-3 {
+      width: 35px;
+      height: 35px;
+      bottom: -2px;
+      left: 20px;
+    }
+  }
+
+  /* 小屏手机 */
+  @media (max-width: 480px) {
+    .hero-container {
+      padding: 1.5rem 0.75rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+    }
+
+    .action-button {
+      min-width: auto;
+    }
+
+    .logo-text-canvas {
+      width: 250px;
+      height: 75px;
+    }
+  }
+</style>
+
+
