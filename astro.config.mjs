@@ -28,7 +28,7 @@ export default defineConfig({
 			})
 		],
 		
-		title: 'Astral',
+		title: 'AstralGame',
 		components: {
 			SocialIcons: './src/components/EmailLink.astro',
 			PageSidebar: './src/components/PageSidebar.astro',
