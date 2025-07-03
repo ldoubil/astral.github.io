@@ -1,0 +1,233 @@
+/* 自定义卡片基本样式 */
+.custom-card {
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  margin-bottom: 1rem;
+}
+
+.custom-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* 卡片前添加装饰线 */
+.custom-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  border-radius: 3px 0 0 3px;
+}
+
+/* 标题样式 */
+.custom-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-left: 0.75rem;
+}
+
+/* 内容样式 */
+.custom-card p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--sl-color-gray-5);
+  padding-left: 0.75rem;
+}
+
+/* 游戏卡片特殊样式 */
+.game-card {
+  background: linear-gradient(135deg, rgba(255, 120, 90, 0.05), rgba(255, 90, 152, 0.05));
+  border-color: rgba(255, 120, 90, 0.2);
+}
+
+.game-card::before {
+  background: linear-gradient(to bottom, #ff785a, #ff5a98);
+}
+
+.game-card h2 {
+  color: #ff5a7e;
+}
+
+/* 平台卡片特殊样式 */
+.platform-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(37, 99, 235, 0.05));
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.platform-card::before {
+  background: linear-gradient(to bottom, #3b82f6, #2563eb);
+}
+
+.platform-card h2 {
+  color: #3b82f6;
+}
+
+/* 卡片悬停效果增强 */
+.custom-card:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, 
+                             rgba(255, 255, 255, 0.1), 
+                             transparent 70%);
+  pointer-events: none;
+}
+
+/* 暗色模式适配 */
+:root[data-theme="dark"] .custom-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .custom-card p {
+  color: var(--sl-color-gray-3);
+}
+
+:root[data-theme="dark"] .game-card {
+  background: linear-gradient(135deg, rgba(255, 120, 90, 0.08), rgba(255, 90, 152, 0.08));
+}
+
+:root[data-theme="dark"] .platform-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(37, 99, 235, 0.08));
+}
+
+/* 游戏名称样式 */
+.game {
+  font-weight: 700;
+  display: inline-block;
+  padding: 0.1em 0.3em;
+  border-radius: 0.25em;
+  margin: 0 0.1em;
+  transition: all 0.2s ease;
+}
+
+/* Minecraft 样式 */
+.game.minecraft {
+  background-color: rgba(116, 196, 86, 0.15);
+  color: #5AB236;
+  border-bottom: 2px solid #5AB236;
+  font-family: 'Minecraft', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.game.minecraft:hover {
+  background-color: rgba(116, 196, 86, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(90, 178, 54, 0.3);
+}
+
+/* Terraria 样式 */
+.game.terraria {
+  background-color: rgba(66, 135, 245, 0.15);
+  color: #4287f5;
+  border-left: 2px solid #4287f5;
+  border-right: 2px solid #4287f5;
+  font-style: italic;
+}
+
+.game.terraria:hover {
+  background-color: rgba(66, 135, 245, 0.25);
+  letter-spacing: 0.5px;
+}
+
+/* Palworld 样式 */
+.game.palworld {
+  background: linear-gradient(120deg, rgba(255, 170, 60, 0.15), rgba(255, 120, 50, 0.15));
+  color: #ff7832;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.game.palworld:hover {
+  background: linear-gradient(120deg, rgba(255, 170, 60, 0.25), rgba(255, 120, 50, 0.25));
+  transform: scale(1.05);
+}
+
+/* Valheim 样式 */
+.game.valheim {
+  background-color: rgba(98, 78, 61, 0.15);
+  color: #8B5A2B;
+  border-top: 1px solid #8B5A2B;
+  border-bottom: 1px solid #8B5A2B;
+  font-family: 'Norse', serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.95em;
+}
+
+.game.valheim:hover {
+  background-color: rgba(98, 78, 61, 0.25);
+  text-shadow: 0 0 3px rgba(139, 90, 43, 0.3);
+}
+
+/* 星露谷物语样式 */
+.game.stardew {
+  background-color: rgba(146, 209, 87, 0.15);
+  color: #6A9738;
+  border: 1px dashed #6A9738;
+  border-radius: 8px;
+  padding: 0.1em 0.4em;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.game.stardew:hover {
+  background-color: rgba(146, 209, 87, 0.25);
+  box-shadow: 0 0 5px rgba(106, 151, 56, 0.4);
+}
+
+.game.stardew:hover::after {
+  content: '✿';
+  position: absolute;
+  top: -8px;
+  right: -3px;
+  font-size: 0.8em;
+  color: #E3821B;
+  animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* 暗色模式游戏名称适配 */
+:root[data-theme="dark"] .game.minecraft {
+  background-color: rgba(116, 196, 86, 0.2);
+  color: #7BDC45;
+}
+
+:root[data-theme="dark"] .game.terraria {
+  background-color: rgba(66, 135, 245, 0.2);
+  color: #5A9EFF;
+}
+
+:root[data-theme="dark"] .game.palworld {
+  background: linear-gradient(120deg, rgba(255, 170, 60, 0.2), rgba(255, 120, 50, 0.2));
+  color: #FF8A48;
+}
+
+:root[data-theme="dark"] .game.valheim {
+  background-color: rgba(139, 90, 43, 0.2);
+  color: #C9935D;
+}
+
+:root[data-theme="dark"] .game.stardew {
+  background-color: rgba(146, 209, 87, 0.2);
+  color: #9BDF5A;
+  border-color: #88C74A;
+}
+
+:root[data-theme="dark"] .game.stardew:hover::after {
+  color: #FFB04C;
+}
