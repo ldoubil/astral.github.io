@@ -1,13 +1,11 @@
 ---
-title: CS:GO 2 联机指南
+title: 🎯 CS:GO 2 联机指南
 description: 使用 Astral 进行 CS:GO 2 专用服务器联机的完整教程
 sidebar:
   order: 2
 ---
 
 import { Steps, Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
-
-# 🎯 CS:GO 2 联机指南
 
 本指南将详细介绍如何使用 Astral 进行《反恐精英2》（CS:GO 2）专用服务器联机游戏。
 
@@ -33,8 +31,6 @@ import { Steps, Aside, Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/
 <CardGrid>
   <Card title="❌ 问题场景" icon="error">
     - 同时运行 Astral 和 Tailscale
-    - 同时运行 Astral 和 Steam++
-    - 启用了其他VPN或加速器
     - 多个 TUN 适配器同时工作
     - 甚至自己连接自己的服务器都失败
   </Card>
@@ -391,7 +387,7 @@ retry
    - 如失败，重启游戏重试
 </Steps>
 
-<Aside type="warning" title="启动顺序的重要性">
+<Aside type="caution" title="启动顺序的重要性">
 根据社区反馈，如果先启动游戏再启动 Astral，或者启动顺序错误，可能导致 CS:GO 2 绑定到错误的网络适配器。**正确的顺序是关键！**
 </Aside>
 
