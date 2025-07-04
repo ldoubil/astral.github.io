@@ -33,6 +33,7 @@ export default defineConfig({
 			SocialIcons: './src/components/EmailLink.astro',
 			PageSidebar: './src/components/PageSidebar.astro',
 			Hero: './src/components/Hero.astro',
+			Head: './src/components/Head.astro',
 		},
 		logo: {
 			light: './src/assets/亮色.svg',
