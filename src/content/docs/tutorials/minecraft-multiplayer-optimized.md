@@ -1,5 +1,5 @@
 ---
-title: Minecraft 联机教程
+title: 🧱 Minecraft
 description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ---
 
