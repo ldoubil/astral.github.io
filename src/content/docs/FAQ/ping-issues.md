@@ -1,4 +1,6 @@
 ---
+title: 📡 Ping不通
+description: 常见网络"Ping不通"问题的排查与解决方法。
 title: Ping不通
 description: 常见网络“Ping不通”问题的排查与解决方法。
 ---

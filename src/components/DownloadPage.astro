@@ -20,11 +20,6 @@
 //   ]}
 // />
 // 
-// 显示预览版：
-// <DownloadPage 
-//   showPrerelease={true}
-// />
-// 
 // 自定义标题和描述：
 // <DownloadPage 
 //   title="下载最新版本"
@@ -39,7 +34,6 @@
 //     'https://your-accelerator-1.com/',
 //     'https://your-accelerator-2.com/'
 //   ]}
-//   showPrerelease={true}
 //   title="下载最新版本"
 //   description="选择适合您系统的安装包"
 // />
@@ -48,7 +42,6 @@ export interface Props {
   repoOwner?: string;
   repoName?: string;
   acceleratedLinks?: string[];
-  showPrerelease?: boolean;
   title?: string;
   description?: string;
 }
@@ -59,7 +52,6 @@ const {
   acceleratedLinks = [
     'https://gh.astral.fan/',
   ],
-  showPrerelease = false,
   title = '最新版本信息',
   description = '请在下方选择下载常见的操作系统对应的二进制文件'
 } = Astro.props;
@@ -88,15 +80,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         <span id="release-version" class="version-number">获取中...</span>
       </div>
     </div>
-    {showPrerelease && (
-      <div class="version-card prerelease">
-        <div class="version-icon">🔬</div>
-        <div class="version-content">
-          <span class="version-label">预览版</span>
-          <span id="prerelease-version" class="version-number">获取中...</span>
-        </div>
-      </div>
-    )}
   </div>
 
   <div class="download-grid">
@@ -108,26 +91,22 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
       <div class="download-categories">
         <div class="download-category">
           <h4>通用版 (推荐)</h4>
-          <div class="download-list" data-version="release" data-keyword="universal" data-suffix="apk">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="universal" data-suffix="apk">
           </div>
         </div>
         <div class="download-category">
           <h4>ARM64</h4>
-          <div class="download-list" data-version="release" data-keyword="arm64-v8a" data-suffix="apk">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="arm64-v8a" data-suffix="apk">
           </div>
         </div>
         <div class="download-category">
           <h4>ARM32</h4>
-          <div class="download-list" data-version="release" data-keyword="armeabi-v7a" data-suffix="apk">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="armeabi-v7a" data-suffix="apk">
           </div>
         </div>
         <div class="download-category">
           <h4>x86_64</h4>
-          <div class="download-list" data-version="release" data-keyword="x86_64" data-suffix="apk">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="x86_64" data-suffix="apk">
           </div>
         </div>
       </div>
@@ -141,14 +120,12 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
       <div class="download-categories">
         <div class="download-category">
           <h4>安装包</h4>
-          <div class="download-list" data-version="release" data-keyword="windows-x64-setup" data-suffix="exe">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="setup" data-suffix="exe">
           </div>
         </div>
         <div class="download-category">
           <h4>便携版</h4>
-          <div class="download-list" data-version="release" data-keyword="windows-x64-zip" data-suffix="zip">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="zip" data-suffix="zip">
           </div>
         </div>
       </div>
@@ -162,20 +139,17 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
       <div class="download-categories">
         <div class="download-category">
           <h4>DEB 包</h4>
-          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="deb">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="linux-x64" data-suffix="deb">
           </div>
         </div>
         <div class="download-category">
           <h4>RPM 包</h4>
-          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="rpm">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="linux-x64" data-suffix="rpm">
           </div>
         </div>
         <div class="download-category">
           <h4>TAR.GZ 包</h4>
-          <div class="download-list" data-version="release" data-keyword="linux-x64" data-suffix="tar.gz">
-            <div class="loading-spinner">加载中...</div>
+          <div class="download-list" data-keyword="linux-x64" data-suffix="tar.gz">
           </div>
         </div>
       </div>
@@ -183,49 +157,36 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   </div>
 </div>
 
-<script define:vars={{ repoOwner, repoName, acceleratedLinks, githubLink, showPrerelease }}>
-  const fileList = { release: [], prerelease: [] }
+<script define:vars={{ repoOwner, repoName, acceleratedLinks, githubLink }}>
+  // 发行文件列表
+  const files = [
+    // Android
+    'astral-universal.apk',
+    'astral-arm64-v8a.apk', 
+    'astral-armeabi-v7a.apk',
+    'astral-x86_64.apk',
+    // Windows
+    'astral-windows-x64-setup.exe',
+    'astral-windows-x64-zip.zip',
+    // Linux
+    'astral-linux-x64.deb',
+    'astral-linux-x64.rpm',
+    'astral-linux-x64.tar.gz'
+  ]
   const divList = document.querySelectorAll('div.download-list')
 
   let releaseInfo = null
-  let prereleaseInfo = null
 
   const getLatestRelease = async () => {
     try {
-      // 使用固定的 API 地址
+      // 仅获取版本信息用于显示
       const link = `https://api.github.com/repos/ldoubil/astral/releases/latest`
       const response = await fetch(link).then(r => r.json())
       releaseInfo = response
-      const { assets } = response
-      for (const { name, browser_download_url: url, size } of assets) {
-        fileList.release.push({ name, url, size })
-      }
       // 更新版本号显示
       updateVersionDisplay()
     } catch (error) {
       console.error('Failed to fetch latest release:', error)
-    }
-  }
-
-  const getPrerelease = async () => {
-    if (!showPrerelease) return
-    
-    try {
-      // 使用固定的 API 地址
-      const link = `https://api.github.com/repos/ldoubil/astral/releases`
-      const releases = await fetch(link).then(r => r.json())
-      const prerelease = releases.find(release => release.prerelease)
-      if (prerelease) {
-        prereleaseInfo = prerelease
-        const { assets } = prerelease
-        for (const { name, browser_download_url: url, size } of assets) {
-          fileList.prerelease.push({ name, url, size })
-        }
-      }
-      // 更新版本号显示
-      updateVersionDisplay()
-    } catch (error) {
-      console.error('Failed to fetch prerelease:', error)
     }
   }
 
@@ -234,17 +195,8 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     return tagName.startsWith('v') ? tagName : `v${tagName}`
   }
 
-  const formatFileSize = (bytes) => {
-    if (!bytes) return '未知大小'
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    if (bytes === 0) return '0 B'
-    const i = Math.floor(Math.log(bytes) / Math.log(1024))
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i]
-  }
-
   const updateVersionDisplay = () => {
     const releaseVersionElement = document.getElementById('release-version')
-    const prereleaseVersionElement = document.getElementById('prerelease-version')
     
     if (releaseInfo && releaseVersionElement) {
       const formattedVersion = formatVersion(releaseInfo.tag_name)
@@ -252,37 +204,33 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         <div class="version-tag">${formattedVersion}</div>
         <div class="version-date">发布于: ${new Date(releaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
       `
-    }
-    
-    if (prereleaseInfo && prereleaseVersionElement) {
-      const formattedVersion = formatVersion(prereleaseInfo.tag_name)
-      prereleaseVersionElement.innerHTML = `
-        <div class="version-tag">${formattedVersion}</div>
-        <div class="version-date">发布于: ${new Date(prereleaseInfo.published_at).toLocaleDateString('zh-CN')}</div>
+    } else if (releaseVersionElement && !releaseInfo) {
+      releaseVersionElement.innerHTML = `
+        <div class="version-tag">Latest</div>
+        <div class="version-date">最新版本</div>
       `
-    } else if (prereleaseVersionElement) {
-      prereleaseVersionElement.innerHTML = '<span class="no-prerelease">暂无预览版</span>'
     }
   }
 
   const populateDownloadList = () => {
     for (const div of divList) {
-      const version = div.getAttribute('data-version')
       const keyword = div.getAttribute('data-keyword')
       const suffix = div.getAttribute('data-suffix')
       
-      // 清除之前的内容（包括加载动画和已存在的下载列表）
+      // 清除之前的内容
       div.innerHTML = ''
       
       // 创建下载列表容器
       const downloadContainer = document.createElement('div')
       downloadContainer.className = 'download-items'
       
-      const files = fileList[version] || []
+      // 查找匹配的文件
+      const matchingFiles = files.filter(fileName => 
+        fileName.includes(keyword) && fileName.endsWith(suffix)
+      )
       
-      for (const { name, url, size } of files) {
-        if (!name.includes(keyword)) continue
-        if (!name.endsWith(suffix)) continue
+      for (const fileName of matchingFiles) {
+        const fileUrl = githubLink + '/latest/download/' + fileName
 
         // 创建下载项
         const downloadItem = document.createElement('div')
@@ -291,10 +239,7 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         // 文件信息
         const fileInfo = document.createElement('div')
         fileInfo.className = 'file-info'
-        fileInfo.innerHTML = `
-          <div class="file-name">${name}</div>
-          <div class="file-size">${formatFileSize(size)}</div>
-        `
+        fileInfo.innerHTML = `<div class="file-name">${fileName}</div>`
         
         // 下载按钮组
         const downloadButtons = document.createElement('div')
@@ -302,17 +247,17 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
         
         // 原始下载按钮
         const originalBtn = document.createElement('a')
-        originalBtn.href = url
-        originalBtn.download = name
+        originalBtn.href = fileUrl
+        originalBtn.download = fileName
         originalBtn.className = 'download-btn primary'
-        originalBtn.innerHTML = '<span class="btn-icon">📥</span><span class="btn-text">原始下载</span>'
+        originalBtn.innerHTML = '<span class="btn-icon">📥</span><span class="btn-text">下载</span>'
         downloadButtons.appendChild(originalBtn)
         
         // 加速下载按钮
         acceleratedLinks.forEach((acceleratorUrl, index) => {
           const acceleratedBtn = document.createElement('a')
-          acceleratedBtn.href = acceleratorUrl + url
-          acceleratedBtn.download = name
+          acceleratedBtn.href = acceleratorUrl + fileUrl
+          acceleratedBtn.download = fileName
           acceleratedBtn.className = 'download-btn secondary'
           acceleratedBtn.innerHTML = `<span class="btn-icon">⚡</span><span class="btn-text">加速下载 ${index + 1}</span>`
           downloadButtons.appendChild(acceleratedBtn)
@@ -340,29 +285,16 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     }
   }
   
+  // 立即显示下载列表，因为我们使用固定链接
+  populateDownloadList()
+  
+  // 立即更新版本显示（显示默认信息）
+  updateVersionDisplay()
+  
+  // 获取版本信息用于显示
   getLatestRelease()
-    .then(() => {
-      populateDownloadList()
-    })
     .catch(() => {
-      for (const div of divList) {
-        // 清除之前的内容
-        div.innerHTML = `
-          <div class="error-message">
-            <div class="error-icon">❌</div>
-            <div class="error-text">加载失败</div>
-            <a href="${githubLink}" target="_blank" class="github-link">
-              <span class="github-icon">🐙</span>
-              在 GitHub 下载 ${repoName}
-            </a>
-          </div>
-        `
-      }
-    })
-
-  getPrerelease()
-    .catch(() => {
-      console.log('No prerelease found or failed to fetch')
+      console.log('Failed to fetch version info, but downloads still work')
     })
 </script>
 
@@ -472,11 +404,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   border-color: var(--sl-color-accent);
 }
 
-.version-card.prerelease {
-  border-color: var(--sl-color-warning);
-  background: linear-gradient(135deg, var(--sl-color-warning-low), var(--sl-color-warning));
-}
-
 .version-icon {
   font-size: 2rem;
   flex-shrink: 0;
@@ -506,11 +433,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
 .version-date {
   font-size: 0.85rem;
   color: var(--sl-color-text-accent);
-}
-
-.no-prerelease {
-  color: var(--sl-color-gray-3);
-  font-style: italic;
 }
 
 /* 下载网格 */
@@ -577,32 +499,6 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   color: var(--sl-color-text-accent);
 }
 
-/* 加载动画 */
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  color: var(--sl-color-text-accent);
-  font-style: italic;
-}
-
-.loading-spinner::before {
-  content: '';
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--sl-color-gray-4);
-  border-top: 2px solid var(--sl-color-accent);
-  border-radius: 50%;
-  margin-right: 0.5rem;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* 下载项 */
 .download-items {
   display: flex;
@@ -639,38 +535,36 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   font-size: 0.95rem;
 }
 
-.file-size {
-  font-size: 0.85rem;
-  color: var(--sl-color-text-accent);
-}
-
 .download-buttons {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 
 /* 下载按钮样式 */
 .download-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
+  gap: 0.8rem;
+  padding: 1rem 1.6rem;
+  border-radius: 20px;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
+  min-width: 130px;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
   position: relative;
   overflow: hidden;
-  min-width: 120px;
-  justify-content: center;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
+  letter-spacing: 0.8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .download-btn::before {
@@ -680,98 +574,107 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.8s ease;
+  z-index: 1;
 }
 
 .download-btn:hover::before {
   left: 100%;
 }
 
+.download-btn .btn-text {
+  position: relative;
+  z-index: 2;
+}
+
 .download-btn.primary {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-color: #3b82f6;
-  font-weight: 800;
+  border-color: rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 .download-btn.primary:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border-color: #1d4ed8;
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  border-color: rgba(102, 126, 234, 0.6);
 }
 
 .download-btn.primary:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 10px rgba(var(--sl-color-accent-rgb, 59, 130, 246), 0.3);
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 .download-btn.secondary {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  border-color: #f59e0b;
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  font-weight: 700;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  color: #2d3748;
+  border-color: rgba(255, 154, 158, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 154, 158, 0.3);
 }
 
 .download-btn.secondary:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
-  border-color: #d97706;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #ff8a95 0%, #f093fb 50%, #f5576c 100%);
   color: white;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(255, 154, 158, 0.4);
+  border-color: rgba(255, 154, 158, 0.6);
 }
 
 .download-btn.secondary:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(255, 154, 158, 0.3);
 }
 
 .btn-icon {
-  font-size: 1.1rem;
-  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+  transition: all 0.4s ease;
   display: inline-block;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .download-btn:hover .btn-icon {
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.3) rotate(15deg);
+  animation: iconPulse 0.6s ease-in-out;
 }
 
 .download-btn.primary:hover .btn-icon {
-  animation: bounce 0.6s ease;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0) scale(1.2);
+.download-btn.secondary:hover .btn-icon {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* 按钮脉冲动画 */
+@keyframes iconPulse {
+  0%, 100% { 
+    transform: scale(1.3) rotate(15deg); 
   }
-  40% {
-    transform: translateY(-3px) scale(1.2);
-  }
-  60% {
-    transform: translateY(-1px) scale(1.2);
+  50% { 
+    transform: scale(1.5) rotate(20deg); 
   }
 }
 
-/* 添加按钮点击波纹效果 */
-.download-btn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease;
+/* 按钮呼吸效果 */
+.download-btn.primary {
+  animation: breathe 4s ease-in-out infinite;
 }
 
-.download-btn:active::after {
-  width: 200px;
-  height: 200px;
+.download-btn.secondary {
+  animation: breathe 4s ease-in-out infinite 2s;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+  }
 }
 
 /* 错误和空状态 */
@@ -896,12 +799,15 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
     flex: 1;
     justify-content: center;
     min-width: 120px;
-    padding: 0.6rem 1.2rem;
+    padding: 0.8rem 1.2rem;
     font-size: 0.8rem;
+    border-radius: 16px;
+    gap: 0.6rem;
   }
   
   .download-buttons {
-    gap: 0.5rem;
+    gap: 0.8rem;
+    margin-top: 1rem;
   }
   
   .btn-icon {
@@ -931,19 +837,41 @@ const githubLink = `https://github.com/${repoOwner}/${repoName}/releases`;
   .download-category {
     background: var(--sl-color-gray-6);
   }
+  
+  .download-btn.primary {
+    background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+    border-color: rgba(76, 81, 191, 0.4);
+    box-shadow: 0 6px 20px rgba(76, 81, 191, 0.4);
+  }
+  
+  .download-btn.primary:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    box-shadow: 0 12px 35px rgba(76, 81, 191, 0.5);
+  }
+  
+  .download-btn.secondary {
+    background: linear-gradient(135deg, #ed64a6 0%, #f093fb 50%, #f5576c 100%);
+    color: white;
+    border-color: rgba(237, 100, 166, 0.4);
+    box-shadow: 0 6px 20px rgba(237, 100, 166, 0.4);
+  }
+  
+  .download-btn.secondary:hover {
+    background: linear-gradient(135deg, #e53e3e 0%, #fc8181 50%, #f56565 100%);
+    box-shadow: 0 12px 35px rgba(237, 100, 166, 0.5);
+  }
 }
 
 /* 无障碍优化 */
 .download-btn:focus {
-  outline: 2px solid var(--sl-color-accent);
-  outline-offset: 2px;
+  outline: 3px solid rgba(102, 126, 234, 0.6);
+  outline-offset: 3px;
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
-/* 高对比度模式支持 */
-@media (prefers-contrast: high) {
-  .download-btn {
-    border-width: 2px;
-  }
+.download-btn.secondary:focus {
+  outline: 3px solid rgba(255, 154, 158, 0.6);
+  box-shadow: 0 12px 35px rgba(255, 154, 158, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
 /* 动画效果 */
