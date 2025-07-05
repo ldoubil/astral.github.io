@@ -1,8 +1,6 @@
 ---
 title: 📡 Ping不通
 description: 常见网络"Ping不通"问题的排查与解决方法。
-title: Ping不通
-description: 常见网络“Ping不通”问题的排查与解决方法。
 ---
 
 当你在网络环境下使用 `ping` 命令无法连通目标主机时，通常说明网络通信存在问题。以下是常见的排查与解决步骤：
