@@ -89,6 +89,7 @@ export default defineConfig({
 					{ label: '安装问题', slug: 'troubleshooting/installation-issues' },
 					{ label: '连接问题', slug: 'troubleshooting/connection-issues' },
 					{ label: 'NAT 类型说明', slug: 'troubleshooting/nat-types' },
+					{ label: 'VM解决方案', slug: 'troubleshooting/vm-shi' },
 				],
 			},
 		],
