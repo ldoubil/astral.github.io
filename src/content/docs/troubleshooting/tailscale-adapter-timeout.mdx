@@ -1,0 +1,69 @@
+---
+title: 解决 wintun "Creating adapter timedout" 错误
+description: 修复 Windows 11 上 wintun 虚拟网卡创建超时问题的完整指南
+sidebar:
+  order: 3
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+# 解决 wintun "Creating adapter timedout" 错误
+
+在使用 wintun 时遇到 "Creating adapter timedout" 错误？本文将详细介绍如何解决这个常见问题，特别是在 Windows 11 系统上。
+
+## 🔍 问题现象
+
+当您启动 wintun 时，可能会遇到以下症状：
+
+<Card title="常见错误症状" icon="warning">
+- wintun 客户端显示 "Creating adapter timedout" 错误
+- 连接状态一直处于连接中，无法成功建立连接
+- 重新安装 wintun 或重启电脑后问题依然存在
+- 设备管理器中的 wintun Tunnel 适配器显示异常
+</Card>
+
+## 🎯 问题原因
+
+这个问题通常由以下原因引起：
+
+### 主要原因：VMware Workstation 残留
+- **不完整的卸载**：VMware Workstation 卸载时未能完全清理网络适配器相关的注册表项
+- **虚拟网卡冲突**：残留的虚拟网卡配置与 wintun 的虚拟网卡产生冲突
+- **系统驱动问题**：网络适配器驱动程序出现异常
+
+### 其他可能原因
+- Windows 系统更新后的兼容性问题
+- 杀毒软件或防火墙阻止了虚拟网卡的创建
+- 系统网络服务异常
+
+## 🛠️ 解决方案
+
+### 方法一：清理注册表（推荐）
+
+这是最有效的解决方案，适用于大多数由 VMware 残留引起的问题。
+
+#### 步骤 1：打开注册表编辑器
+
+1. 按下 `Win + R` 键，打开运行对话框
+2. 输入 `regedit` 并按回车
+3. 如果出现用户账户控制提示，点击"是"
+
+<Card title="⚠️ 安全提醒" icon="warning">
+操作注册表具有风险，建议在操作前：
+- 创建系统还原点
+- 备份注册表：文件 → 导出
+- 仔细核对要删除的注册表项路径
+</Card>
+
+#### 步骤 2：定位并删除问题注册表项
+
+1. 在注册表编辑器中，导航到以下路径：
+   ```
+   HKEY_CLASSES_ROOT\CLSID\{3d09c1ca-2bcc-40b7-b9bb-3f3ec143a87b}
+   ```
+
+2. 找到 `{3d09c1ca-2bcc-40b7-b9bb-3f3ec143a87b}` 项
+
+3. 右键点击该项，选择"删除"
+
+4. 确认删除操作
