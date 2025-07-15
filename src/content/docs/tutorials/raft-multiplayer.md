@@ -2,13 +2,28 @@
 title: 🚢 Raft
 description: 使用 Astral 实现 Raft 联机的完整指南
 ---
+## 概述
+
+本教程将为您提供使用 Astral 进行 Raft 木筏求生联机游戏的完整解决方案，涵盖：
+
+- 📦 木筏求生联机补丁安装
+- 💻 补丁设置和注意事项
+- 🔧 常见问题排查与解决
+
+**适用平台：** Windows
+
+**支持版本：** 理论上支持全版本
+
 ## 📌 核心要求
 
 - **该教程需要先使用 Astral加入相同房间：** 您需要按照官网的[教程](/quick-start/download-install/)，先配置好 Astral，随后房主和房员都进入同个房间
 
 ## 🔽 关于下载
 
-[木筏联机补丁下载](https://pao.lu/)
+**进入Q群群文件下载**
+
+[1群](https://qm.qq.com/q/6WoILstbQA)
+[2群](https://qm.qq.com/q/v9jXBJASqc)
 
 ## ⚙️ 安装联机补丁
 
