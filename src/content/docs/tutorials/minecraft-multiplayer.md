@@ -419,13 +419,11 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![创建房间](/images/MC联机/MC联机-66.png)
 ![选中房间](/images/MC联机/MC联机-67.png)
 
-**Step 2：** 建立连接
-返回主页 → 点击"连接"按钮
+**Step 2：** 返回主页 → 点击"连接"按钮
 
 ![点击连接](/images/MC联机/MC联机-68.png)
 
-**Step 3：** 获取分享码
-进入房间页面 → 点击"复制分享码" → 发送给房员
+**Step 3：** 进入房间页面 → 点击"复制分享码" → 发送给房员
 
 > ⚠️ **注意：** 关于不同的分享方式看[这里](https://astral.fan/quick-start/create-room/#关于不同的分享方式)
 
@@ -443,8 +441,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 ![手机端基础设置](/images/MC联机/MC联机-41.png)
 
-**网络优化：**
-"网络设置" → 启用"延迟优先"
+**网络优化：** 点击右下角“设置” → "网络设置" → 启用"延迟优先"
 
 ![网络设置](/images/MC联机/MC联机-44.png)
 
@@ -456,19 +453,23 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![服务器选择](/images/MC联机/MC联机-45.png)
 
 **Step 2：** 匹配房主服务器
+
 > 🚨 **关键要求：** 必须选择与房主完全相同的服务器
 
 > 💡 **识别方法：** 通过服务器地址信息进行比对确认
 
 ![选择服务器](/images/MC联机/MC联机-46.png)
 
-参考房主配置：
+**参考房主配置：**
+
 ![房主服务器参考](/images/MC联机/MC联机-14.png)
 
 **Step 3：** 启用服务器
+
 ![启用服务器](/images/MC联机/MC联机-47.png)
 
 **最终配置效果：**
+
 ![最终配置](/images/MC联机/MC联机-48.png)
 
 #### 3. 房间连接
@@ -490,9 +491,11 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 #### 4. 连接状态确认
 
 **房主视角：**
+
 ![房主连接状态](/images/MC联机/MC联机-52.png)
 
 **房员视角：**
+
 ![房员连接状态](/images/MC联机/MC联机-53.png)
 
 > 📖 **参考资料：** [NAT 类型详细说明](/troubleshooting/nat-types/)
@@ -522,7 +525,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 **Step 1：** 左侧"下载" → 选择对应版本
 
-> ⚠️ **兼容性提醒：** 如果您使用的是整合包，请跳过此步骤到"渲染器设置"
+> ⚠️ **兼容性提醒：** 如果您使用的是整合包，请跳过此步骤到"渲染器配置"
 
 > 📋 **示例版本：** 1.21.4-forge
 
@@ -548,6 +551,7 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 ![选择渲染器](/images/MC联机/MC联机-36.png)
 
 > 📥 **下载地址：** [MobileGlues 官方发布页](https://github.com/MobileGL-Dev/MobileGlues-release/releases)
+
 > 🌐 **访问提示：** 可能需要科学上网
 
 **游戏启动：**
@@ -658,4 +662,4 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 2. **深入了解：** 查阅相关技术文档
 3. **寻求帮助：** 在官方交流群中礼貌提问
 
-感谢您的阅读，如发现教程错误或有改进建议，欢迎在交流群中反馈！
+# 感谢您的阅读，如发现教程错误或有改进建议，欢迎在交流群中反馈！
