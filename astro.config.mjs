@@ -73,8 +73,9 @@ export default defineConfig({
 			{
 				label: '🎮 游戏联机教程',
 				items: [
-					{ label: 'Minecraft', slug: 'tutorials/minecraft-multiplayer-optimized' },
+					{ label: 'Minecraft', slug: 'tutorials/minecraft-multiplayer' },
 					{ label: 'CS:GO 2', slug: 'tutorials/csgo2-guide' },
+					{ label: 'Raft', slug: 'tutorials/raft-multiplayer' },
 				],
 			},
 			{
