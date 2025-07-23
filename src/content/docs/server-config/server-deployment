@@ -73,7 +73,7 @@ unzip -v
 
 **Step 3：** 根据提示安装unzip
 
-> ⚠️ **重要提醒：** 如果该命令无法更新请自行查找更新指令
+> ⚠️ **重要提醒：** 如果该命令无法安装请自行查找安装指令
 
 ```
 apt install unzip
@@ -109,6 +109,12 @@ wget -O /tmp/easytier.sh "https://raw.githubusercontent.com/EasyTier/EasyTier/ma
 
 [安装ET](/images/服务器部署/服务器部署-10.png)
 
+**Step 6：** 启动EasyTier
+
+```
+systemctl start easytier@default
+```
+
 > ✅ **EasyTier安装完成！** 恭喜你成功安装EasyTier了，现在可以进行下一步了
 
 ### 进入默认EasyTier配置文件目录
@@ -125,9 +131,48 @@ wget -O /tmp/easytier.sh "https://raw.githubusercontent.com/EasyTier/EasyTier/ma
 
 [配置](/images/服务器部署/服务器部署-13.png)
 
+**最终打开效果**
+
+[最终](/images/服务器部署/服务器部署-14.png)
+
 > ✅ **您已打开EasyTier配置文件！** 恭喜你成功打开EasyTier配置文件了，现在可以进行下一步了
 
 ### 修改EasyTier配置文件
 
 **Step 1：** 进入[EasyTier配置生成网站](https://easytier.cn/web/index.html#/config_generator)，并按照以下图示修改
 
+[配置](/images/服务器部署/服务器部署-15.png)
+
+**Step 2：** 在红色方框中的输入框输入服务器名称，不输入将使用随机名称
+
+[名称](/images/服务器部署/服务器部署-16.png)
+
+**Step 3：** 点击最下方的**生成网络（Run Network）**
+
+[生成](/images/服务器部署/服务器部署-17.png)
+
+**Step 3：** 随后上划到页面顶部，CTRAL+A全选右边生成的配置文件内容，随后右键复制
+
+[复制](/images/服务器部署/服务器部署-18.png)
+
+**Step 4：** 将其粘贴到已经打开的RasyTier配置文件中，在弹出的窗口中选择**是**
+
+[粘贴](/images/服务器部署/服务器部署-19.png)
+
+
+**Step 5：** 随后更改配置文件中的**rpc_portal**，并添加**relay_network_whitelist**
+
+> ⚠️ **重要提醒：** **私人房间1**和**私人房间2**为允许转发的房间名称，可根据自身修改，中间用空格隔开
+
+```
+127.0.0.1:15888
+relay_network_whitelist = "私人房间1 私人房间2"
+```
+
+[修改rpc](/images/服务器部署/服务器部署-20.png)
+
+**Step 6：** 回到WindTerm，输入以下指令重启EasyTier
+
+```
+systemctl restart easytier@default
+```
