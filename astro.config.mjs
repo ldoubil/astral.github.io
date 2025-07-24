@@ -82,6 +82,7 @@ export default defineConfig({
 				label: '🌐 服务器配置',
 				items: [
 					{ label: '服务器列表', slug: 'server-config/server-list' },
+					{ label: '服务器部署', slug: 'server-config/server-deployment' },
 				],
 			},
 			{
