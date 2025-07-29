@@ -23,9 +23,9 @@ description: 使用 Astral 实现 Minecraft 跨平台联机的完整指南
 
 2.[手机安装MC联机模组](#手机安装MC联机模组)
 
-3.[电脑配置Astral](#电脑端配置Astral)
+3.[电脑配置Astral](#电脑端配置astral)
 
-4.[手机配置Astral](#手机端配置Astral)
+4.[手机配置Astral](#手机端配置astral)
 
 ---
 
