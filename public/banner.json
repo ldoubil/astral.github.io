@@ -1,0 +1,12 @@
+[
+  {
+    "imageUrl": "https://youke2.picui.cn/s1/2025/12/22/69494ff2dc9b2.png",
+    "title": "MC服务器",
+    "subtitle": "这里简单描述",
+    "tags": [
+      {"text": "国服", "color": "0xFFF44336"},
+      {"text": "养老", "color": "0xFFFF9800"}
+    ],
+    "actionUrl": "https://github.com/ldoubil/astral"
+  },
+]
