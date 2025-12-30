@@ -1,0 +1,294 @@
+---
+import downloads from '../../public/downloads.json';
+---
+
+<style>
+  .download-section {
+    margin: 2rem 0;
+  }
+
+  .main-download {
+    background: linear-gradient(135deg, #00b8d4 0%, #0091ea 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 184, 212, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .main-download::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .main-download::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .main-download:hover {
+    box-shadow: 0 6px 20px rgba(0, 184, 212, 0.35), 0 3px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .main-download:hover::before {
+    left: 100%;
+  }
+
+  .download-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .download-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 6px;
+    color: white;
+  }
+
+  .download-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .download-title {
+    flex: 1;
+  }
+
+  .download-title h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .download-title p {
+    margin: 0.25rem 0 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+  }
+
+  .version-selector {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .version-selector label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+  }
+
+  .version-selector select {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .version-selector select:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .version-selector select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  .version-selector select option {
+    background: #0091ea;
+    color: white;
+  }
+
+  .download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: white;
+    color: #0091ea;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .download-button:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .download-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .github-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .github-link:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+  }
+
+  .github-link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .note {
+    background: #f7fafc;
+    border-left: 4px solid #00b8d4;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    color: #2d3748;
+  }
+
+  .note-title {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .note-content {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #4a5568;
+  }
+
+  @media (max-width: 768px) {
+    .version-selector {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+
+<div class="download-section">
+  <div class="main-download">
+    <div class="download-header">
+      <div class="download-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+        </svg>
+      </div>
+      <div class="download-title">
+        <h3>夸克网盘下载</h3>
+        <p>若无法访问GitHub可使用此下载。</p>
+      </div>
+    </div>
+
+    <div class="version-selector">
+      <label for="version-select">选择版本:</label>
+      <select id="version-select">
+        {downloads.map((download, index) => (
+          <option value={download.url} selected={index === 0}>
+            {download.version} {index === 0 ? '(最新)' : ''} - {download.date}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <a href={downloads[0].url} target="_blank" rel="noopener noreferrer" class="download-button" id="download-link">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+      </svg>
+      立即下载
+    </a>
+  </div>
+
+  <a href="https://github.com/ldoubil/astral/releases" target="_blank" rel="noopener noreferrer" class="github-link">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+    </svg>
+    或从 GitHub 下载其他版本和平台
+  </a>
+</div>
+
+
+
+<script>
+  const select = document.getElementById('version-select') as HTMLSelectElement;
+  const downloadLink = document.getElementById('download-link') as HTMLAnchorElement;
+
+  select?.addEventListener('change', (e) => {
+    const target = e.target as HTMLSelectElement;
+    downloadLink.href = target.value;
+  });
+</script>
