@@ -1,5 +1,13 @@
 [
-  
+  {
+    "imageUrl": "https://youke2.picui.cn/s1/2026/01/01/6955601e4d760.png",
+    "title": "元旦快乐",
+    "subtitle": "新年一年祝你天天开心哦！！！！！！",
+    "tags": [
+      {"text": "开心", "color": "0xFFFF9800"}
+    ],
+   "actionUrl": "https://acg-n.cn"
+  },
 {
     "imageUrl": "https://t.alcy.cc/pc",
     "title": "kevin的Blog",
