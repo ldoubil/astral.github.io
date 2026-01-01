@@ -16,10 +16,6 @@
     "url": "c.oee.icu:60006"
   },
   {
-    "name": "上海1/阿里云/可中转/TCP",
-    "url": "et.sh.suhoan.cn:11010"
-  },
-  {
     "name": "上海2/阿里云/不可中转/TCP",
     "url": "et2.fuis.me:11010"
   },
@@ -28,11 +24,7 @@
     "url": "et.gbc.moe:11010"
   },
   {
-    "name": "北京2/京东云/不可中转/TCP",
-    "url": "et.nxt123.top:11010"
-  },
-  {
-    "name": "未知/雨云/不可中转/TCP",
+    "name": "宁波2/雨云/不可中转/TCP",
     "url": "public2.easytier.cn:54321"
   },
   {
@@ -48,28 +40,12 @@
     "url": "47.96.28.190:9994"
   },
   {
-    "name": "成都3/家宽/不可中转/TCP",
-    "url": "space-vector.top:1101"
-  },
-  {
-    "name": "成都4/阿里云/不可中转/TCP",
-    "url": "easytier.bh8gcj.top:11010"
-  },
-  {
-    "name": "北京3/腾讯云/可中转/TCP",
-    "url": "turn.lzaske.xyz:11010"
-  },
-  {
     "name": "三亚/未知/不可中转/TCP",
     "url": "sy.112c.cc:11090"
   },
   {
     "name": "北京4/腾讯云/不可中转/TCP",
     "url": "211.159.174.121:11010"
-  },
-  {
-    "name": "十堰2/未知/可中转/TCP",
-    "url": "59.153.166.186:11010"
   },
   {
     "name": "东莞/未知/可中转/TCP",
@@ -110,10 +86,6 @@
   {
     "name": "北京8/阿里云/不可中转/TCP",
     "url": "et.lidonglong.top:11010"
-  },
-  {
-    "name": "河南/未知/可中转/TCP",
-    "url": "turn.hn.629957.xyz:14443"
   },
   {
     "name": "张家口/阿里云/不可中转/TCP/UDP",
