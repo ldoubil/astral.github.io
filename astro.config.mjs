@@ -47,7 +47,7 @@ export default defineConfig({
 		lastUpdated: true,
 		sidebar: [
 			{
-				label: '🚀 快速入门',
+				label: '🚀 开始使用',
 				items: [
 					{ label: '什么是 Astral？', slug: 'quick-start/what-is-astral' },
 					{ label: '下载与安装', slug: 'quick-start/download-install' },
@@ -57,41 +57,44 @@ export default defineConfig({
 				],
 			},
 			{
-				label: '📖 用户指南',
+				label: '📖 核心功能',
 				items: [
 					{ label: '服务器管理', slug: 'user-guide/server-management' },
 					{ label: '房间管理', slug: 'user-guide/room-management' },
 					{ label: '网络设置', slug: 'user-guide/network-settings' },
-				],
-			},
-			{
-				label: '🎯 进阶教程',
-				items: [
-					{ label: '游戏联机指南', slug: 'advanced/game-multiplayer' },
+					{ label: '公共服务器列表', slug: 'public-servers/list' },
 				],
 			},
 			{
 				label: '🎮 游戏联机教程',
 				items: [
 					{ label: 'Minecraft', slug: 'tutorials/minecraft-multiplayer' },
-					{ label: 'CS:GO 2', slug: 'tutorials/csgo2-guide' },
 					{ label: 'Raft', slug: 'tutorials/raft-multiplayer' },
+					{ label: 'CS:GO 2', slug: 'tutorials/csgo2-guide' },
 				],
 			},
 			{
-				label: '🌐 服务器配置',
+				label: '🧭 进阶与运维',
 				items: [
+					{ label: '游戏联机指南', slug: 'advanced/game-multiplayer' },
 					{ label: '服务器列表', slug: 'server-config/server-list' },
 					{ label: '服务器部署', slug: 'server-config/server-deployment' },
 				],
 			},
 			{
-				label: '🔧 故障排除',
+				label: '🛟 故障排除',
 				items: [
 					{ label: '安装问题', slug: 'troubleshooting/installation-issues' },
 					{ label: '连接问题', slug: 'troubleshooting/connection-issues' },
 					{ label: 'NAT 类型说明', slug: 'troubleshooting/nat-types' },
-					{ label: 'VM解决方案', slug: 'troubleshooting/vm-shi' },
+					{ label: 'VM 解决方案', slug: 'troubleshooting/vm-shi' },
+				],
+			},
+			{
+				label: '❓ 常见问题',
+				items: [
+					{ label: 'NAT 类型说明', slug: 'faq/nat' },
+					{ label: 'Ping 不通排查', slug: 'faq/ping-issues' },
 				],
 			},
 		],
