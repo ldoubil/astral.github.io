@@ -4,14 +4,6 @@
     "url": "public.easytier.top:11010"
   },
   {
-    "name": "北京1/阿里云/不可中转/TCP",
-    "url": "turn.bj.629957.xyz:11010"
-  },
-  {
-    "name": "江苏/京东云/可中转/TCP",
-    "url": "turn.js.629957.xyz:11012"
-  },
-  {
     "name": "成都1/未知/可中转/TCP",
     "url": "c.oee.icu:60006"
   },
@@ -72,16 +64,8 @@
     "url": "easytier.scpsl.com.cn:11010"
   },    
   {
-    "name": "北京7/阿里云/可中转/TCP",
-    "url": "easytier.jsyn.fun:11010"
-  },
-  {
     "name": "湖北/未知/可中转/TCP",
     "url": "103.184.47.79:11010"
-  },
-  {
-    "name": "台州/未知/可中转/TCP",
-    "url": "public.mxzysoa.top:22010"
   },
   {
     "name": "北京8/阿里云/不可中转/TCP",
