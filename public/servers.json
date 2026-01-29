@@ -1,9 +1,9 @@
 {
   "mcservers": [
     {
-      "name": "若雪的服务器",
-      "host": "43.248.189.79",
-      "port": 25565
+      "name": "养老服务器",
+      "host": "mc.zuoriyi.top",
+      "port": 26688
     }
   ]
 }
