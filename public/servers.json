@@ -2,7 +2,7 @@
   "mcservers": [
     {
       "name": "养老服务器",
-      "host": "182.202.10.144",
+      "host": "mc.zuoriyi.top",
       "port": 26688
     }
   ]
