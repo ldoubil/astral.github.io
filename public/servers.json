@@ -1,8 +1,9 @@
 {
   "mcservers": [
-    {
+
+        {
       "name": "养老服务器",
-      "host": "mc.zuoriyi.top",
+      "host": "blog.wolfhouse.top",
       "port": 26688
     }
   ]
