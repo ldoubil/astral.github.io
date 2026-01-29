@@ -9,4 +9,14 @@
     ],
    "actionUrl": "https://acg-n.cn"
   },
+
+    {
+    "imageUrl": "https://img.cdn1.vip/i/697b4d957fa23_1769688469.webp",
+    "title": "好朋友计划",
+    "subtitle": "开开心心过大年",
+    "tags": [
+      {"text": "MC", "color": "0xFFFF9800"}
+    ],
+   "actionUrl": "https://acg-n.cn/posts/%E5%A5%BD%E6%9C%8B%E5%8F%8B%E8%AE%A1%E5%88%92/"
+  },
 ]
