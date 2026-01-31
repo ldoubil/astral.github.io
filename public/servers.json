@@ -1,6 +1,6 @@
 {
   "mcservers": [
 
-        { "name":"养老服务器","host":"mc.zuoriyi.top","port":26688}
+        { "name":"白名单服务器（防熊）","host":"mc.zuoriyi.top","port":26688}
   ]
 }
