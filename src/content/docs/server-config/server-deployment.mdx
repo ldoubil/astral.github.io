@@ -240,9 +240,19 @@ network_secret = "" #输入您打算在AS使用的房间密码
 
 **Step 3：** 在FinalShell中输入该指令重启EasyTier服务
 
+**一键命令版命令**
+
 ```
 systemctl restart easytier@default
 ```
+
+**手动部署版命令**
+
+```
+./easytier-cli service stop && ./easytier-cli service start
+```
+
+> ⚠️ **重要提醒：** 请根据部署的模式选择对应命令
 
 ![重启](/images/服务器部署/服务器部署-19.png)
 
@@ -304,7 +314,7 @@ mkdir easytier
 cd easytier && unzip easytier-linux-x86_64-v2.5.0.zip && cd easytier-linux-x86_64 && ./easytier-cli service install -c /easytier/easytier-linux-x86_64/config/default.conf && ./easytier-cli service start
 ```
 
-**Step 5：** 随后，您可以正常[使用Astral连接到您的服务器](#-使用Astral连接到您的服务器)了
+**Step 5：** 随后，您可以正常[使用Astral连接到您的服务器](#-使用Astral连接到您的服务器)了,或者继续配置[进阶教程]（#-进阶教程）以保护您的服务器
 
 #### 如果您需要修改配置文件，根据上面的第**Step 3：**刷新后，在下方文件中进入该目录即可找到配置文件
 
