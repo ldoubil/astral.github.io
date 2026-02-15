@@ -1,22 +1,15 @@
 [
-
-{
-    "imageUrl": "https://t.alcy.cc/pc",
-    "title": "kevin的Blog",
-    "subtitle": "碎碎念",
+  {
+    "imageUrl": "https://youke.xn--y7xa690gmna.cn/s1/2026/02/15/699157deb9284.webp",
+    "title": "烟火人间，岁岁平安",
+    "subtitle": "愿这一年，对你温柔一点",
     "tags": [
-      {"text": "Blog", "color": "0xFFFF9800"}
+      { "text": "新", "color": "0xFFFF5252" },
+      { "text": "年", "color": "0xFFFF9800" },
+      { "text": "快", "color": "0xFFFFEB3B" },
+      { "text": "乐", "color": "0xFF4CAF50" },
+      { "text": "！", "color": "0xFF2196F3" }
     ],
-   "actionUrl": "https://acg-n.cn"
-  },
-
-    {
-    "imageUrl": "https://img.cdn1.vip/i/697b4d957fa23_1769688469.webp",
-    "title": "好朋友计划",
-    "subtitle": "开开心心过大年",
-    "tags": [
-      {"text": "MC", "color": "0xFFFF9800"}
-    ],
-   "actionUrl": "https://acg-n.cn/posts/%E5%A5%BD%E6%9C%8B%E5%8F%8B%E8%AE%A1%E5%88%92/"
-  },
+    "actionUrl": "https://acg-n.cn"
+  }
 ]
