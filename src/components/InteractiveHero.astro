@@ -24,8 +24,8 @@ const defaultActions = [
     variant: 'secondary' as const
   },
   {
-    text: 'GitHub',
-    link: 'https://github.com/ldoubil/astral',
+    text: '新版预告',
+    link: '/preview/overview/',
     variant: 'secondary' as const
   }
 ];
@@ -34,7 +34,7 @@ const heroActions = actions || defaultActions;
 
 // 为按钮添加默认图标
 const actionsWithIcons = heroActions.map((action, index) => {
-  const defaultIcons = ['→', '⬇', '⚡'];
+  const defaultIcons = ['→', '⬇', '✨'];
   return {
     ...action,
     icon: defaultIcons[index] || '•'
@@ -52,6 +52,10 @@ const actionsWithIcons = heroActions.map((action, index) => {
       </div>
       <div class="logo-content">
         <canvas id="astral-canvas" class="logo-text-canvas"></canvas>
+        <div class="version-badge">
+          <span class="badge-new">NEW</span>
+          <span class="badge-text">即将到来</span>
+        </div>
         {tagline && <div class="logo-tagline">{tagline}</div>}
       </div>
     </div>
@@ -383,6 +387,7 @@ observer.observe(document.documentElement, {
     justify-content: space-between;
     padding: 2rem;
     gap: 4rem;
+    overflow: hidden;
   }
 
   .hero-left {
@@ -410,6 +415,7 @@ observer.observe(document.documentElement, {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    align-items: center;
   }
 
   .astral-logo:hover {
@@ -509,6 +515,46 @@ observer.observe(document.documentElement, {
 
   [data-theme='dark'] .logo-tagline {
     color: var(--sl-color-text-accent);
+  }
+
+  .version-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    animation: badgeFadeIn 0.8s ease-out;
+  }
+
+  .badge-new {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-text {
+    color: var(--sl-color-text);
+    font-weight: 500;
+  }
+
+  [data-theme='dark'] .badge-new {
+    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
+    color: #1a1a2e;
+  }
+
+  @keyframes badgeFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .hero-actions {
@@ -683,6 +729,10 @@ observer.observe(document.documentElement, {
       align-items: center;
     }
 
+    .version-badge {
+      padding: 0.25rem 0.6rem;
+    }
+
     .logo-text-canvas {
       width: 300px;
       height: 90px;
@@ -733,6 +783,10 @@ observer.observe(document.documentElement, {
   @media (max-width: 480px) {
     .hero-container {
       padding: 1.5rem 0.75rem;
+    }
+
+    .version-badge {
+      padding: 0.2rem 0.5rem;
     }
 
     .hero-actions {
