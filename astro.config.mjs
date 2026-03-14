@@ -59,9 +59,7 @@ export default defineConfig({
 			{
 				label: '✨ 新版预告',
 				items: [
-					{ label: '新版概览', slug: 'preview/overview' },
-					{ label: '游戏版', slug: 'preview/game-edition' },
-					{ label: '通用版', slug: 'preview/universal-edition' },
+					{ label: '抢先下载', slug: 'preview/download' },
 				],
 			},
 			{

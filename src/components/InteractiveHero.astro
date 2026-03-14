@@ -24,8 +24,8 @@ const defaultActions = [
     variant: 'secondary' as const
   },
   {
-    text: '新版预告',
-    link: '/preview/overview/',
+    text: '新版抢先体验',
+    link: '/preview/download/',
     variant: 'secondary' as const
   }
 ];
@@ -34,7 +34,7 @@ const heroActions = actions || defaultActions;
 
 // 为按钮添加默认图标
 const actionsWithIcons = heroActions.map((action, index) => {
-  const defaultIcons = ['→', '⬇', '✨'];
+  const defaultIcons = ['→', '⬇', '🚀'];
   return {
     ...action,
     icon: defaultIcons[index] || '•'
