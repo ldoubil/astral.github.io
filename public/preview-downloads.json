@@ -1,0 +1,43 @@
+{
+  "categories": [
+    {
+      "id": "universal",
+      "name": "通用版",
+      "description": "测试版",
+      "status": "available",
+      "downloads": [
+         {
+          "version": "1.0.0-beta.1+2",
+          "url": "https://pan.quark.cn/s/1e80803cc77c",
+          "date": "Beta 2",
+          "platforms": ["Windows"]
+        }
+        ,
+        {
+          "version": "1.0.0-beta.1+1",
+          "url": "https://pan.quark.cn/s/3e69def6aa12",
+          "date": "Beta 1",
+          "platforms": ["Windows"]
+        }
+      ]
+    },
+    {
+      "id": "game",
+      "name": "游戏版",
+      "description": "专为游戏优化，低延迟",
+      "status": "developing"
+    },
+    {
+      "id": "tv",
+      "name": "TV版",
+      "description": "智能电视专用",
+      "status": "developing"
+    },
+    {
+      "id": "car",
+      "name": "车载版",
+      "description": "车机系统专用",
+      "status": "developing"
+    }
+  ]
+}

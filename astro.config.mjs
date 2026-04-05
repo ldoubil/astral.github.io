@@ -57,6 +57,12 @@ export default defineConfig({
 				],
 			},
 			{
+				label: '✨ 新版预告',
+				items: [
+					{ label: '抢先下载', slug: 'preview/download' },
+				],
+			},
+			{
 				label: '📖 用户指南',
 				items: [
 					{ label: '服务器管理', slug: 'user-guide/server-management' },

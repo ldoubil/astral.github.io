@@ -1,0 +1,419 @@
+---
+import previewDownloads from '../../public/preview-downloads.json';
+---
+
+<style>
+  .preview-download-section {
+    margin: 2rem 0;
+  }
+
+  .category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .category-tab {
+    padding: 0.5rem 1rem;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .category-tab:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .category-tab.active {
+    background: linear-gradient(135deg, #00b8d4 0%, #0091ea 100%);
+    color: white;
+    border-color: transparent;
+  }
+
+  .category-tab .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+  }
+
+  .category-tab.active .status-dot {
+    background: white;
+  }
+
+  .category-tab.available .status-dot {
+    background: #10b981;
+  }
+
+  .category-tab.developing .status-dot {
+    background: #f59e0b;
+  }
+
+  .main-download {
+    background: linear-gradient(135deg, #00b8d4 0%, #0091ea 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 184, 212, 0.25), 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .main-download::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .main-download::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .main-download:hover {
+    box-shadow: 0 6px 20px rgba(0, 184, 212, 0.35), 0 3px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .main-download:hover::before {
+    left: 100%;
+  }
+
+  .download-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .download-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 6px;
+    color: white;
+    font-size: 1.25rem;
+  }
+
+  .download-title {
+    flex: 1;
+  }
+
+  .download-title h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .download-title p {
+    margin: 0.25rem 0 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+  }
+
+  .platform-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .platform-tag {
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: white;
+  }
+
+  .version-selector {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .version-selector label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+  }
+
+  .version-selector select {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .version-selector select:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .version-selector select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  .version-selector select option {
+    background: #0091ea;
+    color: white;
+  }
+
+  .download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: white;
+    color: #0091ea;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .download-button:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .download-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .developing-card {
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .developing-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--sl-color-text);
+  }
+
+  .developing-card p {
+    margin: 0;
+    color: var(--sl-color-text-accent);
+    font-size: 0.9rem;
+  }
+
+  .note {
+    background: #f7fafc;
+    border-left: 4px solid #00b8d4;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    color: #2d3748;
+  }
+
+  [data-theme='dark'] .note {
+    background: rgba(168, 181, 255, 0.08);
+    border-left-color: #a8b5ff;
+    color: var(--sl-color-text);
+  }
+
+  .note-title {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  [data-theme='dark'] .note-title {
+    color: var(--sl-color-text);
+  }
+
+  .note-content {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #4a5568;
+  }
+
+  [data-theme='dark'] .note-content {
+    color: var(--sl-color-text-accent);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 768px) {
+    .version-selector {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+
+<div class="preview-download-section">
+  <div class="category-tabs">
+    {previewDownloads.categories.map((category, index) => (
+      <button 
+        class={`category-tab ${category.status} ${index === 0 ? 'active' : ''}`}
+        data-category={category.id}
+      >
+        <span class="status-dot"></span>
+        {category.name}
+      </button>
+    ))}
+  </div>
+
+  {previewDownloads.categories.map((category, index) => (
+    <div class={`category-content ${index !== 0 ? 'hidden' : ''}`} data-content={category.id}>
+      {category.status === 'available' && category.downloads ? (
+        <div class="main-download">
+          <div class="download-header">
+            <div class="download-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+              </svg>
+            </div>
+            <div class="download-title">
+              <h3>夸克网盘下载 - {category.name}</h3>
+              <p>{category.description}</p>
+            </div>
+          </div>
+
+          {category.downloads[0].platforms && (
+            <div class="platform-tags">
+              {category.downloads[0].platforms.map((platform) => (
+                <span class="platform-tag">{platform}</span>
+              ))}
+            </div>
+          )}
+
+          <div class="version-selector">
+            <label for={`version-${category.id}`}>选择版本:</label>
+            <select id={`version-${category.id}`}>
+              {category.downloads.map((download, i) => (
+                <option value={download.url} selected={i === 0}>
+                  {download.version} {i === 0 ? '(最新)' : ''} - {download.date}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <a 
+            href={category.downloads[0].url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="download-button" 
+            id={`download-${category.id}`}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            立即下载
+          </a>
+        </div>
+      ) : (
+        <div class="developing-card">
+          <h3>{category.name}</h3>
+          <p>{category.description}</p>
+          <p style="margin-top: 1rem; opacity: 0.7;">开发中，敬请期待</p>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.category-tab');
+  const contents = document.querySelectorAll('.category-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const categoryId = tab.getAttribute('data-category');
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      contents.forEach(content => {
+        if (content.getAttribute('data-content') === categoryId) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  const categories = document.currentScript.getAttribute('data-categories');
+  document.querySelectorAll('.version-selector select').forEach(select => {
+    const downloadLink = document.getElementById(`download-${select.id.replace('version-', '')}`);
+    select.addEventListener('change', (e) => {
+      if (downloadLink) {
+        downloadLink.href = e.target.value;
+      }
+    });
+  });
+</script>
