@@ -23,11 +23,7 @@ const defaultActions = [
     link: '/quick-start/download-install/',
     variant: 'secondary' as const
   },
-  {
-    text: '新版抢先体验',
-    link: '/preview/download/',
-    variant: 'secondary' as const
-  }
+
 ];
 
 const heroActions = actions || defaultActions;
@@ -42,37 +38,60 @@ const actionsWithIcons = heroActions.map((action, index) => {
 });
 ---
 
-<div id="interactive-hero" class="hero-container">
-  <div class="hero-left">
-    <div class="astral-logo">
-      <div class="logo-circles">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
-        <div class="circle circle-3"></div>
-      </div>
-      <div class="logo-content">
-        <canvas id="astral-canvas" class="logo-text-canvas"></canvas>
-        <div class="version-badge">
-          <span class="badge-new">NEW</span>
-          <span class="badge-text">即将到来</span>
-        </div>
-        {tagline && <div class="logo-tagline">{tagline}</div>}
+<div class="hero-wrapper">
+  <!-- AstralNext 倒计时横条 -->
+  <div class="astral-next-banner">
+    <div class="banner-content">
+      <span class="banner-text">AstralNext 即将到来</span>
+      <div class="banner-countdown">
+        <span class="countdown-item">
+          <span class="countdown-value" id="days">00</span>
+        </span>
+        <span class="countdown-separator">:</span>
+        <span class="countdown-item">
+          <span class="countdown-value" id="hours">00</span>
+        </span>
+        <span class="countdown-separator">:</span>
+        <span class="countdown-item">
+          <span class="countdown-value" id="minutes">00</span>
+        </span>
+        <span class="countdown-separator">:</span>
+        <span class="countdown-item">
+          <span class="countdown-value" id="seconds">00</span>
+        </span>
       </div>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-actions">
-      {actionsWithIcons.map((action) => (
-        <a 
-          href={action.link} 
-          class={`action-button ${action.variant || 'secondary'}`}
-          target={action.link.startsWith('http') ? '_blank' : undefined}
-          rel={action.link.startsWith('http') ? 'noopener' : undefined}
-        >
-          {action.icon && <span class="button-icon">{action.icon}</span>}
-          <span>{action.text}</span>
-        </a>
-      ))}
+
+  <div id="interactive-hero" class="hero-container">
+    <div class="hero-left">
+      <div class="astral-logo">
+        <div class="logo-circles">
+          <div class="circle circle-1"></div>
+          <div class="circle circle-2"></div>
+          <div class="circle circle-3"></div>
+        </div>
+        <div class="logo-content">
+          <canvas id="astral-canvas" class="logo-text-canvas"></canvas>
+        
+          {tagline && <div class="logo-tagline">{tagline}</div>}
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-actions">
+        {actionsWithIcons.map((action) => (
+          <a 
+            href={action.link} 
+            class={`action-button ${action.variant || 'secondary'}`}
+            target={action.link.startsWith('http') ? '_blank' : undefined}
+            rel={action.link.startsWith('http') ? 'noopener' : undefined}
+          >
+            {action.icon && <span class="button-icon">{action.icon}</span>}
+            <span>{action.text}</span>
+          </a>
+        ))}
+      </div>
     </div>
   </div>
 </div>
@@ -353,7 +372,42 @@ document.addEventListener('DOMContentLoaded', () => {
   if (textCanvas) {
     new StardustText(textCanvas);
   }
+  
+  // 初始化倒计时
+  initCountdown();
 });
+
+// 倒计时功能
+function initCountdown() {
+  const targetDate = new Date('2026-05-16T18:00:00').getTime();
+  
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    
+    if (distance < 0) {
+      // 倒计时结束
+      document.getElementById('days').textContent = '00';
+      document.getElementById('hours').textContent = '00';
+      document.getElementById('minutes').textContent = '00';
+      document.getElementById('seconds').textContent = '00';
+      return;
+    }
+    
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    document.getElementById('days').textContent = String(days).padStart(2, '0');
+    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+}
 
 // 主题切换时重新初始化
 const observer = new MutationObserver((mutations) => {
@@ -378,16 +432,184 @@ observer.observe(document.documentElement, {
 </script>
 
 <style>
+  /* 包装器 - 包含所有内容 */
+  .hero-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* AstralNext 倒计时横条 */
+  .astral-next-banner {
+    width: 100%;
+    padding: 0.75rem 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-icon {
+    font-size: 1.3rem;
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes iconPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  .banner-text {
+    font-weight: 600;
+    color: #667eea;
+    font-size: 0.95rem;
+  }
+
+  [data-theme='dark'] .banner-text {
+    color: #a8b5ff;
+  }
+
+  .banner-countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(102, 126, 234, 0.06);
+    border-radius: 8px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+  }
+
+  [data-theme='dark'] .banner-countdown {
+    background: rgba(168, 181, 255, 0.05);
+    border-color: rgba(168, 181, 255, 0.08);
+  }
+
+  .banner-countdown .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 35px;
+  }
+
+  .banner-countdown .countdown-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #667eea;
+    line-height: 1;
+    font-family: 'Courier New', monospace;
+  }
+
+  [data-theme='dark'] .banner-countdown .countdown-value {
+    color: #a8b5ff;
+  }
+
+  .banner-countdown .countdown-label {
+    font-size: 0.6rem;
+    color: var(--sl-color-text);
+    opacity: 0.6;
+    margin-top: 0.15rem;
+  }
+
+  .banner-countdown .countdown-separator {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #667eea;
+    opacity: 0.4;
+  }
+
+  [data-theme='dark'] .banner-countdown .countdown-separator {
+    color: #a8b5ff;
+  }
+
+  .banner-date {
+    font-size: 0.85rem;
+    color: var(--sl-color-text);
+    opacity: 0.7;
+  }
+
   .hero-container {
     position: relative;
     width: 100%;
-    min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 2rem;
     gap: 4rem;
-    overflow: hidden;
+    z-index: 1;
+  }
+
+  /* 背景渐变球体 */
+  .gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: orbFloat 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.6) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+    animation-delay: 0s;
+  }
+
+  .orb-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(118, 75, 162, 0.5) 0%, transparent 70%);
+    bottom: -50px;
+    left: -50px;
+    animation-delay: 7s;
+  }
+
+  .orb-3 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(168, 181, 255, 0.4) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 14s;
+  }
+
+  [data-theme='dark'] .gradient-orb {
+    opacity: 0.3;
+  }
+
+  [data-theme='dark'] .orb-1 {
+    background: radial-gradient(circle, rgba(168, 181, 255, 0.5) 0%, transparent 70%);
+  }
+
+  [data-theme='dark'] .orb-2 {
+    background: radial-gradient(circle, rgba(156, 136, 255, 0.4) 0%, transparent 70%);
+  }
+
+  @keyframes orbFloat {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(30px, -30px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
   }
 
   .hero-left {
@@ -597,57 +819,86 @@ observer.observe(document.documentElement, {
   }
 
   .action-button.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.15) 0%,
+      rgba(118, 75, 162, 0.15) 100%
+    );
+    backdrop-filter: blur(10px);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.3);
     box-shadow: 
-      0 8px 32px rgba(102, 126, 234, 0.3),
-      0 4px 16px rgba(102, 126, 234, 0.2);
+      0 4px 16px rgba(102, 126, 234, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   .action-button.primary:hover {
-    transform: translateY(-3px);
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.25) 0%,
+      rgba(118, 75, 162, 0.25) 100%
+    );
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
     box-shadow: 
-      0 12px 40px rgba(102, 126, 234, 0.4),
-      0 6px 20px rgba(102, 126, 234, 0.3);
+      0 6px 20px rgba(102, 126, 234, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
   .action-button.secondary {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--sl-color-text);
-    border-color: rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(102, 126, 234, 0.2);
     backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .action-button.secondary:hover {
-    background: rgba(102, 126, 234, 0.1);
-    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(102, 126, 234, 0.08);
+    border-color: rgba(102, 126, 234, 0.35);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    box-shadow: 
+      0 4px 12px rgba(102, 126, 234, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   [data-theme='dark'] .action-button.primary {
-    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
-    color: var(--sl-color-black);
+    background: linear-gradient(
+      135deg,
+      rgba(168, 181, 255, 0.12) 0%,
+      rgba(156, 136, 255, 0.12) 100%
+    );
+    color: #a8b5ff;
+    border-color: rgba(168, 181, 255, 0.25);
     box-shadow: 
-      0 8px 32px rgba(168, 181, 255, 0.25),
-      0 4px 16px rgba(168, 181, 255, 0.15);
+      0 4px 16px rgba(168, 181, 255, 0.08),
+      inset 0 1px 0 rgba(168, 181, 255, 0.15);
   }
 
   [data-theme='dark'] .action-button.primary:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(168, 181, 255, 0.2) 0%,
+      rgba(156, 136, 255, 0.2) 100%
+    );
+    border-color: rgba(168, 181, 255, 0.4);
     box-shadow: 
-      0 12px 40px rgba(168, 181, 255, 0.35),
-      0 6px 20px rgba(168, 181, 255, 0.25);
+      0 6px 20px rgba(168, 181, 255, 0.12),
+      inset 0 1px 0 rgba(168, 181, 255, 0.2);
   }
 
   [data-theme='dark'] .action-button.secondary {
-    background: rgba(168, 181, 255, 0.05);
-    border-color: rgba(168, 181, 255, 0.2);
+    background: rgba(168, 181, 255, 0.03);
+    border-color: rgba(168, 181, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(168, 181, 255, 0.08);
   }
 
   [data-theme='dark'] .action-button.secondary:hover {
-    background: rgba(168, 181, 255, 0.1);
-    border-color: rgba(168, 181, 255, 0.4);
-    box-shadow: 0 8px 24px rgba(168, 181, 255, 0.1);
+    background: rgba(168, 181, 255, 0.06);
+    border-color: rgba(168, 181, 255, 0.3);
+    box-shadow: 
+      0 4px 12px rgba(168, 181, 255, 0.06),
+      inset 0 1px 0 rgba(168, 181, 255, 0.12);
   }
 
   .button-icon {
@@ -674,8 +925,28 @@ observer.observe(document.documentElement, {
 
   /* 平板响应式 */
   @media (max-width: 1024px) {
+    .astral-next-banner {
+      padding: 0.6rem 1.5rem;
+    }
+
+    .banner-content {
+      gap: 1rem;
+    }
+
+    .banner-text {
+      font-size: 0.9rem;
+    }
+
+    .banner-countdown .countdown-value {
+      font-size: 1rem;
+    }
+
+    .banner-date {
+      font-size: 0.8rem;
+    }
+
     .hero-container {
-      min-height: 350px;
+      min-height: 450px;
       padding: 2rem 1.5rem;
       gap: 3rem;
     }
@@ -708,6 +979,35 @@ observer.observe(document.documentElement, {
 
   /* 手机响应式 */
   @media (max-width: 768px) {
+    .astral-next-banner {
+      padding: 0.6rem 1rem;
+    }
+
+    .banner-content {
+      gap: 0.8rem;
+      justify-content: center;
+    }
+
+    .banner-text {
+      font-size: 0.85rem;
+    }
+
+    .banner-countdown {
+      padding: 0.3rem 0.6rem;
+    }
+
+    .banner-countdown .countdown-value {
+      font-size: 0.95rem;
+    }
+
+    .banner-countdown .countdown-item {
+      min-width: 30px;
+    }
+
+    .banner-date {
+      font-size: 0.75rem;
+    }
+
     .hero-container {
       min-height: 400px;
       padding: 2rem 1rem;
@@ -781,6 +1081,38 @@ observer.observe(document.documentElement, {
 
   /* 小屏手机 */
   @media (max-width: 480px) {
+    .astral-next-banner {
+      padding: 0.5rem 0.75rem;
+    }
+
+    .banner-content {
+      gap: 0.6rem;
+    }
+
+    .banner-icon {
+      font-size: 1.1rem;
+    }
+
+    .banner-text {
+      font-size: 0.8rem;
+    }
+
+    .banner-countdown .countdown-value {
+      font-size: 0.85rem;
+    }
+
+    .banner-countdown .countdown-item {
+      min-width: 28px;
+    }
+
+    .banner-countdown .countdown-label {
+      font-size: 0.55rem;
+    }
+
+    .banner-date {
+      display: none;
+    }
+
     .hero-container {
       padding: 1.5rem 0.75rem;
     }

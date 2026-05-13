@@ -33,8 +33,11 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import VisitorCounterCard from '../../components/VisitorCounterCard.astro';
+import GlobalBackground from '../../components/GlobalBackground.astro';
 import '../../styles/platform-tag.css';
 import '../../styles/feature-card.css';
+
+<GlobalBackground />
 
 <CardGrid>
     <Card title="🎮 游戏联机" className="custom-card game-card">
