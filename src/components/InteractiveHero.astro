@@ -6,7 +6,6 @@ export interface Props {
     text: string;
     link: string;
     variant?: 'primary' | 'secondary';
-    icon?: string;
   }>;
 }
 
@@ -23,45 +22,19 @@ const defaultActions = [
     link: '/quick-start/download-install/',
     variant: 'secondary' as const
   },
+  {
+    text: '体验新版',
+    link: '/preview/download/',
+    variant: 'secondary' as const
+  },
 
 ];
 
 const heroActions = actions || defaultActions;
-
-// 为按钮添加默认图标
-const actionsWithIcons = heroActions.map((action, index) => {
-  const defaultIcons = ['→', '⬇', '🚀'];
-  return {
-    ...action,
-    icon: defaultIcons[index] || '•'
-  };
-});
 ---
 
 <div class="hero-wrapper">
-  <!-- AstralNext 倒计时横条 -->
-  <div class="astral-next-banner">
-    <div class="banner-content">
-      <span class="banner-text">【要去外地送妹妹回学校再拖更一天】AstralNext 即将到来</span>
-      <div class="banner-countdown">
-        <span class="countdown-item">
-          <span class="countdown-value" id="days">00</span>
-        </span>
-        <span class="countdown-separator">:</span>
-        <span class="countdown-item">
-          <span class="countdown-value" id="hours">00</span>
-        </span>
-        <span class="countdown-separator">:</span>
-        <span class="countdown-item">
-          <span class="countdown-value" id="minutes">00</span>
-        </span>
-        <span class="countdown-separator">:</span>
-        <span class="countdown-item">
-          <span class="countdown-value" id="seconds">00</span>
-        </span>
-      </div>
-    </div>
-  </div>
+  
 
   <div id="interactive-hero" class="hero-container">
     <div class="hero-left">
@@ -80,14 +53,13 @@ const actionsWithIcons = heroActions.map((action, index) => {
     </div>
     <div class="hero-right">
       <div class="hero-actions">
-        {actionsWithIcons.map((action) => (
+        {heroActions.map((action) => (
           <a 
             href={action.link} 
             class={`action-button ${action.variant || 'secondary'}`}
             target={action.link.startsWith('http') ? '_blank' : undefined}
             rel={action.link.startsWith('http') ? 'noopener' : undefined}
           >
-            {action.icon && <span class="button-icon">{action.icon}</span>}
             <span>{action.text}</span>
           </a>
         ))}
@@ -899,16 +871,6 @@ observer.observe(document.documentElement, {
     box-shadow: 
       0 4px 12px rgba(168, 181, 255, 0.06),
       inset 0 1px 0 rgba(168, 181, 255, 0.12);
-  }
-
-  .button-icon {
-    font-size: 1.3rem;
-    line-height: 1;
-    transition: transform 0.3s ease;
-  }
-
-  .action-button:hover .button-icon {
-    transform: scale(1.1);
   }
 
   @keyframes float {
