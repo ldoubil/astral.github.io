@@ -10,6 +10,7 @@ type Category = (typeof categories)[number];
 type Download = NonNullable<Category['downloads']>[number];
 
 const editionMirror: Partial<Record<string, string>> = {
+  game: '夸克网盘',
   universal: '夸克网盘',
 };
 ---
@@ -342,7 +343,10 @@ const editionMirror: Partial<Record<string, string>> = {
 <div class="preview-hub">
   {categories.map((category) => {
     const mirror = editionMirror[category.id];
-    const isAvailable = category.status === 'available' && category.downloads?.length;
+    const releases = category.downloads ?? [];
+    const hasReleases = releases.length > 0;
+    const showDownloads = hasReleases;
+    const badgeStatus = hasReleases ? 'available' : category.status;
 
     return (
       <article class={`edition ${category.id}`}>
@@ -364,13 +368,13 @@ const editionMirror: Partial<Record<string, string>> = {
             <h2>{category.name}</h2>
             <p>{category.description}</p>
           </div>
-          <span class={`status-badge ${category.status}`}>
-            {category.status === 'available' ? '可下载' : '开发中'}
+          <span class={`status-badge ${badgeStatus}`}>
+            {badgeStatus === 'available' ? '可下载' : '开发中'}
           </span>
         </header>
 
         <div class="edition-body">
-          {isAvailable ? (
+          {showDownloads ? (
             <>
               {mirror && (
                 <div class="mirror-bar">
@@ -381,7 +385,7 @@ const editionMirror: Partial<Record<string, string>> = {
                 </div>
               )}
               <ul class="release-list">
-                {category.downloads!.map((download: Download, index: number) => (
+                {releases.map((download: Download, index: number) => (
                   <li class={`release-item ${index === 0 ? 'is-latest' : ''}`}>
                     <div class="release-info">
                       <div class="release-top">
