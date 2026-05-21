@@ -4,7 +4,17 @@
       "id": "game",
       "name": "游戏版",
       "description": "专为游戏优化，低延迟",
-      "status": "developing"
+      "status": "developing",
+      "downloads": [
+          
+        {
+          "version": "1.0.0",
+          "url": "https://pan.quark.cn/s/e65dbea899f2",
+          "date": "1.0.0",
+          "platforms": ["Windows","android","linux"]
+        }
+       
+      ]
     },
     {
       "id": "universal",
