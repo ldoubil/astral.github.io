@@ -184,6 +184,39 @@ import downloads from '../../public/downloads.json';
     height: 20px;
   }
 
+  .download-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .download-button.android-random {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: none;
+  }
+
+  .download-button.android-random:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .android-random-hint {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.82);
+    text-align: center;
+  }
+
+  .android-random-wrap.hidden {
+    display: none;
+  }
+
   .github-link {
     display: flex;
     align-items: center;
@@ -258,19 +291,47 @@ import downloads from '../../public/downloads.json';
       <label for="version-select">选择版本:</label>
       <select id="version-select">
         {downloads.map((download, index) => (
-          <option value={download.url} selected={index === 0}>
+          <option
+            value={download.url}
+            selected={index === 0}
+            data-android-random={'androidRandomPackage' in download ? download.androidRandomPackage : ''}
+          >
             {download.version} {index === 0 ? '(最新)' : ''} - {download.date}
           </option>
         ))}
       </select>
     </div>
 
-    <a href={downloads[0].url} target="_blank" rel="noopener noreferrer" class="download-button" id="download-link">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-      </svg>
-      立即下载
-    </a>
+    <div class="download-actions">
+      <a href={downloads[0].url} target="_blank" rel="noopener noreferrer" class="download-button" id="download-link">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        立即下载
+      </a>
+
+      <div
+        class:list={[
+          'android-random-wrap',
+          { hidden: !('androidRandomPackage' in downloads[0]) },
+        ]}
+        id="android-random-wrap"
+      >
+        <a
+          href={'androidRandomPackage' in downloads[0] ? downloads[0].androidRandomPackage : '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="download-button android-random"
+          id="android-random-link"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85a.637.637 0 00-.83.22l-1.88 3.24a11.43 11.43 0 00-8.94 0L5.65 5.67a.643.643 0 00-.87-.2.616.616 0 00-.27.83l1.84 3.19a9.74 9.74 0 00-3.66 6.33H2v2h2.07a9.74 9.74 0 003.66 6.33l-1.84 3.19a.616.616 0 00.27.83.643.643 0 00.87-.2l1.88-3.24a11.43 11.43 0 008.94 0l1.88 3.24c.2.34.59.45.87.2.3-.16.42-.54.26-.85l-1.84-3.18a9.74 9.74 0 003.66-6.33H22v-2h-2.07a9.74 9.74 0 00-3.66-6.33zM12 16.5A4.5 4.5 0 1116.5 12 4.5 4.5 0 0112 16.5z"/>
+          </svg>
+          Android 随机包名版
+        </a>
+        <p class="android-random-hint">仅 Android，包名随机化，无法安装时可尝试此版本</p>
+      </div>
+    </div>
   </div>
 
   <a href="https://github.com/ldoubil/astral/releases" target="_blank" rel="noopener noreferrer" class="github-link">
@@ -286,9 +347,29 @@ import downloads from '../../public/downloads.json';
 <script>
   const select = document.getElementById('version-select') as HTMLSelectElement;
   const downloadLink = document.getElementById('download-link') as HTMLAnchorElement;
+  const androidRandomWrap = document.getElementById('android-random-wrap');
+  const androidRandomLink = document.getElementById('android-random-link') as HTMLAnchorElement;
+
+  function updateAndroidRandomPackage() {
+    if (!select || !androidRandomWrap || !androidRandomLink) return;
+
+    const option = select.selectedOptions[0];
+    const androidUrl = option?.dataset.androidRandom ?? '';
+
+    if (androidUrl) {
+      androidRandomWrap.classList.remove('hidden');
+      androidRandomLink.href = androidUrl;
+    } else {
+      androidRandomWrap.classList.add('hidden');
+      androidRandomLink.href = '#';
+    }
+  }
 
   select?.addEventListener('change', (e) => {
     const target = e.target as HTMLSelectElement;
     downloadLink.href = target.value;
+    updateAndroidRandomPackage();
   });
+
+  updateAndroidRandomPackage();
 </script>
