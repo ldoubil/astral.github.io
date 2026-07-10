@@ -1,5 +1,6 @@
 {
   "mcservers": [
-
+ { "name":"白名单服务器（防熊）","host":"mc.zuoriyi.top","port":26688},
+     { "name":"1.20.4正版 生电服","host":"45.253.142.42","port":25565}
         ]
 }
