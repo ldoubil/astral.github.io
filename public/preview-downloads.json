@@ -1,38 +1,76 @@
-{
-  "categories": [
-    {
-      "id": "game",
-      "name": "游戏版",
-      "description": "专为游戏优化，低延迟",
-      "status": "available",
-      "downloads": [
-        {
-          "version": "1.0.0",
-          "url": "https://pan.quark.cn/s/e65dbea899f2",
-          "date": "1.0.0",
-          "platforms": ["Windows", "Android", "Linux"]
-        }
-      ]
-    },
-    {
-      "id": "universal",
-      "name": "通用版",
-      "description": "全功能预览，适合日常联机测试",
-      "status": "available",
-      "downloads": [
-        {
-          "version": "1.0.0-beta.1+2",
-          "url": "https://pan.quark.cn/s/1e80803cc77c",
-          "date": "Beta 2",
-          "platforms": ["Windows"]
-        },
-        {
-          "version": "1.0.0-beta.1+1",
-          "url": "https://pan.quark.cn/s/3e69def6aa12",
-          "date": "Beta 1",
-          "platforms": ["Windows"]
-        }
-      ]
-    }
-  ]
-}
+{
+
+  "categories": [
+
+    {
+
+      "id": "game",
+
+      "name": "游戏版",
+
+      "description": "专为游戏优化，低延迟",
+
+      "status": "available",
+
+      "downloads": [
+
+        {
+
+          "version": "1.0.0",
+
+          "url": "https://pan.quark.cn/s/e65dbea899f2",
+
+          "date": "1.0.0",
+
+          "platforms": ["Windows", "Android", "Linux"]
+
+        }
+
+      ]
+
+    },
+
+    {
+
+      "id": "universal",
+
+      "name": "通用版",
+
+      "description": "全功能预览，适合日常联机测试",
+
+      "status": "available",
+
+      "downloads": [
+
+        {
+
+          "version": "1.0.0-beta.1+2",
+
+          "url": "https://pan.quark.cn/s/1e80803cc77c",
+
+          "date": "Beta 2",
+
+          "platforms": ["Windows"]
+
+        },
+
+        {
+
+          "version": "1.0.0-beta.1+1",
+
+          "url": "https://pan.quark.cn/s/3e69def6aa12",
+
+          "date": "Beta 1",
+
+          "platforms": ["Windows"]
+
+        }
+
+      ]
+
+    }
+
+  ]
+
+}
+
