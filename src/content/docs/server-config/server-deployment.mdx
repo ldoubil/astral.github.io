@@ -280,6 +280,8 @@ systemctl restart easytier@default
 
 **Step 1：** 下载easytier的linux包（在QQ群文件），随后将该文件移动到自己电脑桌面方便后续使用
 
+> ⚠️ **重要提醒：** 图示文件可能与群文件中的版本不同，请选择无视（因为群文件会更新）
+
 ![退出](/images/服务器部署/服务器部署-25.png)
 
 ![退出](/images/服务器部署/服务器部署-26.png)
@@ -311,10 +313,10 @@ mkdir easytier
 **Step 5：** 在上方窗口输入该命令
 
 ```
-cd easytier && unzip easytier-linux-x86_64-v2.5.0.zip && cd easytier-linux-x86_64 && ./easytier-cli service install -c /easytier/easytier-linux-x86_64/config/default.conf && ./easytier-cli service start
+cd easytier && unzip easytier-linux-x86_64-v2.6.4.zip && cd easytier-linux-x86_64 && ./easytier-cli service install -c /easytier/easytier-linux-x86_64/config/default.conf && ./easytier-cli service start
 ```
 
-**Step 5：** 随后，您可以正常[使用Astral连接到您的服务器](#-使用astral连接到您的服务器)了,或者继续配置[进阶教程](#-进阶教程)以保护您的服务器
+**Step 6：** 随后，您可以正常[使用Astral连接到您的服务器](#-使用astral连接到您的服务器)了,或者继续配置[进阶教程](#-进阶教程)以保护您的服务器
 
 #### 如果您需要修改配置文件，根据上面的第Step 3刷新后，在下方文件中进入该目录即可找到配置文件
 
@@ -322,10 +324,16 @@ cd easytier && unzip easytier-linux-x86_64-v2.5.0.zip && cd easytier-linux-x86_6
 
 > ⚠️ **重要提醒：** 改完配置文件后请点击左上角**文件**，随后选择**保存**，FinalShell将会自动上传替换配置文件
 
-**随后使用该命令重启easytier即可**
+**Step 7：**随后使用该命令重启easytier即可
 
 ```
 ./easytier-cli service stop && ./easytier-cli service start
+```
+
+> ⚠️ **重要提醒：** 确认操作目录是否在easytier，如果不是请使用以下命令进入easytier目录
+
+```
+cd easytier
 ```
 
 ## 🎉 写在最后
