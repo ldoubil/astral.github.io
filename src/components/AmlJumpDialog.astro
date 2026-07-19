@@ -1,0 +1,163 @@
+---
+const AML_URL = 'https://aml.astral.fan/';
+---
+
+<dialog class="aml-jump-dialog" data-aml-jump-dialog aria-labelledby="aml-jump-dialog-title">
+	<div class="aml-jump-dialog-inner">
+		<img class="aml-jump-dialog-logo" src="/images/aml-logo.png" alt="AML" width="120" height="48" decoding="async" />
+		<p class="aml-jump-dialog-kicker">MC 启动器测试</p>
+		<h2 id="aml-jump-dialog-title">前往测试邀请页？</h2>
+		<p>将离开 Astral 文档站，打开 <strong>aml.astral.fan</strong> 查看 MC 启动器测试说明。</p>
+		<div class="aml-jump-dialog-actions">
+			<button type="button" class="aml-jump-dialog-cancel" data-aml-jump-cancel>
+				留在本站
+			</button>
+			<button type="button" class="aml-jump-dialog-confirm" data-aml-jump-confirm>
+				前往 AML
+			</button>
+		</div>
+	</div>
+</dialog>
+
+<script>
+	const AML_URL = 'https://aml.astral.fan/';
+
+	const dialog = document.querySelector('[data-aml-jump-dialog]');
+	const cancelBtn = document.querySelector('[data-aml-jump-cancel]');
+	const confirmBtn = document.querySelector('[data-aml-jump-confirm]');
+
+	if (dialog instanceof HTMLDialogElement && cancelBtn && confirmBtn) {
+		let pendingUrl = AML_URL;
+
+		const openDialog = (url: string) => {
+			pendingUrl = url;
+			dialog.showModal();
+		};
+
+		const closeDialog = () => dialog.close();
+
+		cancelBtn.addEventListener('click', closeDialog);
+		confirmBtn.addEventListener('click', () => {
+			closeDialog();
+			window.open(pendingUrl, '_blank', 'noopener,noreferrer');
+		});
+
+		dialog.addEventListener('click', (event) => {
+			if (event.target === dialog) closeDialog();
+		});
+
+		document.addEventListener(
+			'click',
+			(event) => {
+				const target = event.target;
+				if (!(target instanceof Element)) return;
+				const link = target.closest('a[href*="aml.astral.fan"], a[data-aml-invite]');
+				if (!(link instanceof HTMLAnchorElement)) return;
+				event.preventDefault();
+				openDialog(link.href || AML_URL);
+			},
+			true,
+		);
+	}
+</script>
+
+<style is:global>
+	.aml-jump-dialog {
+		--aml-green: #3ddc84;
+		margin: auto;
+		padding: 0;
+		border: 1px solid color-mix(in srgb, var(--aml-green) 32%, transparent);
+		border-radius: 1rem;
+		background:
+			radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--aml-green) 18%, transparent), transparent 55%),
+			linear-gradient(180deg, #121a2b, #0b1220);
+		color: #e8eefc;
+		box-shadow:
+			0 24px 60px rgba(0, 0, 0, 0.55),
+			0 0 0 1px color-mix(in srgb, var(--aml-green) 10%, transparent);
+		width: min(22.5rem, calc(100vw - 2rem));
+	}
+
+	.aml-jump-dialog::backdrop {
+		background: color-mix(in srgb, #020617 64%, transparent);
+		backdrop-filter: blur(6px);
+	}
+
+	.aml-jump-dialog-inner {
+		padding: 1.35rem 1.4rem 1.25rem;
+	}
+
+	.aml-jump-dialog-logo {
+		display: block;
+		height: 2rem;
+		width: auto;
+		margin: 0 0 0.85rem;
+		object-fit: contain;
+	}
+
+	.aml-jump-dialog-kicker {
+		margin: 0 0 0.45rem;
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: color-mix(in srgb, var(--aml-green) 78%, white);
+	}
+
+	.aml-jump-dialog-inner h2 {
+		margin: 0;
+		font-size: 1.22rem;
+		font-weight: 800;
+		color: #f8fafc;
+	}
+
+	.aml-jump-dialog-inner > p {
+		margin: 0.7rem 0 0;
+		font-size: 0.94rem;
+		line-height: 1.6;
+		color: color-mix(in srgb, #cbd5e1 92%, white);
+	}
+
+	.aml-jump-dialog-inner strong {
+		color: #f8fafc;
+		font-weight: 700;
+	}
+
+	.aml-jump-dialog-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.65rem;
+		margin-top: 1.25rem;
+	}
+
+	.aml-jump-dialog-cancel,
+	.aml-jump-dialog-confirm {
+		appearance: none;
+		border: 0;
+		cursor: pointer;
+		border-radius: 0.55rem;
+		padding: 0.55rem 1rem;
+		font-size: 0.88rem;
+		font-weight: 700;
+		font-family: inherit;
+	}
+
+	.aml-jump-dialog-cancel {
+		color: #e8eefc;
+		background: color-mix(in srgb, white 8%, transparent);
+		border: 1px solid color-mix(in srgb, white 14%, transparent);
+	}
+
+	.aml-jump-dialog-cancel:hover {
+		background: color-mix(in srgb, white 14%, transparent);
+	}
+
+	.aml-jump-dialog-confirm {
+		color: #04140c;
+		background: linear-gradient(180deg, #5cf0a0, var(--aml-green));
+	}
+
+	.aml-jump-dialog-confirm:hover {
+		filter: brightness(1.05);
+	}
+</style>
