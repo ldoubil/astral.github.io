@@ -1,31 +1,33 @@
 {
-    "version": 6,
-    "games":  [
-                  {
-                      "id":  "minecraft",
-                      "name":  "Minecraft",
-                      "color":  "#5D9C3E",
-                      "icon":  "terrain",
-                      "sgdb_game_id":  38365,
-                      "icon_asset":  "games/minecraft/icon.png",
-                      "grid_asset":  "games/minecraft/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  10,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "network":  {
-                                                                        "protocol":  "tcp"
-                                                                    },
-                                                        "lan_game_discover":  {
-                                                                                  "type":  "udp_multicast",
-                                                                                  "multicast":  "224.0.2.60:4445",
-                                                                                  "parser":  "minecraft_motd",
-                                                                                  "title":  "{player} · {game}"
-                                                                              }
-                                                    }
-                                    }
-                  },
-          {
+  "version": 8,
+  "games": [
+    {
+      "id": "minecraft",
+      "name": "Minecraft",
+      "name_zh": "我的世界",
+      "description": "开局域网世界，客人在本机游戏列表加入",
+      "color": "#5D9C3E",
+      "icon": "terrain",
+      "sgdb_game_id": 38365,
+      "icon_asset": "games/minecraft/icon.png",
+      "grid_asset": "games/minecraft/grid.png",
+      "show_in_picker": true,
+      "sort": 10,
+      "platforms": {
+        "windows": {
+          "network": {
+            "protocol": "tcp"
+          },
+          "lan_game_discover": {
+            "type": "udp_multicast",
+            "multicast": "224.0.2.60:4445",
+            "parser": "minecraft_motd",
+            "title": "{player} · {game}"
+          }
+        }
+      }
+    },
+    {
       "id":  "grand_theft_auto_v",
       "name":  "Grand Theft Auto V",
       "name_zh": "侠盗猎车手5",
@@ -54,274 +56,398 @@
         }
       }
     },
-                  {
-                      "id":  "mindustry",
-                      "name":  "Mindustry",
-                      "color":  "#C4A35A",
-                      "icon":  "precision_manufacturing",
-                      "steam_app_id":  1127400,
-                      "icon_asset":  "games/mindustry/icon.png",
-                      "grid_asset":  "games/mindustry/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  20,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "lan_game_discover":  {
-                                                                                  "type":  "udp_probe",
-                                                                                  "probe":  "fe01",
-                                                                                  "parser":  "mindustry_server",
-                                                                                  "multicast":  "227.2.7.7:20151",
-                                                                                  "port":  6567
-                                                                              }
-                                                    }
-                                    }
-                  },
-                  {
-                      "id":  "forged_alliance",
-                      "name":  "Forged Alliance",
-                      "color":  "#3B6EA5",
-                      "icon":  "military_tech",
-                      "steam_app_id":  9420,
-                      "sgdb_game_id":  31467,
-                      "icon_asset":  "games/forged_alliance/icon.png",
-                      "grid_asset":  "games/forged_alliance/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  25,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "network":  {
-                                                                        "enable_udp_broadcast_relay":  true
-                                                                    },
-                                                        "lan_game_discover":  {
-                                                                                  "id":  "scfa",
-                                                                                  "type":  "process_udp",
-                                                                                  "parser":  "scfa_lan",
-                                                                                  "beacon_port":  15000,
-                                                                                  "process":  [
-                                                                                                  "game.exe",
-                                                                                                  "ForgedAlliance.exe",
-                                                                                                  "SupremeCommander.exe"
-                                                                                              ],
-                                                                                  "window":  [
-                                                                                                 "Forged Alliance",
-                                                                                                 "Supreme Commander"
-                                                                                             ],
-                                                                                  "title":  "{player} * Astral",
-                                                                                  "label":  "Forged Alliance"
-                                                                              }
-                                                    }
-                                    }
-                  },
-                  {
-                      "id":  "raft",
-                      "name":  "Raft",
-                      "color":  "#2A7F9E",
-                      "icon":  "sailing",
-                      "steam_app_id":  648800,
-                      "sgdb_game_id":  18740,
-                      "icon_asset":  "games/raft/icon.png",
-                      "grid_asset":  "games/raft/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  22,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "network":  {
-                                                                        "enable_udp_broadcast_relay":  true
-                                                                    },
-                                                        "lan_game_discover":  {
-                                                                                  "id":  "raft_lan",
-                                                                                  "type":  "udp_broadcast",
-                                                                                  "port":  6489,
-                                                                                  "parser":  "raft_lan",
-                                                                                  "title":  "{player} * Astral",
-                                                                                  "label":  "Raft"
-                                                                              },
-                                                        "inject":  {
-                                                                       "type":  "mono",
-                                                                       "process":  [
-                                                                                       "Raft.exe"
-                                                                                   ],
-                                                                       "dll":  "AstralRaftNet.dll",
-                                                                       "namespace":  "AstralRaftNet",
-                                                                       "class":  "Loader",
-                                                                       "method":  "Init"
-                                                                   }
-                                                    }
-                                    }
-                  },
-                  {
-                      "id":  "stardew_valley",
-                      "name":  "Stardew Valley",
-                      "color":  "#5B8C5A",
-                      "icon":  "grass",
-                      "steam_app_id":  413150,
-                      "icon_asset":  "games/stardew_valley/icon.png",
-                      "grid_asset":  "games/stardew_valley/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  30,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "lan_game_discover":  {
-                                                                                  "type":  "static_port",
-                                                                                  "port":  24642
-                                                                              }
-                                                    }
-                                    }
-                  },
-                  {
-                      "id":  "terraria",
-                      "name":  "Terraria",
-                      "color":  "#2E7D5B",
-                      "icon":  "forest",
-                      "steam_app_id":  105600,
-                      "icon_asset":  "games/terraria/icon.png",
-                      "grid_asset":  "games/terraria/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  40
-                  },
-                  {
-                      "id":  "valheim",
-                      "name":  "Valheim",
-                      "color":  "#4A6FA5",
-                      "icon":  "ac_unit",
-                      "steam_app_id":  892970,
-                      "icon_asset":  "games/valheim/icon.png",
-                      "grid_asset":  "games/valheim/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  50,
-                      "platforms":  {
-                                        "windows":  {
-                                                        "network":  {
-                                                                        "enable_udp_broadcast_relay":  true
-                                                                    },
-                                                        "lan_game_discover":  {
-                                                                                  "id":  "valheim_lan",
-                                                                                  "type":  "udp_broadcast",
-                                                                                  "port":  2460,
-                                                                                  "parser":  "valheim_lan",
-                                                                                  "title":  "{player} * Astral",
-                                                                                  "label":  "Valheim"
-                                                                              },
-                                                        "inject":  {
-                                                                       "type":  "mono",
-                                                                       "process":  [
-                                                                                       "valheim.exe"
-                                                                                   ],
-                                                                       "dll":  "AstralValheimNet.dll",
-                                                                       "namespace":  "AstralValheimNet",
-                                                                       "class":  "Loader",
-                                                                       "method":  "Init",
-                                                                       "delay_seconds":  8
-                                                                   }
-                                                    }
-                                    }
-                  },
-                  {
-                      "id":  "palworld",
-                      "name":  "Palworld",
-                      "color":  "#E07A3D",
-                      "icon":  "pets",
-                      "steam_app_id":  1623730,
-                      "icon_asset":  "games/palworld/icon.png",
-                      "grid_asset":  "games/palworld/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  60
-                  },
-                  {
-                      "id":  "factorio",
-                      "name":  "Factorio",
-                      "color":  "#C5753A",
-                      "icon":  "factory",
-                      "steam_app_id":  427520,
-                      "icon_asset":  "games/factorio/icon.png",
-                      "grid_asset":  "games/factorio/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  70
-                  },
-                  {
-                      "id":  "dont_starve_together",
-                      "name":  "Don't Starve Together",
-                      "color":  "#8B5A2B",
-                      "icon":  "outdoors",
-                      "steam_app_id":  322330,
-                      "icon_asset":  "games/dont_starve_together/icon.png",
-                      "grid_asset":  "games/dont_starve_together/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  80
-                  },
-                  {
-                      "id":  "project_zomboid",
-                      "name":  "Project Zomboid",
-                      "color":  "#6B4F3A",
-                      "icon":  "coronavirus",
-                      "steam_app_id":  108600,
-                      "icon_asset":  "games/project_zomboid/icon.png",
-                      "grid_asset":  "games/project_zomboid/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  90
-                  },
-                  {
-                      "id":  "v_rising",
-                      "name":  "V Rising",
-                      "color":  "#8B1E3F",
-                      "icon":  "nightlight",
-                      "steam_app_id":  1604030,
-                      "icon_asset":  "games/v_rising/icon.png",
-                      "grid_asset":  "games/v_rising/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  100
-                  },
-                  {
-                      "id":  "satisfactory",
-                      "name":  "Satisfactory",
-                      "color":  "#E8A838",
-                      "icon":  "precision_manufacturing",
-                      "steam_app_id":  526870,
-                      "icon_asset":  "games/satisfactory/icon.png",
-                      "grid_asset":  "games/satisfactory/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  110
-                  },
-                  {
-                      "id":  "seven_days_to_die",
-                      "name":  "7 Days to Die",
-                      "color":  "#5C4033",
-                      "icon":  "warning",
-                      "steam_app_id":  251570,
-                      "icon_asset":  "games/seven_days_to_die/icon.png",
-                      "grid_asset":  "games/seven_days_to_die/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  120
-                  },
-                  {
-                      "id":  "ark",
-                      "name":  "ARK: Survival Evolved",
-                      "color":  "#3D7A5C",
-                      "icon":  "pets",
-                      "steam_app_id":  346110,
-                      "icon_asset":  "games/ark/icon.png",
-                      "grid_asset":  "games/ark/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  130
-                  },
-                  {
-                      "id":  "rust",
-                      "name":  "Rust",
-                      "color":  "#A0522D",
-                      "icon":  "hardware",
-                      "steam_app_id":  252490,
-                      "icon_asset":  "games/rust/icon.png",
-                      "grid_asset":  "games/rust/grid.png",
-                      "show_in_picker":  true,
-                      "sort":  140
-                  },
-                  {
-                      "id":  "other",
-                      "name":  "其他",
-                      "color":  "#6B7280",
-                      "icon":  "sports_esports_outlined",
-                      "show_in_picker":  true,
-                      "sort":  900
-                  }
-              ]
+    {
+      "id": "mindustry",
+      "name": "Mindustry",
+      "name_zh": "像素工厂",
+      "color": "#C4A35A",
+      "icon": "precision_manufacturing",
+      "steam_app_id": 1127400,
+      "icon_asset": "games/mindustry/icon.png",
+      "grid_asset": "games/mindustry/grid.png",
+      "show_in_picker": true,
+      "sort": 20,
+      "platforms": {
+        "windows": {
+          "lan_game_discover": {
+            "type": "udp_probe",
+            "probe": "fe01",
+            "parser": "mindustry_server",
+            "multicast": "227.2.7.7:20151",
+            "port": 6567
+          }
+        }
+      }
+    },
+    {
+      "id": "raft",
+      "name": "Raft",
+      "name_zh": "木筏求生",
+      "color": "#2A7F9E",
+      "icon": "sailing",
+      "steam_app_id": 648800,
+      "sgdb_game_id": 18740,
+      "icon_asset": "games/raft/icon.png",
+      "grid_asset": "games/raft/grid.png",
+      "show_in_picker": true,
+      "sort": 22,
+      "platforms": {
+        "windows": {
+          "network": {
+            "enable_udp_broadcast_relay": true
+          },
+          "lan_game_discover": {
+            "id": "raft_lan",
+            "type": "udp_broadcast",
+            "port": 6489,
+            "parser": "raft_lan",
+            "title": "{player} * Astral",
+            "label": "Raft"
+          },
+          "inject": {
+            "type": "mono",
+            "process": [
+              "Raft.exe"
+            ],
+            "dll": "AstralRaftNet.dll",
+            "namespace": "AstralRaftNet",
+            "class": "Loader",
+            "method": "Init"
+          }
+        }
+      }
+    },
+    {
+      "id": "stardew_valley",
+      "name": "Stardew Valley",
+      "name_zh": "星露谷物语",
+      "color": "#5B8C5A",
+      "icon": "grass",
+      "steam_app_id": 413150,
+      "icon_asset": "games/stardew_valley/icon.png",
+      "grid_asset": "games/stardew_valley/grid.png",
+      "show_in_picker": true,
+      "sort": 30,
+      "platforms": {
+        "windows": {
+          "lan_game_discover": {
+            "type": "static_port",
+            "port": 24642
+          }
+        }
+      }
+    },
+    {
+      "id": "terraria",
+      "name": "Terraria",
+      "name_zh": "泰拉瑞亚",
+      "color": "#2E7D5B",
+      "icon": "forest",
+      "steam_app_id": 105600,
+      "icon_asset": "games/terraria/icon.png",
+      "grid_asset": "games/terraria/grid.png",
+      "show_in_picker": true,
+      "sort": 40
+    },
+    {
+      "id": "valheim",
+      "name": "Valheim",
+      "name_zh": "英灵神殿",
+      "color": "#4A6FA5",
+      "icon": "ac_unit",
+      "steam_app_id": 892970,
+      "icon_asset": "games/valheim/icon.png",
+      "grid_asset": "games/valheim/grid.png",
+      "show_in_picker": true,
+      "sort": 50,
+      "platforms": {
+        "windows": {
+          "network": {
+            "enable_udp_broadcast_relay": true
+          },
+          "lan_game_discover": {
+            "id": "valheim_lan",
+            "type": "udp_broadcast",
+            "port": 2460,
+            "parser": "valheim_lan",
+            "title": "{player} * Astral",
+            "label": "Valheim"
+          },
+          "inject": {
+            "type": "mono",
+            "process": [
+              "valheim.exe"
+            ],
+            "dll": "AstralValheimNet.dll",
+            "namespace": "AstralValheimNet",
+            "class": "Loader",
+            "method": "Init",
+            "delay_seconds": 8
+          }
+        }
+      }
+    },
+    {
+      "id": "palworld",
+      "name": "Palworld",
+      "name_zh": "幻兽帕鲁",
+      "color": "#E07A3D",
+      "icon": "pets",
+      "steam_app_id": 1623730,
+      "icon_asset": "games/palworld/icon.png",
+      "grid_asset": "games/palworld/grid.png",
+      "show_in_picker": true,
+      "sort": 60
+    },
+    {
+      "id": "factorio",
+      "name": "Factorio",
+      "name_zh": "异星工厂",
+      "color": "#C5753A",
+      "icon": "factory",
+      "steam_app_id": 427520,
+      "icon_asset": "games/factorio/icon.png",
+      "grid_asset": "games/factorio/grid.png",
+      "show_in_picker": true,
+      "sort": 70
+    },
+    {
+      "id": "dont_starve_together",
+      "name": "Don't Starve Together",
+      "name_zh": "饥荒联机版",
+      "color": "#8B5A2B",
+      "icon": "outdoors",
+      "steam_app_id": 322330,
+      "icon_asset": "games/dont_starve_together/icon.png",
+      "grid_asset": "games/dont_starve_together/grid.png",
+      "show_in_picker": true,
+      "sort": 80
+    },
+    {
+      "id": "project_zomboid",
+      "name": "Project Zomboid",
+      "name_zh": "僵尸毁灭工程",
+      "color": "#6B4F3A",
+      "icon": "coronavirus",
+      "steam_app_id": 108600,
+      "icon_asset": "games/project_zomboid/icon.png",
+      "grid_asset": "games/project_zomboid/grid.png",
+      "show_in_picker": true,
+      "sort": 90
+    },
+    {
+      "id": "v_rising",
+      "name": "V Rising",
+      "name_zh": "夜族崛起",
+      "color": "#8B1E3F",
+      "icon": "nightlight",
+      "steam_app_id": 1604030,
+      "icon_asset": "games/v_rising/icon.png",
+      "grid_asset": "games/v_rising/grid.png",
+      "show_in_picker": true,
+      "sort": 100
+    },
+    {
+      "id": "satisfactory",
+      "name": "Satisfactory",
+      "name_zh": "幸福工厂",
+      "color": "#E8A838",
+      "icon": "precision_manufacturing",
+      "steam_app_id": 526870,
+      "icon_asset": "games/satisfactory/icon.png",
+      "grid_asset": "games/satisfactory/grid.png",
+      "show_in_picker": true,
+      "sort": 110
+    },
+    {
+      "id": "seven_days_to_die",
+      "name": "7 Days to Die",
+      "name_zh": "七日杀",
+      "color": "#5C4033",
+      "icon": "warning",
+      "steam_app_id": 251570,
+      "icon_asset": "games/seven_days_to_die/icon.png",
+      "grid_asset": "games/seven_days_to_die/grid.png",
+      "show_in_picker": true,
+      "sort": 120
+    },
+    {
+      "id": "ark",
+      "name": "ARK: Survival Evolved",
+      "name_zh": "方舟：生存进化",
+      "color": "#3D7A5C",
+      "icon": "pets",
+      "steam_app_id": 346110,
+      "icon_asset": "games/ark/icon.png",
+      "grid_asset": "games/ark/grid.png",
+      "show_in_picker": true,
+      "sort": 130
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "name_zh": "腐蚀",
+      "color": "#A0522D",
+      "icon": "hardware",
+      "steam_app_id": 252490,
+      "icon_asset": "games/rust/icon.png",
+      "grid_asset": "games/rust/grid.png",
+      "show_in_picker": true,
+      "sort": 140
+    },
+    {
+      "id": "forged_alliance",
+      "name": "Supreme Commander: Forged Alliance",
+      "name_zh": "最高指挥官：钢铁联盟",
+      "color": "#3B6EA5",
+      "icon": "military_tech",
+      "steam_app_id": 9420,
+      "sgdb_game_id": 31467,
+      "icon_asset": "games/forged_alliance/icon.png",
+      "grid_asset": "games/forged_alliance/grid.png",
+      "show_in_picker": true,
+      "sort": 25,
+      "platforms": {
+        "windows": {
+          "network": {
+            "enable_udp_broadcast_relay": true
+          },
+          "lan_game_discover": {
+            "id": "scfa",
+            "type": "process_udp",
+            "parser": "scfa_lan",
+            "beacon_port": 15000,
+            "process": [
+              "game.exe",
+              "ForgedAlliance.exe",
+              "SupremeCommander.exe"
+            ],
+            "window": [
+              "Forged Alliance",
+              "Supreme Commander"
+            ],
+            "title": "{player} * Astral",
+            "label": "Forged Alliance"
+          }
+        }
+      }
+    },
+    {
+      "id": "payday_the_heist",
+      "name": "PAYDAY: The Heist",
+      "name_zh": "收获日：掠夺",
+      "color": "#A0522D",
+      "icon": "hardware",
+      "steam_app_id": 24240,
+      "icon_asset": "games/payday_the_heist/icon.png",
+      "grid_asset": "games/payday_the_heist/grid.png",
+      "show_in_picker": true,
+      "sort": 150,
+      "platforms": {
+        "windows": {
+          "magic_wall": {
+            "steam.exe": [
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "3478"
+              },
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "4379-4400"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "left_4_dead",
+      "name": "Left 4 Dead",
+      "name_zh": "求生之路",
+      "color": "#A0522D",
+      "icon": "hardware",
+      "steam_app_id": 500,
+      "icon_asset": "games/left_4_dead/icon.png",
+      "grid_asset": "games/left_4_dead/grid.png",
+      "show_in_picker": true,
+      "sort": 160,
+      "platforms": {
+        "windows": {
+          "magic_wall": {
+            "steam.exe": [
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "3478"
+              },
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "4379-4400"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "left_4_dead_2",
+      "name": "Left 4 Dead 2",
+      "name_zh": "求生之路2",
+      "color": "#A0522D",
+      "icon": "hardware",
+      "steam_app_id": 550,
+      "icon_asset": "games/left_4_dead_2/icon.png",
+      "grid_asset": "games/left_4_dead_2/grid.png",
+      "show_in_picker": true,
+      "sort": 170,
+      "platforms": {
+        "windows": {
+          "magic_wall": {
+            "steam.exe": [
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "3478"
+              },
+              {
+                "action": "block",
+                "protocol": "udp",
+                "direction": "both",
+                "remote_port": "4379-4400"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "sudden_strike_II",
+      "name": "Sudden Strike II",
+      "name_zh": "突袭2",
+      "color": "#A0522D",
+      "icon": "hardware",
+      "steam_app_id": 612520,
+      "icon_asset": "games/sudden_strike_II/icon.png",
+      "grid_asset": "games/sudden_strike_II/grid.png",
+      "show_in_picker": true,
+      "sort": 180
+    },
+    {
+      "id": "other",
+      "name": "其他",
+      "name_zh": "其他",
+      "color": "#6B7280",
+      "icon": "sports_esports_outlined",
+      "show_in_picker": true,
+      "sort": 900
+    }
+  ]
 }
