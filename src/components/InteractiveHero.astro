@@ -9,7 +9,11 @@ export interface Props {
   }>;
 }
 
-const { title = 'Astral', tagline, actions } = Astro.props;
+const {
+  title = 'Astral',
+  tagline = '跨平台 P2P 游戏联机软件，轻松实现多人联机',
+  actions
+} = Astro.props;
 
 const defaultActions = [
   {
@@ -18,7 +22,7 @@ const defaultActions = [
     variant: 'primary' as const
   },
   {
-    text: '下载应用', 
+    text: '下载应用',
     link: '/quick-start/download-install/',
     variant: 'secondary' as const
   },
@@ -26,53 +30,43 @@ const defaultActions = [
     text: '前往新版',
     link: 'https://next.astral.fan/',
     variant: 'secondary' as const
-  },
-
+  }
 ];
 
-const heroActions = actions || defaultActions;
+const heroActions = actions && actions.length ? actions : defaultActions;
 ---
 
 <div class="hero-wrapper">
-  <a class="astral-next-banner" href="https://next.astral.fan/" data-rift="true">
-    <div class="banner-content">
-      <span class="banner-icon">🎮</span>
-      <span class="banner-text">Astral Game 已上线，前往 next.astral.fan</span>
-    </div>
+  <a class="astral-next-banner" href="https://next.astral.fan/" rel="noopener">
+    <span class="banner-badge">NEW</span>
+    <span class="banner-text">Astral Game 已上线，前往 next.astral.fan</span>
+    <span class="banner-arrow" aria-hidden="true">→</span>
   </a>
 
-  <div id="interactive-hero" class="hero-container">
-    <div class="hero-left">
-      <div class="astral-logo">
-        <div class="logo-circles">
-          <div class="circle circle-1"></div>
-          <div class="circle circle-2"></div>
-          <div class="circle circle-3"></div>
-        </div>
-        <div class="logo-content">
-          <canvas id="astral-canvas" class="logo-text-canvas"></canvas>
-        
-          {tagline && <div class="logo-tagline">{tagline}</div>}
-        </div>
-      </div>
+  <div class="hero-container">
+    <h1 class="hero-title-sr">{title}</h1>
+
+    <div class="astral-logo">
+      <canvas id="astral-canvas" class="logo-text-canvas" aria-hidden="true"></canvas>
     </div>
-    <div class="hero-right">
-      <div class="hero-actions">
-        {heroActions.map((action) => {
-          const isNext = action.link.includes('next.astral.fan');
-          return (
-            <a 
-              href={action.link} 
-              class={`action-button ${action.variant || 'secondary'}${isNext ? ' action-next' : ''}`}
-              data-rift={isNext ? 'true' : undefined}
-              target={action.link.startsWith('http') && !isNext ? '_blank' : undefined}
-              rel={action.link.startsWith('http') ? 'noopener' : undefined}
-            >
-              <span>{action.text}</span>
-            </a>
-          );
-        })}
-      </div>
+
+    {tagline && <p class="logo-tagline">{tagline}</p>}
+
+    <div class="hero-actions">
+      {heroActions.map((action) => {
+        const isNext = action.link.includes('next.astral.fan');
+        return (
+          <a
+            href={action.link}
+            class={`action-button ${action.variant || 'secondary'}${isNext ? ' action-next' : ''}`}
+            target={action.link.startsWith('http') && !isNext ? '_blank' : undefined}
+            rel={action.link.startsWith('http') ? 'noopener' : undefined}
+          >
+            <span>{action.text}</span>
+            {isNext && <span class="action-badge">新</span>}
+          </a>
+        );
+      })}
     </div>
   </div>
 </div>
@@ -85,149 +79,158 @@ class StardustText {
     this.ctx = canvas.getContext('2d');
     this.particles = [];
     this.text = 'Astral';
-    this.mouse = { x: 0, y: 0 };
+    this.mouse = { x: -9999, y: -9999 };
     this.isHovering = false;
+    this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     this.init();
-    this.animate();
-    this.setupResize();
-    this.setupMouseInteraction();
+    this.bindEvents();
+
+    if (this.reduced) {
+      this.drawStatic();
+    } else {
+      this.animate();
+    }
   }
-  
-  setupMouseInteraction() {
-    const canvasRect = this.canvas.getBoundingClientRect();
-    
-    // 鼠标移动事件
+
+  bindEvents() {
     this.canvas.addEventListener('mousemove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
-      this.mouse.x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
-      this.mouse.y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+      this.mouse.x = (e.clientX - rect.left) * (this.width / rect.width);
+      this.mouse.y = (e.clientY - rect.top) * (this.height / rect.height);
       this.isHovering = true;
     });
-    
-    // 鼠标进入
+
     this.canvas.addEventListener('mouseenter', () => {
       this.isHovering = true;
       this.canvas.style.cursor = 'pointer';
     });
-    
-    // 鼠标离开
+
     this.canvas.addEventListener('mouseleave', () => {
       this.isHovering = false;
+      this.mouse.x = -9999;
+      this.mouse.y = -9999;
       this.canvas.style.cursor = 'default';
     });
-    
-    // 点击事件 - 粒子爆炸效果
+
     this.canvas.addEventListener('click', () => {
       this.createExplosion();
     });
+
+    window.addEventListener('resize', () => {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => {
+        this.init();
+        if (this.reduced) this.drawStatic();
+      }, 200);
+    });
+
+    const themeObserver = new MutationObserver(() => {
+      if (this.reduced) this.drawStatic();
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
   }
-  
+
   createExplosion() {
-    // 为每个粒子添加爆炸效果
-    this.particles.forEach(particle => {
+    this.particles.forEach((particle) => {
       const dx = particle.x - this.mouse.x;
       const dy = particle.y - this.mouse.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+      const distance = Math.sqrt(dx * dx + dy * dy) || 1;
       const force = Math.max(0, 150 - distance) / 150;
-      
+
       particle.vx += (dx / distance) * force * 5;
       particle.vy += (dy / distance) * force * 5;
       particle.size += force * 2;
       particle.explosionTime = Date.now();
     });
   }
-  
-  setupResize() {
-    // 监听窗口大小变化
-    window.addEventListener('resize', () => {
-      clearTimeout(this.resizeTimeout);
-      this.resizeTimeout = setTimeout(() => {
-        this.init();
-      }, 200);
-    });
-  }
-  
-  getCanvasDimensions() {
-    const rect = this.canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    
-    // 根据屏幕尺寸调整
-    let width = 400;
-    let height = 120;
-    let fontSize = 80;
-    
-    if (window.innerWidth <= 480) {
-      width = 250;
-      height = 75;
-      fontSize = 50;
-    } else if (window.innerWidth <= 768) {
-      width = 300;
-      height = 90;
-      fontSize = 60;
-    } else if (window.innerWidth <= 1024) {
-      width = 350;
-      height = 105;
-      fontSize = 70;
-    }
-    
-    return { width, height, fontSize, dpr };
-  }
-  
+
   init() {
-    const { width, height, fontSize, dpr } = this.getCanvasDimensions();
-    
-    // 设置 canvas 实际尺寸
+    const rect = this.canvas.getBoundingClientRect();
+    const width = Math.max(240, Math.round(rect.width) || 440);
+    const height = Math.round(width * 0.3);
+    const fontSize = Math.round(height * 0.66);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    this.width = width;
+    this.height = height;
+    this.fontSize = fontSize;
+
     this.canvas.width = width * dpr;
     this.canvas.height = height * dpr;
-    this.canvas.style.width = width + 'px';
-    this.canvas.style.height = height + 'px';
-    
-    // 缩放上下文以适应设备像素比
-    this.ctx.scale(dpr, dpr);
-    
-    // 创建临时 canvas 来获取文字像素数据
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = width;
     tempCanvas.height = height;
-    
-    // 绘制文字
-    tempCtx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
+
+    tempCtx.font = `800 ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
     tempCtx.fillStyle = '#ffffff';
     tempCtx.textAlign = 'center';
     tempCtx.textBaseline = 'middle';
     tempCtx.fillText(this.text, width / 2, height / 2);
-    
-    // 获取像素数据
+
     const imageData = tempCtx.getImageData(0, 0, width, height);
     const pixels = imageData.data;
-    
-    // 根据像素数据创建粒子
+
     this.particles = [];
-    const gap = Math.max(2, Math.floor(width / 120)); // 动态调整粒子密度
-    
+    const gap = Math.max(4, Math.round(width / 100));
+
     for (let y = 0; y < height; y += gap) {
       for (let x = 0; x < width; x += gap) {
         const index = (y * width + x) * 4;
-        const alpha = pixels[index + 3];
-        
-        if (alpha > 128) { // 如果像素不透明
+        if (pixels[index + 3] > 128) {
           this.particles.push(new Particle(x, y, width));
         }
       }
     }
   }
-  
+
+  drawBaseText() {
+    const ctx = this.ctx;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const gradient = ctx.createLinearGradient(0, 0, this.width, 0);
+
+    if (isDark) {
+      gradient.addColorStop(0, '#d7ddff');
+      gradient.addColorStop(0.5, '#a9b5ff');
+      gradient.addColorStop(1, '#c2a6ff');
+    } else {
+      gradient.addColorStop(0, '#4f57c8');
+      gradient.addColorStop(0.5, '#667eea');
+      gradient.addColorStop(1, '#8b5cf6');
+    }
+
+    ctx.save();
+    ctx.font = `800 ${this.fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = gradient;
+    ctx.fillText(this.text, this.width / 2, this.height / 2);
+    ctx.restore();
+  }
+
+  drawStatic() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.drawBaseText();
+  }
+
   animate() {
-    const { width, height } = this.getCanvasDimensions();
-    this.ctx.clearRect(0, 0, width, height);
-    
-    // 更新和绘制粒子
-    this.particles.forEach(particle => {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.width, this.height);
+
+    // 底层实心渐变字保证可读性，粒子作为微光叠加
+    this.drawBaseText();
+
+    this.particles.forEach((particle) => {
       particle.update(this.mouse, this.isHovering);
-      particle.draw(this.ctx);
+      particle.draw(ctx);
     });
-    
+
     requestAnimationFrame(() => this.animate());
   }
 }
@@ -236,52 +239,45 @@ class Particle {
   constructor(targetX, targetY, canvasWidth) {
     this.targetX = targetX;
     this.targetY = targetY;
-    this.originalX = targetX;
-    this.originalY = targetY;
     this.x = targetX + (Math.random() - 0.5) * Math.min(100, canvasWidth * 0.3);
     this.y = targetY + (Math.random() - 0.5) * 100;
     this.vx = 0;
     this.vy = 0;
-    this.size = Math.random() * 1.5 + 0.8;
+    this.size = Math.random() * 1.1 + 0.6;
     this.originalSize = this.size;
-    this.alpha = Math.random() * 0.4 + 0.6;
+    this.alpha = Math.random() * 0.3 + 0.25;
     this.baseAlpha = this.alpha;
     this.twinkleSpeed = Math.random() * 0.02 + 0.01;
     this.twinkleOffset = Math.random() * Math.PI * 2;
     this.explosionTime = 0;
-    
-    // 彩色效果
-    this.hue = Math.random() * 60 + 200; // 蓝紫色范围
+
+    this.hue = Math.random() * 60 + 200;
     this.saturation = Math.random() * 30 + 70;
-    this.lightness = Math.random() * 20 + 70;
+    this.lightness = Math.random() * 20 + 75;
   }
-  
+
   update(mouse, isHovering) {
-    // 鼠标交互效果
     if (isHovering) {
       const dx = mouse.x - this.x;
       const dy = mouse.y - this.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       const maxDistance = 80;
-      
+
       if (distance < maxDistance) {
         const force = (maxDistance - distance) / maxDistance;
         const angle = Math.atan2(dy, dx);
-        
-        // 鼠标吸引效果
+
         this.vx += Math.cos(angle) * force * 0.3;
         this.vy += Math.sin(angle) * force * 0.3;
-        
-        // 增大粒子尺寸
+
         this.size = this.originalSize * (1 + force * 0.5);
-        this.alpha = this.baseAlpha * (1 + force * 0.3);
+        this.alpha = this.baseAlpha * (1 + force * 0.6);
       } else {
         this.size = this.originalSize;
         this.alpha = this.baseAlpha;
       }
     }
-    
-    // 爆炸效果恢复
+
     if (this.explosionTime > 0) {
       const elapsed = Date.now() - this.explosionTime;
       if (elapsed > 1000) {
@@ -291,35 +287,30 @@ class Particle {
         this.size = Math.max(this.originalSize, this.size * (1 - recovery * 0.1));
       }
     }
-    
-    // 向目标位置移动
+
     const dx = this.targetX - this.x;
     const dy = this.targetY - this.y;
-    
+
     this.vx += dx * 0.015;
     this.vy += dy * 0.015;
-    
+
     this.vx *= 0.85;
     this.vy *= 0.85;
-    
+
     this.x += this.vx;
     this.y += this.vy;
-    
-    // 闪烁效果
-    const twinkle = Math.sin(Date.now() * this.twinkleSpeed + this.twinkleOffset) * 0.25;
-    this.alpha = Math.max(0.1, this.baseAlpha + twinkle);
+
+    const twinkle = Math.sin(Date.now() * this.twinkleSpeed + this.twinkleOffset) * 0.15;
+    this.alpha = Math.max(0.12, this.baseAlpha + twinkle);
   }
-  
+
   draw(ctx) {
     ctx.save();
     ctx.globalAlpha = this.alpha;
-    
-    // 检查是否为暗色主题
+
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    
-    // 创建渐变
     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
-    
+
     if (isDark) {
       gradient.addColorStop(0, `hsla(${this.hue + 20}, ${this.saturation}%, ${this.lightness + 10}%, 1)`);
       gradient.addColorStop(0.5, `hsla(${this.hue + 20}, ${this.saturation}%, ${this.lightness}%, 0.7)`);
@@ -329,1114 +320,296 @@ class Particle {
       gradient.addColorStop(0.5, `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, 0.8)`);
       gradient.addColorStop(1, `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, 0)`);
     }
-    
+
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
-    
-    // 添加亮点
-    ctx.globalAlpha = this.alpha * 0.9;
-    ctx.fillStyle = isDark ? '#ffffff' : '#f0f8ff';
-    ctx.beginPath();
-    ctx.arc(this.x - this.size * 0.25, this.y - this.size * 0.25, this.size * 0.25, 0, Math.PI * 2);
-    ctx.fill();
-    
+
     ctx.restore();
   }
 }
 
-function makeBolt(x1, y1, x2, y2, displace) {
-  let pts = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
-  let d = displace;
-  while (d > 3) {
-    const next = [pts[0]];
-    for (let i = 0; i < pts.length - 1; i++) {
-      const a = pts[i];
-      const b = pts[i + 1];
-      next.push({
-        x: (a.x + b.x) / 2 + (Math.random() - 0.5) * d,
-        y: (a.y + b.y) / 2 + (Math.random() - 0.5) * d
-      });
-      next.push(b);
-    }
-    pts = next;
-    d *= 0.52;
-  }
-  return pts;
+const canvas = document.getElementById('astral-canvas');
+if (canvas) {
+  new StardustText(canvas);
 }
-
-function generateCracks(ox, oy, w, h) {
-  const bolts = [];
-  const reach = Math.hypot(w, h);
-
-  const mainUp = makeBolt(ox, oy, ox + (Math.random() - 0.5) * w * 0.25, -40, 140);
-  const mainDown = makeBolt(ox, oy, ox + (Math.random() - 0.5) * w * 0.3, h + 40, 160);
-  const mainPath = mainUp.slice().reverse().concat(mainDown.slice(1));
-  bolts.push({ pts: mainUp, width: 2.4 });
-  bolts.push({ pts: mainDown, width: 2.4 });
-
-  const rays = 8 + Math.floor(Math.random() * 4);
-  for (let i = 0; i < rays; i++) {
-    const angle = (Math.PI * 2 * i) / rays + (Math.random() - 0.5) * 0.5;
-    const dist = reach * (0.45 + Math.random() * 0.55);
-    const pts = makeBolt(
-      ox,
-      oy,
-      ox + Math.cos(angle) * dist,
-      oy + Math.sin(angle) * dist,
-      70 + Math.random() * 50
-    );
-    bolts.push({ pts, width: 1.1 + Math.random() * 0.8 });
-
-    const branchCount = 1 + Math.floor(Math.random() * 3);
-    for (let b = 0; b < branchCount; b++) {
-      const from = pts[Math.floor(pts.length * (0.25 + Math.random() * 0.5))];
-      if (!from) continue;
-      const ba = angle + (Math.random() > 0.5 ? 1 : -1) * (0.5 + Math.random() * 0.9);
-      const bl = dist * (0.15 + Math.random() * 0.28);
-      bolts.push({
-        pts: makeBolt(from.x, from.y, from.x + Math.cos(ba) * bl, from.y + Math.sin(ba) * bl, 36),
-        width: 0.6 + Math.random() * 0.5
-      });
-    }
-  }
-
-  return { bolts, mainPath };
-}
-
-function pathToPolygon(pts, width) {
-  const left = [];
-  const right = [];
-  for (let i = 0; i < pts.length; i++) {
-    const prev = pts[Math.max(0, i - 1)];
-    const next = pts[Math.min(pts.length - 1, i + 1)];
-    const dx = next.x - prev.x;
-    const dy = next.y - prev.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const nx = (-dy / len) * width;
-    const ny = (dx / len) * width;
-    left.push({ x: pts[i].x + nx, y: pts[i].y + ny });
-    right.push({ x: pts[i].x - nx, y: pts[i].y - ny });
-  }
-  return left.concat(right.reverse());
-}
-
-function drawPolyline(ctx, pts, maxDist, origin, lineWidth, color, glow) {
-  ctx.save();
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  if (glow) {
-    ctx.shadowColor = glow;
-    ctx.shadowBlur = 18;
-  }
-
-  ctx.beginPath();
-  let started = false;
-  for (let i = 0; i < pts.length; i++) {
-    const p = pts[i];
-    const dist = Math.hypot(p.x - origin.x, p.y - origin.y);
-    if (dist > maxDist) break;
-    if (!started) {
-      ctx.moveTo(p.x, p.y);
-      started = true;
-    } else {
-      ctx.lineTo(p.x, p.y);
-    }
-  }
-  ctx.stroke();
-  ctx.restore();
-}
-
-function playRift(originX, originY, href) {
-  if (document.getElementById('astral-rift-overlay')) return;
-
-  const overlay = document.createElement('div');
-  overlay.id = 'astral-rift-overlay';
-  overlay.setAttribute('aria-hidden', 'true');
-
-  const canvas = document.createElement('canvas');
-  canvas.className = 'astral-rift-canvas';
-  overlay.appendChild(canvas);
-  document.body.appendChild(overlay);
-  document.documentElement.classList.add('astral-rift-active');
-
-  const ctx = canvas.getContext('2d');
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
-  ctx.scale(dpr, dpr);
-
-  const origin = { x: originX, y: originY };
-  const { bolts, mainPath } = generateCracks(originX, originY, w, h);
-  const maxReach = Math.hypot(w, h) * 1.05;
-  const duration = 1600;
-  const start = performance.now();
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  let navigated = false;
-
-  const go = () => {
-    if (navigated) return;
-    navigated = true;
-    window.location.href = href;
-  };
-  window.setTimeout(go, duration + 120);
-
-  const tick = (now) => {
-    const t = Math.min(1, (now - start) / duration);
-    const crackT = Math.min(1, t / 0.42);
-    const crackEase = 1 - Math.pow(1 - crackT, 2);
-    const maxDist = crackEase * maxReach;
-
-    ctx.clearRect(0, 0, w, h);
-
-    const dim = Math.min(0.72, t * 1.15);
-    ctx.fillStyle = isDark ? `rgba(4, 6, 18, ${dim})` : `rgba(8, 10, 28, ${dim})`;
-    ctx.fillRect(0, 0, w, h);
-
-    const shake = t < 0.7 ? (1 - t / 0.7) * 3.2 : 0;
-    if (shake > 0.2) {
-      document.documentElement.style.setProperty('--rift-shake-x', `${(Math.random() - 0.5) * shake}px`);
-      document.documentElement.style.setProperty('--rift-shake-y', `${(Math.random() - 0.5) * shake}px`);
-    } else {
-      document.documentElement.style.setProperty('--rift-shake-x', '0px');
-      document.documentElement.style.setProperty('--rift-shake-y', '0px');
-    }
-
-    for (const bolt of bolts) {
-      const core = isDark ? 'rgba(232, 238, 255, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-      const glow = isDark ? 'rgba(168, 181, 255, 0.95)' : 'rgba(102, 126, 234, 0.9)';
-      drawPolyline(ctx, bolt.pts, maxDist, origin, bolt.width + 2.8, glow, glow);
-      drawPolyline(ctx, bolt.pts, maxDist, origin, bolt.width, core, null);
-    }
-
-    if (t > 0.32) {
-      const open = Math.pow(Math.min(1, (t - 0.32) / 0.55), 1.15);
-      const riftWidth = 4 + open * Math.max(w, h) * 0.18;
-      const poly = pathToPolygon(mainPath, riftWidth);
-
-      ctx.save();
-      ctx.beginPath();
-      poly.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
-      ctx.closePath();
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1, 0.4 + open)})`;
-      ctx.fill();
-      ctx.restore();
-
-      ctx.save();
-      ctx.beginPath();
-      poly.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
-      ctx.closePath();
-      ctx.strokeStyle = isDark ? 'rgba(232, 238, 255, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-      ctx.lineWidth = 2 + open * 3;
-      ctx.shadowColor = isDark ? 'rgba(168, 181, 255, 1)' : 'rgba(102, 126, 234, 1)';
-      ctx.shadowBlur = 24 + open * 40;
-      ctx.stroke();
-
-      ctx.globalCompositeOperation = 'lighter';
-      const g = ctx.createRadialGradient(origin.x, origin.y, 0, origin.x, origin.y, 80 + open * 280);
-      g.addColorStop(0, `rgba(255, 255, 255, ${0.22 + open * 0.38})`);
-      g.addColorStop(0.4, isDark ? `rgba(168, 181, 255, ${0.18 * open})` : `rgba(102, 126, 234, ${0.2 * open})`);
-      g.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = g;
-      ctx.fill();
-      ctx.restore();
-    }
-
-    if (t > 0.82) {
-      const flash = (t - 0.82) / 0.18;
-      ctx.fillStyle = `rgba(255, 255, 255, ${flash * 0.92})`;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    if (t < 1) {
-      requestAnimationFrame(tick);
-    } else {
-      go();
-    }
-  };
-
-  requestAnimationFrame(tick);
-}
-
-function initRiftNavigation() {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  document.querySelectorAll('[data-rift="true"]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-      const href = el.getAttribute('href');
-      if (!href) return;
-      e.preventDefault();
-      if (reduced) {
-        window.location.href = href;
-        return;
-      }
-      playRift(e.clientX, e.clientY, href);
-    });
-  });
-
-}
-
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-  const textCanvas = document.getElementById('astral-canvas');
-  
-  if (textCanvas) {
-    new StardustText(textCanvas);
-  }
-  
-  // 初始化倒计时
-  initRiftNavigation();
-  initCountdown();
-});
-
-// 倒计时功能
-function initCountdown() {
-  const daysEl = document.getElementById('days');
-  const hoursEl = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
-  if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
-
-  const targetDate = new Date('2026-05-18T24:00:00').getTime();
-  
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
-    
-    if (distance < 0) {
-      daysEl.textContent = '00';
-      hoursEl.textContent = '00';
-      minutesEl.textContent = '00';
-      secondsEl.textContent = '00';
-      return;
-    }
-    
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
-    daysEl.textContent = String(days).padStart(2, '0');
-    hoursEl.textContent = String(hours).padStart(2, '0');
-    minutesEl.textContent = String(minutes).padStart(2, '0');
-    secondsEl.textContent = String(seconds).padStart(2, '0');
-  }
-  
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-}
-
-// 主题切换时重新初始化
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
-      const textCanvas = document.getElementById('astral-canvas');
-      
-      if (textCanvas) {
-        setTimeout(() => {
-          new StardustText(textCanvas);
-        }, 100);
-      }
-    }
-  });
-});
-
-// 监听文档主题变化
-observer.observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: ['data-theme']
-});
 </script>
 
 <style>
-  /* 包装器 - 包含所有内容 */
   .hero-wrapper {
+    --h-accent: #4c58c9;
+    --h-accent-2: #7c3aed;
+    --h-text: #1a1b22;
+    --h-muted: #5b6172;
+    --h-border: rgba(91, 110, 232, 0.18);
+    --h-surface: rgba(255, 255, 255, 0.6);
+    --h-shadow: 0 10px 28px rgba(60, 70, 140, 0.12);
+    --h-grid: rgba(30, 40, 90, 0.1);
+    --h-glow: rgba(102, 126, 234, 0.16);
+
     position: relative;
     width: 100%;
-    overflow: hidden;
   }
 
-  /* AstralNext 倒计时横条 */
-  .astral-next-banner {
-    display: block;
-    width: 100%;
-    padding: 0.75rem 2rem;
-    position: relative;
-    z-index: 1;
-    text-decoration: none;
+  :global([data-theme='dark']) .hero-wrapper {
+    --h-accent: #a3b0ff;
+    --h-accent-2: #c0a6ff;
+    --h-text: #f2f3f8;
+    --h-muted: #a0a4b8;
+    --h-border: rgba(163, 176, 255, 0.2);
+    --h-surface: rgba(163, 176, 255, 0.05);
+    --h-shadow: 0 12px 32px rgba(0, 0, 0, 0.38);
+    --h-grid: rgba(170, 185, 255, 0.14);
+    --h-glow: rgba(139, 120, 255, 0.2);
   }
 
-  .astral-next-banner:hover .banner-text {
-    text-decoration: underline;
-  }
-
-  .banner-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .banner-icon {
-    font-size: 1.3rem;
-    animation: iconPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes iconPulse {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-
-  .banner-text {
-    font-weight: 600;
-    color: #667eea;
-    font-size: 0.95rem;
-  }
-
-  [data-theme='dark'] .banner-text {
-    color: #a8b5ff;
-  }
-
-  .banner-countdown {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.8rem;
-    background: rgba(102, 126, 234, 0.06);
-    border-radius: 8px;
-    border: 1px solid rgba(102, 126, 234, 0.1);
-  }
-
-  [data-theme='dark'] .banner-countdown {
-    background: rgba(168, 181, 255, 0.05);
-    border-color: rgba(168, 181, 255, 0.08);
-  }
-
-  .banner-countdown .countdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 35px;
-  }
-
-  .banner-countdown .countdown-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #667eea;
-    line-height: 1;
-    font-family: 'Courier New', monospace;
-  }
-
-  [data-theme='dark'] .banner-countdown .countdown-value {
-    color: #a8b5ff;
-  }
-
-  .banner-countdown .countdown-label {
-    font-size: 0.6rem;
-    color: var(--sl-color-text);
-    opacity: 0.6;
-    margin-top: 0.15rem;
-  }
-
-  .banner-countdown .countdown-separator {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #667eea;
-    opacity: 0.4;
-  }
-
-  [data-theme='dark'] .banner-countdown .countdown-separator {
-    color: #a8b5ff;
-  }
-
-  .banner-date {
-    font-size: 0.85rem;
-    color: var(--sl-color-text);
-    opacity: 0.7;
-  }
-
-  .hero-container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2rem;
-    gap: 4rem;
-    z-index: 1;
-  }
-
-  /* 背景渐变球体 */
-  .gradient-orb {
+  /* 背景点阵，向四周淡出 */
+  .hero-wrapper::before {
+    content: '';
     position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-    animation: orbFloat 20s ease-in-out infinite;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(circle at 1px 1px, var(--h-grid) 1px, transparent 0);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 38%, #000 10%, transparent 72%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 38%, #000 10%, transparent 72%);
     pointer-events: none;
   }
 
-  .orb-1 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(102, 126, 234, 0.6) 0%, transparent 70%);
-    top: -100px;
-    right: -100px;
-    animation-delay: 0s;
-  }
-
-  .orb-2 {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(118, 75, 162, 0.5) 0%, transparent 70%);
-    bottom: -50px;
-    left: -50px;
-    animation-delay: 7s;
-  }
-
-  .orb-3 {
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, rgba(168, 181, 255, 0.4) 0%, transparent 70%);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation-delay: 14s;
-  }
-
-  [data-theme='dark'] .gradient-orb {
-    opacity: 0.3;
-  }
-
-  [data-theme='dark'] .orb-1 {
-    background: radial-gradient(circle, rgba(168, 181, 255, 0.5) 0%, transparent 70%);
-  }
-
-  [data-theme='dark'] .orb-2 {
-    background: radial-gradient(circle, rgba(156, 136, 255, 0.4) 0%, transparent 70%);
-  }
-
-  @keyframes orbFloat {
-    0%, 100% {
-      transform: translate(0, 0) scale(1);
-    }
-    33% {
-      transform: translate(30px, -30px) scale(1.1);
-    }
-    66% {
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-  }
-
-  .hero-left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .astral-logo {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    transition: transform 0.3s ease;
-  }
-
-  .logo-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  .astral-logo:hover {
-    transform: scale(1.02);
-  }
-
-  .logo-circles {
-    position: relative;
-    width: 120px;
-    height: 120px;
-  }
-
-  .circle {
+  /* 中心柔光，向上延伸进顶栏下方，避免被容器切断 */
+  .hero-wrapper::after {
+    content: '';
     position: absolute;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    transition: all 0.5s ease;
-    animation: float 8s ease-in-out infinite;
-    box-shadow: 
-      0 8px 32px rgba(102, 126, 234, 0.2),
-      0 4px 16px rgba(102, 126, 234, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    top: -220px;
+    left: 50%;
+    z-index: 0;
+    width: min(900px, 100%);
+    height: 560px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse 55% 50% at 50% 35%, var(--h-glow), transparent 70%);
+    filter: blur(28px);
+    pointer-events: none;
   }
 
-  [data-theme='dark'] .circle {
-    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
-    box-shadow: 
-      0 8px 32px rgba(168, 181, 255, 0.15),
-      0 4px 16px rgba(168, 181, 255, 0.1);
-    border: 1px solid rgba(168, 181, 255, 0.2);
+  .hero-title-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .circle-1 {
-    width: 100px;
-    height: 100px;
-    top: 10px;
-    left: 10px;
-    animation-delay: 0s;
-  }
-
-  .circle-2 {
-    width: 60px;
-    height: 60px;
-    top: 30px;
-    right: -20px;
-    animation-delay: 2.5s;
-  }
-
-  .circle-3 {
-    width: 40px;
-    height: 40px;
-    bottom: -10px;
-    left: 20px;
-    animation-delay: 5s;
-  }
-
-  .logo-text-canvas {
-    width: 400px;
-    height: 120px;
-    max-width: 100%;
-    display: block;
-    filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
-    animation: canvasGlow 3s ease-in-out infinite alternate;
-  }
-
-  [data-theme='dark'] .logo-text-canvas {
-    filter: drop-shadow(0 0 8px rgba(168, 181, 255, 0.4));
-    animation: canvasGlowDark 3s ease-in-out infinite alternate;
-  }
-
-  @keyframes canvasGlow {
-    from {
-      filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
-    }
-    to {
-      filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
-    }
-  }
-
-  @keyframes canvasGlowDark {
-    from {
-      filter: drop-shadow(0 0 8px rgba(168, 181, 255, 0.4));
-    }
-    to {
-      filter: drop-shadow(0 0 20px rgba(168, 181, 255, 0.6));
-    }
-  }
-
-  .logo-tagline {
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: var(--sl-color-text-accent);
-    opacity: 0.8;
-    line-height: 1.4;
-  }
-
-  [data-theme='dark'] .logo-tagline {
-    color: var(--sl-color-text-accent);
-  }
-
-  .version-badge {
-    display: inline-flex;
+  /* 顶部公告 */
+  .astral-next-banner {
+    position: relative;
+    z-index: 2;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    gap: 0.6rem;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    margin: 1.1rem auto 0;
+    padding: 0.35rem 0.85rem 0.35rem 0.4rem;
+    border: 1px solid var(--h-border);
+    border-radius: 999px;
+    background: var(--h-surface);
+    backdrop-filter: blur(10px);
+    color: var(--h-text);
     font-size: 0.85rem;
-    animation: badgeFadeIn 0.8s ease-out;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .badge-new {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.7rem;
+  .astral-next-banner:hover {
+    transform: translateY(-1px);
+    border-color: var(--h-accent);
+    box-shadow: var(--h-shadow);
+  }
+
+  .banner-badge {
+    flex-shrink: 0;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--h-accent), var(--h-accent-2));
+    color: #fff;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
 
-  .badge-text {
-    color: var(--sl-color-text);
+  .banner-text {
+    color: var(--h-text);
     font-weight: 500;
   }
 
-  [data-theme='dark'] .badge-new {
-    background: linear-gradient(135deg, #a8b5ff 0%, #9c88ff 100%);
-    color: #1a1a2e;
+  .banner-arrow {
+    color: var(--h-accent);
+    transition: transform 0.2s ease;
   }
 
-  @keyframes badgeFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .astral-next-banner:hover .banner-arrow {
+    transform: translateX(3px);
   }
 
-  .hero-actions {
+  /* 主视觉 */
+  .hero-container {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem clamp(2.5rem, 5vw, 3.75rem);
+    text-align: center;
+  }
+
+  .astral-logo {
+    width: min(100%, 460px);
+  }
+
+  .logo-text-canvas {
+    display: block;
     width: 100%;
-    max-width: 350px;
+    aspect-ratio: 10 / 3;
+    filter: drop-shadow(0 0 18px var(--h-glow));
+  }
+
+  .logo-tagline {
+    max-width: 34em;
+    margin: 0.75rem 0 0;
+    color: var(--h-muted);
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    line-height: 1.7;
+  }
+
+  /* 按钮组 */
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 1.75rem;
   }
 
   .action-button {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    padding: 1.2rem 2rem;
-    border-radius: 12px;
-    text-decoration: none;
+    gap: 0.45rem;
+    padding: 0.72rem 1.35rem;
+    border: 1px solid var(--h-border);
+    border-radius: 999px;
+    background: var(--h-surface);
+    backdrop-filter: blur(10px);
+    color: var(--h-text);
+    font-size: 0.95rem;
     font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   }
 
-  .action-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+  .action-button:hover {
+    transform: translateY(-2px);
+    border-color: var(--h-accent);
+    box-shadow: var(--h-shadow);
   }
 
-  .action-button:hover::before {
-    left: 100%;
+  .action-button:focus-visible {
+    outline: 2px solid var(--h-accent);
+    outline-offset: 3px;
   }
 
   .action-button.primary {
-    background: linear-gradient(
-      135deg,
-      rgba(102, 126, 234, 0.15) 0%,
-      rgba(118, 75, 162, 0.15) 100%
-    );
-    backdrop-filter: blur(10px);
-    color: #667eea;
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    box-shadow: 
-      0 4px 16px rgba(102, 126, 234, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: transparent;
+    background: linear-gradient(135deg, #5560d8, #7c46e6);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(102, 126, 234, 0.32);
   }
 
   .action-button.primary:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(102, 126, 234, 0.25) 0%,
-      rgba(118, 75, 162, 0.25) 100%
-    );
-    border-color: rgba(102, 126, 234, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 
-      0 6px 20px rgba(102, 126, 234, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
-
-  .action-button.secondary {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--sl-color-text);
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    backdrop-filter: blur(10px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-
-  .action-button.secondary:hover {
-    background: rgba(102, 126, 234, 0.08);
-    border-color: rgba(102, 126, 234, 0.35);
-    transform: translateY(-2px);
-    box-shadow: 
-      0 4px 12px rgba(102, 126, 234, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 28px rgba(102, 126, 234, 0.42);
   }
 
   .action-button.action-next {
-    color: #5b6fd6;
-    border-color: rgba(102, 126, 234, 0.38);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.1) 100%);
-    animation: nextGlow 2.8s ease-in-out infinite;
+    border-color: rgba(102, 126, 234, 0.35);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(139, 92, 246, 0.12));
+    color: var(--h-accent);
   }
 
-  .action-button.action-next:hover {
-    color: #4c5ec4;
-    border-color: rgba(102, 126, 234, 0.5);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.18) 0%, rgba(118, 75, 162, 0.14) 100%);
-    animation: none;
-    box-shadow:
-      0 0 16px rgba(102, 126, 234, 0.32),
-      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  .action-badge {
+    padding: 0.1rem 0.35rem;
+    border-radius: 999px;
+    background: var(--h-accent);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1.4;
   }
 
-  @keyframes nextGlow {
-    0%, 100% {
-      box-shadow: 0 0 10px rgba(102, 126, 234, 0.18);
-    }
-    50% {
-      box-shadow: 0 0 18px rgba(102, 126, 234, 0.38);
-    }
+  :global([data-theme='dark']) .action-button.primary {
+    color: #14152a;
+    background: linear-gradient(135deg, #b9c3ff, #d0b8ff);
+    box-shadow: 0 8px 24px rgba(139, 120, 255, 0.22);
   }
 
-  [data-theme='dark'] .action-button.primary {
-    background: linear-gradient(
-      135deg,
-      rgba(168, 181, 255, 0.12) 0%,
-      rgba(156, 136, 255, 0.12) 100%
-    );
-    color: #a8b5ff;
-    border-color: rgba(168, 181, 255, 0.25);
-    box-shadow: 
-      0 4px 16px rgba(168, 181, 255, 0.08),
-      inset 0 1px 0 rgba(168, 181, 255, 0.15);
+  :global([data-theme='dark']) .action-button.primary:hover {
+    box-shadow: 0 12px 30px rgba(139, 120, 255, 0.32);
   }
 
-  [data-theme='dark'] .action-button.primary:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(168, 181, 255, 0.2) 0%,
-      rgba(156, 136, 255, 0.2) 100%
-    );
-    border-color: rgba(168, 181, 255, 0.4);
-    box-shadow: 
-      0 6px 20px rgba(168, 181, 255, 0.12),
-      inset 0 1px 0 rgba(168, 181, 255, 0.2);
+  :global([data-theme='dark']) .action-badge {
+    color: #14152a;
   }
 
-  [data-theme='dark'] .action-button.secondary {
-    background: rgba(168, 181, 255, 0.03);
-    border-color: rgba(168, 181, 255, 0.15);
-    box-shadow: inset 0 1px 0 rgba(168, 181, 255, 0.08);
-  }
-
-  [data-theme='dark'] .action-button.secondary:hover {
-    background: rgba(168, 181, 255, 0.06);
-    border-color: rgba(168, 181, 255, 0.3);
-    box-shadow: 
-      0 4px 12px rgba(168, 181, 255, 0.06),
-      inset 0 1px 0 rgba(168, 181, 255, 0.12);
-  }
-
-  [data-theme='dark'] .action-button.action-next {
-    color: #c5cdff;
-    border-color: rgba(168, 181, 255, 0.4);
-    background: linear-gradient(135deg, rgba(168, 181, 255, 0.12) 0%, rgba(156, 136, 255, 0.1) 100%);
-    animation-name: nextGlowDark;
-  }
-
-  [data-theme='dark'] .action-button.action-next:hover {
-    color: #e8ebff;
-    border-color: rgba(168, 181, 255, 0.55);
-    background: linear-gradient(135deg, rgba(168, 181, 255, 0.18) 0%, rgba(156, 136, 255, 0.14) 100%);
-    animation: none;
-    box-shadow: 0 0 16px rgba(168, 181, 255, 0.32);
-  }
-
-  @keyframes nextGlowDark {
-    0%, 100% {
-      box-shadow: 0 0 10px rgba(168, 181, 255, 0.16);
-    }
-    50% {
-      box-shadow: 0 0 18px rgba(168, 181, 255, 0.36);
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    33% {
-      transform: translateY(-15px) rotate(120deg);
-    }
-    66% {
-      transform: translateY(-8px) rotate(240deg);
-    }
-  }
-
-  /* 平板响应式 */
-  @media (max-width: 1024px) {
-    .astral-next-banner {
-      padding: 0.6rem 1.5rem;
-    }
-
-    .banner-content {
-      gap: 1rem;
-    }
-
-    .banner-text {
-      font-size: 0.9rem;
-    }
-
-    .banner-countdown .countdown-value {
-      font-size: 1rem;
-    }
-
-    .banner-date {
-      font-size: 0.8rem;
-    }
-
-    .hero-container {
-      min-height: 450px;
-      padding: 2rem 1.5rem;
-      gap: 3rem;
-    }
-
-    .logo-text-canvas {
-      width: 350px;
-      height: 105px;
-    }
-
-    .logo-circles {
-      width: 100px;
-      height: 100px;
-    }
-
-    .circle-1 {
-      width: 85px;
-      height: 85px;
-    }
-
-    .circle-2 {
-      width: 50px;
-      height: 50px;
-    }
-
-    .circle-3 {
-      width: 35px;
-      height: 35px;
-    }
-  }
-
-  /* 手机响应式 */
+  /* 响应式 */
   @media (max-width: 768px) {
     .astral-next-banner {
-      padding: 0.6rem 1rem;
-    }
-
-    .banner-content {
-      gap: 0.8rem;
-      justify-content: center;
+      margin-top: 0.85rem;
+      padding: 0.3rem 0.65rem 0.3rem 0.35rem;
+      font-size: 0.78rem;
     }
 
     .banner-text {
-      font-size: 0.85rem;
-    }
-
-    .banner-countdown {
-      padding: 0.3rem 0.6rem;
-    }
-
-    .banner-countdown .countdown-value {
-      font-size: 0.95rem;
-    }
-
-    .banner-countdown .countdown-item {
-      min-width: 30px;
-    }
-
-    .banner-date {
-      font-size: 0.75rem;
+      line-height: 1.4;
     }
 
     .hero-container {
-      min-height: 400px;
-      padding: 2rem 1rem;
-      flex-direction: column;
-      gap: 2.5rem;
-    }
-
-    .hero-left, .hero-right {
-      flex: none;
-    }
-
-    .astral-logo {
-      flex-direction: column;
-      gap: 1.5rem;
-      text-align: center;
-    }
-
-    .logo-content {
-      align-items: center;
-    }
-
-    .version-badge {
-      padding: 0.25rem 0.6rem;
-    }
-
-    .logo-text-canvas {
-      width: 300px;
-      height: 90px;
+      padding: 2.25rem 1.25rem 2.5rem;
     }
 
     .hero-actions {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 1rem;
-      max-width: none;
-    }
-
-    .action-button {
-      flex: 1;
-      min-width: 140px;
-      padding: 1rem 1.5rem;
-      font-size: 1rem;
-    }
-
-    .logo-circles {
-      width: 100px;
-      height: 100px;
-    }
-
-    .circle-1 {
-      width: 80px;
-      height: 80px;
-      top: 10px;
-      left: 10px;
-    }
-
-    .circle-2 {
-      width: 50px;
-      height: 50px;
-      top: 25px;
-      right: -10px;
-    }
-
-    .circle-3 {
-      width: 35px;
-      height: 35px;
-      bottom: -2px;
-      left: 20px;
-    }
-  }
-
-  /* 小屏手机 */
-  @media (max-width: 480px) {
-    .astral-next-banner {
-      padding: 0.5rem 0.75rem;
-    }
-
-    .banner-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 420px;
       gap: 0.6rem;
-    }
-
-    .banner-icon {
-      font-size: 1.1rem;
-    }
-
-    .banner-text {
-      font-size: 0.8rem;
-    }
-
-    .banner-countdown .countdown-value {
-      font-size: 0.85rem;
-    }
-
-    .banner-countdown .countdown-item {
-      min-width: 28px;
-    }
-
-    .banner-countdown .countdown-label {
-      font-size: 0.55rem;
-    }
-
-    .banner-date {
-      display: none;
-    }
-
-    .hero-container {
-      padding: 1.5rem 0.75rem;
-    }
-
-    .version-badge {
-      padding: 0.2rem 0.5rem;
-    }
-
-    .hero-actions {
-      flex-direction: column;
+      margin-top: 1.5rem;
     }
 
     .action-button {
-      min-width: auto;
-    }
-
-    .logo-text-canvas {
-      width: 250px;
-      height: 75px;
+      width: 100%;
+      padding: 0.75rem 0.75rem;
+      font-size: 0.9rem;
     }
   }
-</style>
 
-<style is:global>
-  html.astral-rift-active {
-    overflow: hidden;
-  }
+  @media (max-width: 420px) {
+    .banner-text {
+      font-size: 0.74rem;
+    }
 
-  html.astral-rift-active body {
-    transform: translate(var(--rift-shake-x, 0px), var(--rift-shake-y, 0px));
-  }
+    .hero-container {
+      padding: 1.75rem 1rem 2.25rem;
+    }
 
-  #astral-rift-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483646;
-    pointer-events: all;
-    cursor: wait;
-  }
-
-  #astral-rift-overlay .astral-rift-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .action-button.action-next {
-      animation: none;
-      box-shadow: 0 0 12px rgba(102, 126, 234, 0.22);
+    .logo-tagline {
+      font-size: 0.9rem;
     }
   }
 </style>
-
-

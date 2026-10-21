@@ -1,103 +1,168 @@
-/* 自定义卡片基本样式 */
-.custom-card {
-  border-radius: 16px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+/* 首页内容卡片 */
+.home-cards {
+  margin: 0.25rem 0 2rem;
+}
+
+.home-cards .card-grid {
+  gap: 1.5rem;
+}
+
+.home-card {
+  --card-accent: #8b5cf6;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--sl-color-bg-nav), var(--sl-color-black));
   overflow: hidden;
-  border: 2px solid transparent;
-  margin-bottom: 1rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.custom-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* 卡片前添加装饰线 */
-.custom-card::before {
+.home-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 6px;
-  height: 100%;
-  border-radius: 3px 0 0 3px;
-}
-
-/* 标题样式 */
-.custom-card h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  padding-left: 0.75rem;
-}
-
-/* 内容样式 */
-.custom-card p {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--sl-color-gray-5);
-  padding-left: 0.75rem;
-}
-
-/* 游戏卡片特殊样式 */
-.game-card {
-  background: linear-gradient(135deg, rgba(255, 120, 90, 0.05), rgba(255, 90, 152, 0.05));
-  border-color: rgba(255, 120, 90, 0.2);
-}
-
-.game-card::before {
-  background: linear-gradient(to bottom, #ff785a, #ff5a98);
-}
-
-.game-card h2 {
-  color: #ff5a7e;
-}
-
-/* 平台卡片特殊样式 */
-.platform-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(37, 99, 235, 0.05));
-  border-color: rgba(59, 130, 246, 0.2);
-}
-
-.platform-card::before {
-  background: linear-gradient(to bottom, #3b82f6, #2563eb);
-}
-
-.platform-card h2 {
-  color: #3b82f6;
-}
-
-/* 卡片悬停效果增强 */
-.custom-card:hover::after {
-  content: '';
-  position: absolute;
-  top: 0;
   right: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top right, 
-                             rgba(255, 255, 255, 0.1), 
-                             transparent 70%);
-  pointer-events: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--card-accent), transparent);
+  opacity: 0.55;
 }
 
-/* 暗色模式适配 */
-:root[data-theme="dark"] .custom-card {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.home-card--game {
+  --card-accent: #f2705f;
 }
 
-:root[data-theme="dark"] .custom-card p {
+.home-card--platform {
+  --card-accent: #5b8cff;
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--card-accent) 45%, var(--sl-color-hairline));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.home-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.home-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 28%, transparent);
+  background: color-mix(in srgb, var(--card-accent) 14%, transparent);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.home-card h2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--sl-color-white);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.home-card p {
+  margin: 0;
   color: var(--sl-color-gray-3);
+  font-size: 0.95rem;
+  line-height: 1.75;
 }
 
-:root[data-theme="dark"] .game-card {
-  background: linear-gradient(135deg, rgba(255, 120, 90, 0.08), rgba(255, 90, 152, 0.08));
+/* 首页赞助商 */
+.sponsor-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 2rem 0 2.5rem;
 }
 
-:root[data-theme="dark"] .platform-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(37, 99, 235, 0.08));
+.sponsor-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+  box-sizing: border-box;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--sl-color-bg-nav), var(--sl-color-black));
+  text-decoration: none;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sponsor-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, #7c3aed 45%, var(--sl-color-hairline));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.sponsor-logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 12px;
+  background: #f7f8fc;
+}
+
+.sponsor-logo img {
+  display: block;
+  width: 150px;
+  height: auto;
+}
+
+.sponsor-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  .home-card {
+    padding: 1.25rem;
+  }
+
+  .sponsor-card {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .sponsor-logo img {
+    width: 130px;
+  }
+
+  .sponsor-cta {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 /* 游戏名称样式 */
@@ -113,8 +178,8 @@
 /* Minecraft 样式 */
 .game.minecraft {
   background-color: rgba(116, 196, 86, 0.15);
-  color: #5AB236;
-  border-bottom: 2px solid #5AB236;
+  color: #3e7b1f;
+  border-bottom: 2px solid #3e7b1f;
   font-family: 'Minecraft', sans-serif;
   letter-spacing: 0.5px;
 }
@@ -128,9 +193,9 @@
 /* Terraria 样式 */
 .game.terraria {
   background-color: rgba(66, 135, 245, 0.15);
-  color: #4287f5;
-  border-left: 2px solid #4287f5;
-  border-right: 2px solid #4287f5;
+  color: #2c6bc7;
+  border-left: 2px solid #2c6bc7;
+  border-right: 2px solid #2c6bc7;
   font-style: italic;
 }
 
@@ -142,7 +207,7 @@
 /* Palworld 样式 */
 .game.palworld {
   background: linear-gradient(120deg, rgba(255, 170, 60, 0.15), rgba(255, 120, 50, 0.15));
-  color: #ff7832;
+  color: #d4550f;
   border-radius: 10px;
   font-weight: 800;
 }
@@ -172,8 +237,8 @@
 /* 星露谷物语样式 */
 .game.stardew {
   background-color: rgba(146, 209, 87, 0.15);
-  color: #6A9738;
-  border: 1px dashed #6A9738;
+  color: #4f7327;
+  border: 1px dashed #4f7327;
   border-radius: 8px;
   padding: 0.1em 0.4em;
   font-family: 'Comic Sans MS', cursive, sans-serif;
