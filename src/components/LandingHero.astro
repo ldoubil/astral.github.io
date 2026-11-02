@@ -1,0 +1,35 @@
+---
+import DownloadDialog from './DownloadDialog.astro';
+import LineFieldLogo from './LineFieldLogo.astro';
+---
+
+<section class="kt-hero">
+  <div class="kt-hero-inner kt-hero-grid">
+    <div class="kt-hero-copy">
+      <h1 class="kt-hero-title">
+        Astral<br />
+        <span class="kt-accent">Game</span>
+      </h1>
+
+      <p class="kt-hero-lead">
+        开源免费的跨平台联机工具
+      </p>
+
+      <div class="kt-actions">
+        <button type="button" class="kt-btn kt-btn--primary" data-open-game-download>
+          下载 AstralGame
+        </button>
+        <a
+          class="kt-btn"
+          href="https://github.com/AstralNext/AstralGame"
+          target="_blank"
+          rel="noopener noreferrer"
+        >GitHub ↗</a>
+      </div>
+    </div>
+
+    <LineFieldLogo />
+  </div>
+</section>
+
+<DownloadDialog />

@@ -1,0 +1,23 @@
+---
+import data from '../data/games.json';
+
+const games = data.games
+  .filter((game) => game.show_in_picker && game.id !== 'other')
+  .sort((a, b) => a.sort - b.sort);
+---
+
+<section class="kt-section" id="games">
+  <div class="kt-section-inner">
+    <h2 class="kt-section-title">已适配 <span class="kt-signal">{games.length}</span> 款游戏</h2>
+
+    <ul class="kt-games">
+      {games.map((game, index) => (
+        <li class="kt-game">
+          <span class="kt-game-idx">{String(index + 1).padStart(2, '0')}</span>
+          <span class="kt-game-name">{game.name_zh}</span>
+          <span class="kt-game-en">{game.name}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

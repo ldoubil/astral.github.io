@@ -10,12 +10,12 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
 	site:'https://astral.fan',
 	redirects: {
-		'/preview/download': 'https://next.astral.fan/',
-		'/preview/download/': 'https://next.astral.fan/',
-		'/tutorials/raft-multiplayer': 'https://next.astral.fan/game/',
-		'/tutorials/raft-multiplayer/': 'https://next.astral.fan/game/',
-		'/tutorials/minecraft-multiplayer': 'https://next.astral.fan/game/',
-		'/tutorials/minecraft-multiplayer/': 'https://next.astral.fan/game/',
+		'/preview/download': 'https://github.com/AstralNext/AstralGame/releases',
+		'/preview/download/': 'https://github.com/AstralNext/AstralGame/releases',
+		'/tutorials/raft-multiplayer': '/advanced/game-multiplayer/',
+		'/tutorials/raft-multiplayer/': '/advanced/game-multiplayer/',
+		'/tutorials/minecraft-multiplayer': '/advanced/game-multiplayer/',
+		'/tutorials/minecraft-multiplayer/': '/advanced/game-multiplayer/',
 		'/server-config/server-list': '/user-guide/server-management/',
 		'/server-config/server-list/': '/user-guide/server-management/',
 		'/public-servers/list': '/user-guide/server-management/',
@@ -40,71 +40,32 @@ export default defineConfig({
 			})
 		],
 		
-		title: 'AstralGame',
+		title: 'Astral Game',
 		components: {
 			SocialIcons: './src/components/EmailLink.astro',
 			PageSidebar: './src/components/PageSidebar.astro',
 			Hero: './src/components/Hero.astro',
 			Head: './src/components/Head.astro',
 		},
-		logo: {
-			light: './src/assets/亮色.svg',
-			dark: './src/assets/暗色.svg',
-			replacesTitle: true,
-		},
-		social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/ldoubil/astral' }],
+		// 动力学排印：Anybody 可变字体（wght 100-900 / wdth 50-150）+ 中文回退
+		head: [
+			{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.loli.net' } },
+			{
+				tag: 'link',
+				attrs: {
+					rel: 'stylesheet',
+					href: 'https://fonts.loli.net/css2?family=Anybody:wdth,wght@50..150,100..900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap',
+				},
+			},
+		],
+		customCss: ['./src/styles/kinetic.css'],
+		pagefind: false,
+		social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/AstralNext' }],
 		editLink: {
 			baseUrl: 'https://github.com/ldoubil/astral.github.io/tree/main/',
 		},
 		lastUpdated: true,
-		sidebar: [
-			{
-				label: '🚀 快速入门',
-				items: [
-					{ label: '什么是 Astral？', slug: 'quick-start/what-is-astral' },
-					{ label: '下载与安装', slug: 'quick-start/download-install' },
-					{ label: '基础设置', slug: 'quick-start/basic-settings' },
-					{ label: '创建房间', slug: 'quick-start/create-room' },
-					{ label: '加入房间', slug: 'quick-start/join-room' },
-				],
-			},
-			{
-				label: '📖 用户指南',
-				items: [
-					{ label: '服务器管理', slug: 'user-guide/server-management' },
-					{ label: '房间管理', slug: 'user-guide/room-management' },
-					{ label: '网络设置', slug: 'user-guide/network-settings' },
-				],
-			},
-			{
-				label: '🎯 进阶教程',
-				items: [
-					{ label: '游戏联机指南', slug: 'advanced/game-multiplayer' },
-				],
-			},
-			{
-				label: '🎮 游戏联机教程',
-				items: [
-					{ label: 'Minecraft（新版）', link: 'https://next.astral.fan/game/' },
-					{ label: 'CS:GO 2', slug: 'tutorials/csgo2-guide' },
-					{ label: 'Raft（新版）', link: 'https://next.astral.fan/game/' },
-				],
-			},
-			{
-				label: '🌐 服务器配置',
-				items: [
-					{ label: '服务器部署', slug: 'server-config/server-deployment' },
-				],
-			},
-			{
-				label: '🔧 故障排除',
-				items: [
-					{ label: '安装问题', slug: 'troubleshooting/installation-issues' },
-					{ label: '连接问题', slug: 'troubleshooting/connection-issues' },
-					{ label: 'NAT 类型说明', slug: 'troubleshooting/nat-types' },
-					{ label: 'VM解决方案', slug: 'troubleshooting/vm-shi' },
-				],
-			},
-		],
+		// 文档入口全部隐藏，但历史页面 URL 仍然保留可访问
+		sidebar: [],
 	}), sitemap()],
 });

@@ -1,17 +1,5 @@
 ---
-import InteractiveHero from './InteractiveHero.astro';
-
-// Starlight 的 Hero 覆盖组件不接收 props，页面 frontmatter 从路由数据中读取
-const route = Astro.locals.starlightRoute;
-const hero = route?.entry?.data?.hero;
+import LandingHero from './LandingHero.astro';
 ---
 
-{hero ? (
-  <InteractiveHero
-    title={hero.title}
-    tagline={hero.tagline}
-    actions={hero.actions}
-  />
-) : (
-  <InteractiveHero />
-)}
+<LandingHero />

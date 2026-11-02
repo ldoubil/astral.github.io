@@ -1,0 +1,580 @@
+---
+// 量化线场 · Astral Game 标志
+// 只用 Canvas 2D + Path2D 绘制：初始化时采样一次路径亮度表，
+// 之后每帧用 60 列 × 30 段、四档线宽重建，噪声缓流 + 指针弹簧 + 网格检测框。
+// 画布本身透明，直接叠在页面底色上，不带卡片边框或圆角。
+const circlesPath =
+  'M235,70 A96,96 0 1,0 235,262 A96,96 0 1,0 235,70 Z M333,256 A62,62 0 1,0 333,380 A62,62 0 1,0 333,256 Z M154,335 A42,42 0 1,0 154,419 A42,42 0 1,0 154,335 Z';
+const lineAPath = 'M235,166 L333,318';
+const lineBPath = 'M333,318 L154,377';
+---
+
+<div
+  class="lf-field"
+  data-linefield
+  data-circles={circlesPath}
+  data-line-a={lineAPath}
+  data-line-b={lineBPath}
+  role="img"
+  aria-label="Astral Game 标志，由四档竖线重建的量化线场"
+>
+  <canvas class="lf-canvas" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector<HTMLElement>('[data-linefield]');
+    if (!root) return;
+
+    const canvas = root.querySelector('canvas');
+    const ctx = canvas && typeof Path2D !== 'undefined' ? canvas.getContext('2d') : null;
+    if (!canvas || !ctx) {
+      root.classList.add('lf-unsupported');
+      return;
+    }
+
+    const G = 60;
+    const SEGS = 30;
+    const SAMPLE = 5;
+    const TH = [0.12, 0.42, 0.89];
+    const LW = [0.38, 1.12, 2.28, 3.8];
+    const ALPHA = [0.15, 0.64, 0.93, 1];
+    const SEED = 7319;
+    const BRAND = 11;
+    const LINE = '#f4f1eb';
+    const DETECT = '#ff4d00';
+    const K_PTR = 145;
+    const C_PTR = 19;
+    const K_BOX = 144;
+    const C_BOX = 24;
+
+    /* ---------- 1. 路径只采样一次 ---------- */
+
+    const sampleTable = (): Float32Array => {
+      const size = G * SAMPLE;
+      const off = document.createElement('canvas');
+      off.width = size;
+      off.height = size;
+      const octx = off.getContext('2d')!;
+      octx.fillStyle = '#000';
+      octx.fillRect(0, 0, size, size);
+      const k = (size * 0.92) / 349;
+      octx.translate(size / 2, size / 2);
+      octx.scale(k, k);
+      octx.translate(-256, -256);
+      octx.strokeStyle = '#fff';
+      octx.fillStyle = '#fff';
+      octx.lineCap = 'round';
+      octx.lineJoin = 'round';
+      octx.lineWidth = 32;
+      octx.stroke(new Path2D(root.dataset.lineA!));
+      octx.lineWidth = 28;
+      octx.stroke(new Path2D(root.dataset.lineB!));
+      octx.fill(new Path2D(root.dataset.circles!));
+
+      const px = octx.getImageData(0, 0, size, size).data;
+      const table = new Float32Array(G * G);
+      for (let cy = 0; cy < G; cy++) {
+        for (let cx = 0; cx < G; cx++) {
+          let sum = 0;
+          for (let y = 0; y < SAMPLE; y++) {
+            for (let x = 0; x < SAMPLE; x++) {
+              const i = ((cy * SAMPLE + y) * size + cx * SAMPLE + x) * 4;
+              sum += (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+            }
+          }
+          table[cy * G + cx] = sum / (SAMPLE * SAMPLE);
+        }
+      }
+      off.width = 0;
+      off.height = 0;
+      return table;
+    };
+
+    const TABLE = sampleTable();
+
+    /* ---------- 2. 共享噪声格点 ---------- */
+
+    const LAT = 128;
+    const lattice = new Float32Array(LAT * LAT);
+    {
+      let state = SEED | 0;
+      for (let i = 0; i < lattice.length; i++) {
+        state ^= state << 13;
+        state ^= state >>> 17;
+        state ^= state << 5;
+        lattice[i] = ((state >>> 0) / 4294967295) * 2 - 1;
+      }
+    }
+
+    const noiseAt = (x: number, y: number): number => {
+      const xi = Math.floor(x);
+      const yi = Math.floor(y);
+      const fx = x - xi;
+      const fy = y - yi;
+      const sx = fx * fx * (3 - 2 * fx);
+      const sy = fy * fy * (3 - 2 * fy);
+      const at = (a: number, b: number) => lattice[(b & 127) * LAT + (a & 127)];
+      const n00 = at(xi, yi);
+      const n10 = at(xi + 1, yi);
+      const n01 = at(xi, yi + 1);
+      const n11 = at(xi + 1, yi + 1);
+      return (n00 * (1 - sx) + n10 * sx) * (1 - sy) + (n01 * (1 - sx) + n11 * sx) * sy;
+    };
+
+    const levelOf = (b: number) => (b < TH[0] ? 0 : b < TH[1] ? 1 : b < TH[2] ? 2 : 3);
+
+    /* ---------- 3. 状态 ---------- */
+
+    const count = G * SEGS;
+    const ox = new Float32Array(count);
+    const oy = new Float32Array(count);
+    const vx = new Float32Array(count);
+    const vy = new Float32Array(count);
+    const segB = new Float32Array(count);
+    const field = new Float32Array(G * G);
+
+    let cssW = 0;
+    let cssH = 0;
+    let cell = 0;
+    let dpr = 0;
+    let pulse = 0;
+    let pointerX = -1e5;
+    let pointerY = -1e5;
+    let overlay = false;
+    let scanAcc = 0;
+    let elapsed = 0;
+    let last = 0;
+    let raf = 0;
+    let motionOn = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let inView = true;
+
+    type Box = { x: number; y: number; px: number; py: number; bvx: number; bvy: number; a: number; id: number };
+    let boxes: Box[] = [];
+    let nextId = 1;
+
+    /* ---------- 4. 尺寸与 DPR ---------- */
+
+    const layout = () => {
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(1, Math.round(rect.width));
+      const h = Math.max(1, Math.round(rect.height));
+      const ratio = window.devicePixelRatio || 1;
+      const bw = Math.round(w * ratio);
+      const bh = Math.round(h * ratio);
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw;
+        canvas.height = bh;
+      }
+      if (w === cssW && h === cssH && ratio === dpr) return false;
+      cssW = w;
+      cssH = h;
+      dpr = ratio;
+      cell = w / G;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return true;
+    };
+
+    /* ---------- 5. 绘制 ---------- */
+
+    const paint = () => {
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      const segH = cell * 2;
+      const gap = 0.7;
+      const paths = [new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+      for (let col = 0; col < G; col++) {
+        const cx = (col + 0.5) * cell;
+        for (let seg = 0; seg < SEGS; seg++) {
+          const idx = seg * G + col;
+          const r0 = seg * 2;
+          const raw = (TABLE[r0 * G + col] + TABLE[(r0 + 1) * G + col]) / 2;
+          // 只画标志本体：空白区域直接跳过，避免底色上出现零散的浅线
+          if (raw < 0.02) {
+            segB[idx] = 0;
+            continue;
+          }
+          const n = noiseAt(col * 0.15 + BRAND, r0 * 0.16 - elapsed * 0.17);
+          const b = Math.max(0, Math.min(1, raw * 0.94 + n * 0.12 * (0.25 + raw * 0.75)));
+          segB[idx] = b;
+          const lv = levelOf(b);
+          const p = paths[lv];
+          p.moveTo(cx + ox[idx], seg * segH + gap / 2 + oy[idx]);
+          p.lineTo(cx + ox[idx], seg * segH + segH - gap / 2 + oy[idx]);
+        }
+      }
+
+      ctx.lineCap = 'butt';
+      for (let lv = 3; lv >= 0; lv--) {
+        ctx.globalAlpha = ALPHA[lv];
+        ctx.lineWidth = LW[lv] * (cell / 5.25);
+        ctx.strokeStyle = LINE;
+        ctx.stroke(paths[lv]);
+      }
+      ctx.globalAlpha = 1;
+
+      /* 检测框 */
+      if (boxes.length) {
+        ctx.save();
+        ctx.lineJoin = 'miter';
+        for (let i = 0; i < boxes.length - 1; i++) {
+          const a = boxes[i];
+          const b = boxes[i + 1];
+          ctx.globalAlpha = Math.min(a.a, b.a) * 0.5;
+          ctx.strokeStyle = DETECT;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.px + 4.5 * cell, a.py + 4.5 * cell);
+          ctx.lineTo(b.px + 4.5 * cell, b.py + 4.5 * cell);
+          ctx.stroke();
+        }
+        ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+        ctx.textBaseline = 'top';
+        for (const box of boxes) {
+          const side = 9 * cell;
+          const left = box.px * cell;
+          const top = box.py * cell;
+          ctx.globalAlpha = box.a * 0.09;
+          ctx.fillStyle = DETECT;
+          ctx.fillRect(left, top, side, side);
+          ctx.globalAlpha = box.a;
+          ctx.strokeStyle = DETECT;
+          ctx.lineWidth = 1.4;
+          ctx.strokeRect(left, top, side, side);
+          const m = Math.min(side * 0.22, 12);
+          ctx.lineWidth = 2.2;
+          const corners: number[][] = [
+            [left, top, 1, 1],
+            [left + side, top, -1, 1],
+            [left, top + side, 1, -1],
+            [left + side, top + side, -1, -1],
+          ];
+          for (const [x0, y0, sx, sy] of corners) {
+            ctx.beginPath();
+            ctx.moveTo(x0 + sx * m, y0);
+            ctx.lineTo(x0, y0);
+            ctx.lineTo(x0, y0 + sy * m);
+            ctx.stroke();
+          }
+          const moving = Math.abs(box.bvx) > 0.05 || Math.abs(box.bvy) > 0.05;
+          const label = moving
+            ? `${(box.x + 4).toFixed(1)}, ${(box.y + 4).toFixed(1)}`
+            : `${Math.round(box.x + 4)}, ${Math.round(box.y + 4)}`;
+          ctx.fillStyle = DETECT;
+          ctx.globalAlpha = box.a;
+          ctx.fillText(label, left, Math.max(2, top - 13));
+        }
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+    };
+
+    /* ---------- 6. 检测 ---------- */
+
+    const scan = () => {
+      field.fill(0);
+      const segH = cell * 2;
+      for (let col = 0; col < G; col++) {
+        for (let seg = 0; seg < SEGS; seg++) {
+          const idx = seg * G + col;
+          const b = segB[idx];
+          if (b <= 0.004) continue;
+          const r0 = seg * 2;
+          const shift = oy[idx] / segH;
+          const r = r0 + shift;
+          const i0 = Math.floor(r);
+          const w1 = r - i0;
+          const w0 = 1 - w1;
+          if (i0 >= 0 && i0 < G) field[i0 * G + col] += b * w0;
+          if (i0 + 1 >= 0 && i0 + 1 < G) field[(i0 + 1) * G + col] += b * w1;
+        }
+      }
+
+      const S = G + 1;
+      const ii = new Float32Array(S * S);
+      for (let y = 0; y < G; y++) {
+        let rowSum = 0;
+        for (let x = 0; x < G; x++) {
+          rowSum += field[y * G + x];
+          ii[(y + 1) * S + (x + 1)] = ii[y * S + (x + 1)] + rowSum;
+        }
+      }
+      const winSum = (x0: number, y0: number, w: number) => {
+        const x1 = Math.min(G, x0 + w);
+        const y1 = Math.min(G, y0 + w);
+        if (x1 <= x0 || y1 <= y0) return 0;
+        return (
+          ii[y1 * S + x1] - ii[y0 * S + x1] - ii[y1 * S + x0] + ii[y0 * S + x0]
+        ) / ((x1 - x0) * (y1 - y0));
+      };
+
+      const W = 7;
+      const cand: { x: number; y: number; s: number }[] = [];
+      for (let y = 0; y + W <= G; y += 2) {
+        for (let x = 0; x + W <= G; x += 2) {
+          const s = winSum(x, y, W);
+          if (s > 0.04) cand.push({ x, y, s });
+        }
+      }
+      if (!cand.length) return;
+
+      const best = cand.reduce((m, c) => Math.max(m, c.s), 0);
+      let keep = cand.filter((c) => c.s >= best * 0.48);
+      keep = keep.map((c) => {
+        const prev = boxes[0];
+        const bonus = prev
+          ? 0.025 * Math.exp(-((c.x - prev.x) ** 2 + (c.y - prev.y) ** 2) / 128)
+          : 0;
+        return { ...c, s: c.s + bonus };
+      });
+      keep.sort((a, b) => b.s - a.s);
+
+      const picked: { x: number; y: number; s: number }[] = [];
+      const minDist = keep.length >= 2 ? 16 : 12;
+      for (const c of keep) {
+        if (picked.some((p) => (p.x - c.x) ** 2 + (p.y - c.y) ** 2 < minDist * minDist)) continue;
+        picked.push(c);
+        if (picked.length >= 3) break;
+      }
+
+      const next: Box[] = [];
+      for (const c of picked) {
+        const near = boxes.find(
+          (b) => (b.x - c.x) ** 2 + (b.y - c.y) ** 2 <= 144,
+        );
+        next.push({
+          x: c.x,
+          y: c.y,
+          px: near ? near.px : c.x,
+          py: near ? near.py : c.y,
+          bvx: near ? near.bvx : 0,
+          bvy: near ? near.bvy : 0,
+          a: near ? near.a : 0,
+          id: near ? near.id : nextId++,
+        });
+      }
+      boxes = next;
+    };
+
+    /* ---------- 7. 指针 ---------- */
+
+    const applyPointerTarget = () => {
+      if (!overlay || pulse <= 0.01 || cell <= 0) return;
+      const radius = (G * cell) / 4;
+      const segH = cell * 2;
+      for (let col = 0; col < G; col++) {
+        const sx = (col + 0.5) * cell;
+        const dxCol = sx - pointerX;
+        if (Math.abs(dxCol) > radius) continue;
+        for (let seg = 0; seg < SEGS; seg++) {
+          const idx = seg * G + col;
+          const sy = seg * segH + segH / 2;
+          const dx = dxCol;
+          const dy = sy - pointerY;
+          const dist = Math.hypot(dx, dy);
+          if (dist > radius) continue;
+          const falloff = 1 - dist / radius;
+          const f = falloff * falloff * pulse * 25;
+          const inv = dist > 0.001 ? 1 / dist : 0;
+          ox[idx] = dx * inv * f;
+          oy[idx] = dy * inv * f * 0.58;
+        }
+      }
+    };
+
+    const stepSprings = (dt: number) => {
+      const steps = Math.max(1, Math.ceil(dt / (1 / 30)));
+      const h = dt / steps;
+      for (let step = 0; step < steps; step++) {
+        for (let i = 0; i < count; i++) {
+          if (ox[i] === 0 && oy[i] === 0 && vx[i] === 0 && vy[i] === 0) continue;
+          const ax = -K_PTR * ox[i] - C_PTR * vx[i];
+          const ay = -K_PTR * oy[i] - C_PTR * vy[i];
+          vx[i] += ax * h;
+          vy[i] += ay * h;
+          ox[i] += vx[i] * h;
+          oy[i] += vy[i] * h;
+          if (Math.abs(ox[i]) < 0.002 && Math.abs(vx[i]) < 0.002) {
+            ox[i] = 0;
+            vx[i] = 0;
+          }
+          if (Math.abs(oy[i]) < 0.002 && Math.abs(vy[i]) < 0.002) {
+            oy[i] = 0;
+            vy[i] = 0;
+          }
+        }
+      }
+    };
+
+    const stepBoxes = (dt: number) => {
+      const steps = Math.max(1, Math.ceil(dt / (1 / 120)));
+      const h = dt / steps;
+      for (let i = 0; i < boxes.length; i++) {
+        const b = boxes[i];
+        for (let s = 0; s < steps; s++) {
+          const ax = K_BOX * (b.x - b.px) - C_BOX * b.bvx;
+          const ay = K_BOX * (b.y - b.py) - C_BOX * b.bvy;
+          b.bvx += ax * h;
+          b.bvy += ay * h;
+          b.px += b.bvx * h;
+          b.py += b.bvy * h;
+        }
+        const goal = overlay ? 1 : 0;
+        b.a += (goal - b.a) * (1 - Math.exp(-dt * 16));
+      }
+      if (!boxes.length) return;
+      boxes = boxes.filter((b) => overlay || b.a > 0.04);
+    };
+
+    /* ---------- 8. 帧 ---------- */
+
+    const renderOnce = () => {
+      layout();
+      for (let i = 0; i < count; i++) {
+        ox[i] = 0;
+        oy[i] = 0;
+        vx[i] = 0;
+        vy[i] = 0;
+      }
+      elapsed = 0;
+      paint();
+    };
+
+    const tick = (now: number) => {
+      raf = 0;
+      const dt = Math.min(Math.max((now - last) / 1000, 0), 1 / 30);
+      last = now;
+      elapsed += dt;
+      pulse *= Math.exp(-dt * 5.5);
+      layout();
+      applyPointerTarget();
+      stepSprings(dt);
+      if (overlay) {
+        scanAcc += dt;
+        if (scanAcc >= 0.1) {
+          scanAcc = 0;
+          scan();
+        }
+      }
+      stepBoxes(dt);
+      paint();
+      if (shouldRun()) raf = requestAnimationFrame(tick);
+    };
+
+    const shouldRun = () => motionOn && inView && !document.hidden;
+
+    const evaluate = () => {
+      if (shouldRun()) {
+        if (!raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+      } else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        renderOnce();
+      }
+    };
+
+    const paintStatic = () => {
+      layout();
+      if (overlay) {
+        scan();
+        for (const box of boxes) box.a = 1;
+      } else {
+        boxes = [];
+      }
+      paint();
+    };
+
+    /* ---------- 9. 交互 ---------- */
+
+    const setPulse = (clientX: number, clientY: number) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = clientX - rect.left;
+      pointerY = clientY - rect.top;
+      pulse = 1;
+    };
+
+    let lastPointer: { x: number; y: number } | null = null;
+
+    root.addEventListener('pointerdown', (e) => {
+      overlay = true;
+      setPulse(e.clientX, e.clientY);
+      lastPointer = { x: e.clientX, y: e.clientY };
+      if (!shouldRun()) paintStatic();
+    });
+
+    root.addEventListener('pointermove', (e) => {
+      overlay = true;
+      setPulse(e.clientX, e.clientY);
+      if (lastPointer) {
+        const moved = Math.hypot(e.clientX - lastPointer.x, e.clientY - lastPointer.y);
+        if (moved > 1.5) pulse = 1;
+      }
+      lastPointer = { x: e.clientX, y: e.clientY };
+      if (!shouldRun()) paintStatic();
+    });
+
+    root.addEventListener('pointerenter', (e) => {
+      overlay = true;
+      setPulse(e.clientX, e.clientY);
+      lastPointer = { x: e.clientX, y: e.clientY };
+      if (!shouldRun()) paintStatic();
+    });
+
+    root.addEventListener('pointerleave', () => {
+      overlay = false;
+      lastPointer = null;
+      if (!shouldRun()) paintStatic();
+    });
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        if (layout() && !shouldRun()) paintStatic();
+      });
+      ro.observe(canvas);
+    } else {
+      window.addEventListener('resize', () => {
+        if (layout() && !shouldRun()) paintStatic();
+      });
+    }
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      new IntersectionObserver(
+        ([entry]) => {
+          inView = entry.isIntersecting;
+          evaluate();
+        },
+        { threshold: 0.05 },
+      ).observe(root);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) last = performance.now();
+      evaluate();
+    });
+
+    evaluate();
+    paintStatic();
+  })();
+</script>
+
+<style>
+  .lf-field {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    margin-inline: auto;
+  }
+
+  .lf-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .lf-unsupported .lf-canvas {
+    display: none;
+  }
+</style>

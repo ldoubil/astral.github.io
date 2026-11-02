@@ -1,88 +1,73 @@
 ---
-title: 🏠 Astral
+title: AstralGame | 跨平台游戏联机
 template: splash
 head:
   - tag: title
-    content: AstralGame|游戏联机
+    content: AstralGame | 跨平台游戏联机
   - tag: meta
     attrs:
       name: description
-      content: "Astral 是一个基于 EasyTier 的跨平台 P2P 游戏联机软件，支持 Minecraft、Terraria 等游戏联机。提供端到端加密传输与简单易用的现代化界面，几分钟即可完成配置，突破地理限制享受低延迟网络体验。"
+      content: "AstralGame 是基于 EasyTier 的跨平台 P2P 游戏联机客户端，已适配 Minecraft、Terraria、Palworld、Raft、Valheim 等 27 款游戏。无需公网 IP，创建房间即可联机。"
   - tag: meta
     attrs:
       property: og:description
-      content: "跨平台 P2P 游戏联机软件，轻松实现 Minecraft、Terraria 等游戏联机，突破地理限制，低延迟体验。"
+      content: "跨平台 P2P 游戏联机客户端，已适配 27 款游戏。无需公网 IP，创建房间即可联机。"
   - tag: meta
     attrs:
       name: msvalidate.01
       content: F4A0EB96F45EB42EDE966F47E40F3E1C
 hero:
-  title: Astral
-  tagline: 跨平台 P2P 游戏联机软件，轻松实现多人联机
-  actions:
-    - text: 快速开始
-      link: /quick-start/what-is-astral/
-      variant: primary
-    - text: 下载应用
-      link: /quick-start/download-install/
-      variant: secondary
-    - text: 前往新版
-      link: https://next.astral.fan/
-      variant: secondary
-    - text: GitHub
-      link: https://github.com/ldoubil/astral
-      variant: secondary
-    - text: 腾讯频道
-      link: https://pd.qq.com/s/90vkmvwar
-      variant: secondary
-    - text: QQ群
-      link: https://qm.qq.com/q/MGETTxg524
-      variant: secondary
+  title: AstralGame
+  tagline: 跨平台 P2P 游戏联机
 ---
 
-import { CardGrid } from '@astrojs/starlight/components';
+import GameGrid from '../../components/GameGrid.astro';
+import DownloadSection from '../../components/DownloadSection.astro';
 import VisitorCounterCard from '../../components/VisitorCounterCard.astro';
-import GlobalBackground from '../../components/GlobalBackground.astro';
-import '../../styles/platform-tag.css';
-import '../../styles/feature-card.css';
 
-<GlobalBackground />
+<GameGrid />
 
-<div class="home-cards">
-<CardGrid>
-    <div className="home-card home-card--game">
-        <div className="home-card-head">
-            <span className="home-card-icon">🎮</span>
-            <h2>游戏联机</h2>
-        </div>
-        <p>
-            与朋友轻松进行 <span className="game minecraft">Minecraft</span>、<span className="game terraria">Terraria</span>、<span className="game palworld">Palworld</span>、<span className="game valheim">Valheim</span>、<span className="game stardew">Stardew Valley</span> 等游戏的联机，突破地理限制，低延迟体验。
+<DownloadSection />
+
+<section className="kt-final">
+    <div className="kt-final-inner">
+        <h2 className="kt-final-title">
+            开一局
+        </h2>
+        <p className="kt-final-desc">
+            下载后创建房间，把房间信息发给朋友就行。
         </p>
-    </div>
-    <div className="home-card home-card--platform">
-        <div className="home-card-head">
-            <span className="home-card-icon">💻</span>
-            <h2>支持平台</h2>
+        <div className="kt-actions">
+            <button type="button" className="kt-btn kt-btn--primary" data-open-game-download>
+                下载 AstralGame
+            </button>
+            <a
+                className="kt-btn"
+                href="https://pd.qq.com/s/90vkmvwar"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                腾讯频道 ↗
+            </a>
+            <a
+                className="kt-btn"
+                href="https://qm.qq.com/q/MGETTxg524"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                QQ 群 ↗
+            </a>
         </div>
-        <p>
-            Windows 10+、安卓设备、主流 Linux 发行版全面支持，iOS 与 macOS 版本开发中。
-        </p>
     </div>
-</CardGrid>
-</div>
+</section>
 
-
-
-## 赞助商
-
-<div class="sponsor-row">
-    <a class="sponsor-card" href="https://langlangy.cn/?ife9268" target="_blank" rel="noopener noreferrer">
-        <span class="sponsor-logo">
+<section className="kt-footline">
+    <div className="kt-footline-inner">
+        <a className="kt-sponsor" href="https://langlangy.cn/?ife9268" target="_blank" rel="noopener noreferrer">
             <img src="/images/赞助/logo (1).png" alt="浪浪云" data-zoom-off />
-        </span>
-        <span class="sponsor-cta">前往浪浪云 <span aria-hidden="true">→</span></span>
-    </a>
-</div>
-
-<VisitorCounterCard name="astral-home" title="Astral首页" />
-
+            <span className="kt-sponsor-text">赞助商 · 浪浪云</span>
+            <span aria-hidden="true">↗</span>
+        </a>
+        <VisitorCounterCard name="astral-home" title="Astral首页" />
+    </div>
+</section>

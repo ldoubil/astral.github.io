@@ -1,0 +1,63 @@
+---
+import data from '../data/games.json';
+
+const gameCount = data.games.filter((game) => game.show_in_picker && game.id !== 'other').length;
+---
+
+<section class="kt-section" id="downloads">
+  <div class="kt-section-inner">
+    <h2 class="kt-section-title">下载</h2>
+
+    <div class="kt-products">
+      <article class="kt-product">
+        <h3 class="kt-product-mark">Astral<span class="kt-signal">Game</span></h3>
+        <p class="kt-product-desc">
+          支持 {gameCount} 款游戏，Windows、Android、Linux 都有安装包。
+        </p>
+        <ul class="kt-product-points">
+          <li>按游戏自动配置</li>
+          <li>P2P 直连、加密传输</li>
+        </ul>
+        <div class="kt-actions">
+          <button type="button" class="kt-btn kt-btn--primary" data-open-game-download>
+            下载 AstralGame
+          </button>
+          <a
+            class="kt-btn"
+            href="https://github.com/AstralNext/AstralGame"
+            target="_blank"
+            rel="noopener noreferrer"
+          >仓库 ↗</a>
+        </div>
+      </article>
+
+      <article class="kt-product">
+        <h3 class="kt-product-mark">Astral 通用版</h3>
+        <p class="kt-product-desc">需要同时开多个网络实例时用这个。</p>
+        <ul class="kt-product-points">
+          <li>多实例并行</li>
+          <li>每个实例独立配置</li>
+        </ul>
+        <div class="kt-actions">
+          <button type="button" class="kt-btn" data-open-general-download>
+            下载通用版
+          </button>
+          <a
+            class="kt-btn"
+            href="https://github.com/AstralNext/Astral"
+            target="_blank"
+            rel="noopener noreferrer"
+          >仓库 ↗</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="kt-archive">
+      <span>历史归档 · Astral v2.9.x</span>
+      <span class="kt-archive-links">
+        <a href="https://github.com/ldoubil/astral/releases" target="_blank" rel="noopener noreferrer">GitHub Releases ↗</a>
+        <a href="https://pan.quark.cn/s/6a9f67fbb845" target="_blank" rel="noopener noreferrer">夸克网盘 ↗</a>
+      </span>
+    </div>
+  </div>
+</section>

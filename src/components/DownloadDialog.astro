@@ -1,0 +1,280 @@
+<div class="dl-dialogs">
+  <dialog
+    class="dl-dialog dl-dialog--game"
+    data-dl-dialog="game"
+    data-accent="game"
+    data-releases-api="https://api.github.com/repos/AstralNext/AstralGame/releases/latest"
+    data-releases="https://github.com/AstralNext/AstralGame/releases"
+    data-downloads-json="/downloads-game.json"
+    data-github-proxy="https://gh.astral.fan/"
+    aria-labelledby="dl-game-title"
+  >
+    <div class="dl-card">
+      <button type="button" class="dl-close" data-dl-close aria-label="关闭">×</button>
+      <p class="dl-kicker">游戏版 · 推荐</p>
+      <h2 id="dl-game-title">下载 AstralGame</h2>
+      <p class="dl-ver" data-dl-ver>正在获取最新版本…</p>
+
+      <div class="dl-tabs" role="tablist" aria-label="下载渠道">
+        <button type="button" class="dl-tab is-on" data-dl-tab="quark" role="tab" aria-selected="true">夸克网盘</button>
+        <button type="button" class="dl-tab" data-dl-tab="github" role="tab" aria-selected="false">GitHub</button>
+      </div>
+
+      <div class="dl-pane" data-dl-pane="quark" role="tabpanel">
+        <p class="dl-hint">国内推荐。点开对应版本后，在分享里选择平台安装包。</p>
+        <div class="dl-list" data-dl-quark>加载中…</div>
+      </div>
+
+      <div class="dl-pane" data-dl-pane="github" role="tabpanel" hidden>
+        <p class="dl-hint">直链下载最新包；国内访问较慢可点“加速”。</p>
+        <div class="dl-list" data-dl-github>加载中…</div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog
+    class="dl-dialog dl-dialog--general"
+    data-dl-dialog="general"
+    data-accent="general"
+    data-releases-api="https://api.github.com/repos/AstralNext/Astral/releases/latest"
+    data-releases="https://github.com/AstralNext/Astral/releases"
+    data-downloads-json="/downloads-astral.json"
+    data-github-proxy="https://gh.astral.fan/"
+    aria-labelledby="dl-general-title"
+  >
+    <div class="dl-card">
+      <button type="button" class="dl-close" data-dl-close aria-label="关闭">×</button>
+      <p class="dl-kicker">通用版</p>
+      <h2 id="dl-general-title">下载 Astral 通用版</h2>
+      <p class="dl-ver" data-dl-ver>正在获取最新版本…</p>
+
+      <div class="dl-tabs" role="tablist" aria-label="下载渠道">
+        <button type="button" class="dl-tab is-on" data-dl-tab="quark" role="tab" aria-selected="true">夸克网盘</button>
+        <button type="button" class="dl-tab" data-dl-tab="github" role="tab" aria-selected="false">GitHub</button>
+      </div>
+
+      <div class="dl-pane" data-dl-pane="quark" role="tabpanel">
+        <p class="dl-hint">国内推荐。点开对应版本后，在分享里选择平台安装包。</p>
+        <div class="dl-list" data-dl-quark>加载中…</div>
+      </div>
+
+      <div class="dl-pane" data-dl-pane="github" role="tabpanel" hidden>
+        <p class="dl-hint">直链下载最新包；国内访问较慢可点“加速”。</p>
+        <div class="dl-list" data-dl-github>加载中…</div>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  // @ts-nocheck
+  (() => {
+    if (document.documentElement.dataset.dlBound === '1') return;
+    document.documentElement.dataset.dlBound = '1';
+
+    const labelOf = (name) => {
+      const n = String(name || '').toLowerCase();
+      if (n.indexOf('android') >= 0 && n.slice(-4) === '.apk') return 'Android';
+      if (n.indexOf('windows') >= 0 && n.indexOf('setup') >= 0 && n.slice(-4) === '.exe') return 'Windows 安装包';
+      if (n.indexOf('windows') >= 0 && n.slice(-4) === '.zip') return 'Windows 便携版';
+      if (n.indexOf('linux') >= 0) return 'Linux';
+      return name;
+    };
+
+    const rankOf = (name) => {
+      const n = String(name || '').toLowerCase();
+      if (n.indexOf('setup') >= 0 && n.slice(-4) === '.exe') return 0;
+      if (n.indexOf('windows') >= 0 && n.slice(-4) === '.zip') return 1;
+      if (n.slice(-4) === '.apk') return 2;
+      if (n.indexOf('linux') >= 0) return 3;
+      return 9;
+    };
+
+    const makeBtn = (href, text, className) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.className = className;
+      a.rel = 'noopener noreferrer';
+      if (href.indexOf('http') === 0) a.target = '_blank';
+      a.textContent = text;
+      return a;
+    };
+
+    const accentBtn = (dialog) =>
+      dialog.getAttribute('data-accent') === 'general' ? 'dl-btn dl-btn--general' : 'dl-btn dl-btn--game';
+
+    const setTab = (dialog, id) => {
+      dialog.querySelectorAll('[data-dl-tab]').forEach((btn) => {
+        const on = btn.getAttribute('data-dl-tab') === id;
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      dialog.querySelectorAll('[data-dl-pane]').forEach((pane) => {
+        pane.hidden = pane.getAttribute('data-dl-pane') !== id;
+      });
+    };
+
+    const loadGithub = async (dialog) => {
+      const api = dialog.getAttribute('data-releases-api') || '';
+      const releases = dialog.getAttribute('data-releases') || '';
+      const proxy = dialog.getAttribute('data-github-proxy') || '';
+      const verEl = dialog.querySelector('[data-dl-ver]');
+      const ghList = dialog.querySelector('[data-dl-github]');
+      if (!ghList) return;
+
+      try {
+        const res = await fetch(api);
+        if (!res.ok) throw new Error('github');
+        const data = await res.json();
+        const tag = data.tag_name || 'latest';
+
+        if (verEl && verEl.dataset.source !== 'quark') {
+          const date = data.published_at
+            ? new Date(data.published_at).toLocaleDateString('zh-CN')
+            : '';
+          verEl.dataset.source = 'github';
+          verEl.textContent = date ? tag + ' · ' + date : tag;
+        }
+
+        const assets = (data.assets || [])
+          .filter((item) => item && item.name && item.browser_download_url)
+          .sort((a, b) => rankOf(a.name) - rankOf(b.name));
+
+        ghList.textContent = '';
+        if (!assets.length) {
+          ghList.appendChild(makeBtn(data.html_url || releases, '打开 GitHub Release', accentBtn(dialog)));
+          return;
+        }
+
+        assets.forEach((item) => {
+          const row = document.createElement('div');
+          row.className = 'dl-item';
+          const info = document.createElement('div');
+          info.className = 'dl-item-info';
+          const title = document.createElement('strong');
+          title.textContent = labelOf(item.name);
+          const file = document.createElement('span');
+          file.textContent = item.name;
+          info.append(title, file);
+
+          const actions = document.createElement('div');
+          actions.className = 'dl-item-actions';
+          actions.appendChild(makeBtn(item.browser_download_url, '下载', accentBtn(dialog)));
+          if (proxy) {
+            actions.appendChild(makeBtn(proxy + item.browser_download_url, '加速', 'dl-btn dl-btn--ghost'));
+          }
+
+          row.append(info, actions);
+          ghList.appendChild(row);
+        });
+      } catch (_err) {
+        if (verEl && verEl.dataset.source !== 'quark') verEl.textContent = 'GitHub 暂时不可用';
+        ghList.textContent = '';
+        ghList.appendChild(makeBtn(releases, '打开 GitHub Release', accentBtn(dialog)));
+      }
+    };
+
+    const loadQuark = async (dialog) => {
+      const jsonUrl = dialog.getAttribute('data-downloads-json') || '';
+      const verEl = dialog.querySelector('[data-dl-ver]');
+      const qkList = dialog.querySelector('[data-dl-quark]');
+      if (!qkList) return;
+
+      try {
+        const res = await fetch(jsonUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('json');
+        const items = ((await res.json()) || []).filter((x) => x && String(x.url || '').trim());
+        if (!items.length) throw new Error('empty');
+
+        const latest = items[0];
+        if (verEl) {
+          const tag = latest.version || '最新';
+          verEl.dataset.source = 'quark';
+          verEl.textContent = latest.date ? tag + ' · ' + latest.date : tag;
+        }
+
+        qkList.textContent = '';
+        items.forEach((item, index) => {
+          const row = document.createElement('div');
+          row.className = index === 0 ? 'dl-item is-latest' : 'dl-item';
+          const info = document.createElement('div');
+          info.className = 'dl-item-info';
+          const title = document.createElement('strong');
+          title.textContent = (item.version || '版本') + (index === 0 ? ' · 最新' : '');
+          const desc = document.createElement('span');
+          desc.textContent = item.date ? item.date + ' · 打开后选择平台安装包' : '打开后选择平台安装包';
+          info.append(title, desc);
+
+          const actions = document.createElement('div');
+          actions.className = 'dl-item-actions';
+          actions.appendChild(makeBtn(item.url, '打开网盘', accentBtn(dialog)));
+
+          row.append(info, actions);
+          qkList.appendChild(row);
+        });
+      } catch (_err) {
+        qkList.textContent = '';
+        const p = document.createElement('p');
+        p.className = 'dl-empty';
+        p.textContent = '网盘链接暂未就绪，请先用 GitHub 下载。';
+        qkList.appendChild(p);
+      }
+    };
+
+    const openDialog = (dialog) => {
+      if (!(dialog instanceof HTMLDialogElement)) return;
+      document.documentElement.style.overflow = 'hidden';
+      dialog.showModal();
+      if (dialog.dataset.loaded !== '1') {
+        dialog.dataset.loaded = '1';
+        loadGithub(dialog);
+        loadQuark(dialog);
+      }
+    };
+
+    const dialogOf = (target) => {
+      if (target.closest('[data-open-game-download]')) {
+        return document.querySelector('[data-dl-dialog="game"]');
+      }
+      if (target.closest('[data-open-general-download]')) {
+        return document.querySelector('[data-dl-dialog="general"]');
+      }
+      return null;
+    };
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const dialog = dialogOf(target);
+      if (dialog) {
+        event.preventDefault();
+        openDialog(dialog);
+        return;
+      }
+
+      const closeHost = target.closest('[data-dl-close]');
+      if (closeHost) {
+        const host = closeHost.closest('dialog');
+        if (host instanceof HTMLDialogElement) host.close();
+        return;
+      }
+
+      const tab = target.closest('[data-dl-tab]');
+      if (tab) {
+        const host = tab.closest('dialog');
+        const id = tab.getAttribute('data-dl-tab');
+        if (host && (id === 'github' || id === 'quark')) setTab(host, id);
+      }
+    });
+
+    document.querySelectorAll('[data-dl-dialog]').forEach((dialog) => {
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog && dialog instanceof HTMLDialogElement) dialog.close();
+      });
+      dialog.addEventListener('close', () => {
+        document.documentElement.style.overflow = '';
+      });
+    });
+  })();
+</script>
