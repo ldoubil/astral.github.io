@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 15,
   "games": [
     {
@@ -41,36 +41,40 @@
       }
     },
     {
-      "id":  "grand_theft_auto_v",
-      "name":  "Grand Theft Auto V",
+      "id": "grand_theft_auto_v",
+      "name": "Grand Theft Auto V",
       "name_zh": "侠盗猎车手5",
       "description": "支持传承版和增强版以及跨平台联机",
-      "color":  "#A0522D",
-      "icon":  "hardware",
+      "color": "#A0522D",
+      "icon": "hardware",
       "steam_app_id": 3240220,
-      "icon_asset":  "games/grand_theft_auto_v/icon.png",
-      "grid_asset":  "games/grand_theft_auto_v/grid.png",
-      "show_in_picker":  true,
+      "icon_asset": "games/grand_theft_auto_v/icon.png",
+      "grid_asset": "games/grand_theft_auto_v/grid.png",
+      "show_in_picker": true,
       "sort": 2
     },
     {
-      "id":  "sid_meier's_civilization_vi",
-      "name":  "Sid Meier's Civilization VI",
+      "id": "sid_meier's_civilization_vi",
+      "name": "Sid Meier's Civilization VI",
       "name_zh": "文明6",
       "description": "支持互联网(包含跨平台联机)以及局域网联机",
-      "color":  "#A0522D",
-      "icon":  "hardware",
+      "color": "#A0522D",
+      "icon": "hardware",
       "steam_app_id": 289070,
-      "icon_asset":  "games/sid_meier's_civilization_vi/icon.png",
-      "grid_asset":  "games/sid_meier's_civilization_vi/grid.png",
-      "show_in_picker":  true,
-      "sort":  3,
+      "icon_asset": "games/sid_meier's_civilization_vi/icon.png",
+      "grid_asset": "games/sid_meier's_civilization_vi/grid.png",
+      "show_in_picker": true,
+      "sort": 3,
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe", "CivilizationVI.exe", "CivilizationVI_DX12.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe",
+              "CivilizationVI.exe",
+              "CivilizationVI_DX12.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -89,7 +93,10 @@
         "android": {
           "lan_nat": {
             "enabled": true,
-            "ports": [62900, 62056]
+            "ports": [
+              62900,
+              62056
+            ]
           }
         }
       }
@@ -385,9 +392,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -420,9 +429,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -455,9 +466,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -490,9 +503,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["*"],
-          "rules": [
+            "enabled": true,
+            "process": [
+              "*"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -520,7 +535,9 @@
         "windows": {
           "magic_wall": {
             "enabled": true,
-            "process": ["*"],
+            "process": [
+              "*"
+            ],
             "rules": [
               {
                 "name": "block udp 1900",
@@ -549,9 +566,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -584,9 +603,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",
@@ -619,9 +640,11 @@
       "platforms": {
         "windows": {
           "magic_wall": {
-          "enabled": true,
-          "process": ["steam.exe"],
-          "rules":  [
+            "enabled": true,
+            "process": [
+              "steam.exe"
+            ],
+            "rules": [
               {
                 "action": "block",
                 "protocol": "udp",

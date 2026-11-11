@@ -1,10 +1,42 @@
 [
-  { "version": "v1.0.12", "date": "2026年9月6日", "url": "https://pan.quark.cn/s/d504a32a75e2" },
-  { "version": "v1.0.11", "date": "2026年9月2日", "url": "https://pan.quark.cn/s/0d48735fd3d9" },
-  { "version": "v1.0.9", "date": "2026年8月21日", "url": "https://pan.quark.cn/s/6a30a2349d78" },
-  { "version": "v1.0.8", "date": "2026年8月21日", "url": "https://pan.quark.cn/s/f8cba337996b" },
-  { "version": "v1.0.7", "date": "2026年8月21日", "url": "https://pan.quark.cn/s/95cdcc11975e" },
-  { "version": "v1.0.6", "date": "2026年8月20日", "url": "https://pan.quark.cn/s/7ea4bee8bdbc" },
-  { "version": "v1.0.5", "date": "2026年8月20日", "url": "https://pan.quark.cn/s/16a014cbc49c" },
-  { "version": "v1.0.0", "date": "2026年8月13日", "url": "https://pan.quark.cn/s/397107d396be" }
+  {
+    "version": "v1.0.12",
+    "date": "2026年9月6日",
+    "url": "https://pan.quark.cn/s/d504a32a75e2"
+  },
+  {
+    "version": "v1.0.11",
+    "date": "2026年9月2日",
+    "url": "https://pan.quark.cn/s/0d48735fd3d9"
+  },
+  {
+    "version": "v1.0.9",
+    "date": "2026年8月21日",
+    "url": "https://pan.quark.cn/s/6a30a2349d78"
+  },
+  {
+    "version": "v1.0.8",
+    "date": "2026年8月21日",
+    "url": "https://pan.quark.cn/s/f8cba337996b"
+  },
+  {
+    "version": "v1.0.7",
+    "date": "2026年8月21日",
+    "url": "https://pan.quark.cn/s/95cdcc11975e"
+  },
+  {
+    "version": "v1.0.6",
+    "date": "2026年8月20日",
+    "url": "https://pan.quark.cn/s/7ea4bee8bdbc"
+  },
+  {
+    "version": "v1.0.5",
+    "date": "2026年8月20日",
+    "url": "https://pan.quark.cn/s/16a014cbc49c"
+  },
+  {
+    "version": "v1.0.0",
+    "date": "2026年8月13日",
+    "url": "https://pan.quark.cn/s/397107d396be"
+  }
 ]
