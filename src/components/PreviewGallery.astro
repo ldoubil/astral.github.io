@@ -1,0 +1,179 @@
+---
+import { games } from '../data/games.json';
+
+const gameCount = games.filter((game) => game.show_in_picker && game.id !== 'other').length;
+---
+
+<section class="kt-section">
+  <div class="kt-section-inner">
+    <h1 class="kt-section-title">预览</h1>
+
+    <div class="kt-preview">
+      <div class="kt-preview-head">
+        <h2 class="kt-preview-name">AstralGame</h2>
+        <span class="kt-preview-meta">{gameCount} 款游戏 · Windows / Android / Linux</span>
+      </div>
+
+      <div class="kt-gallery">
+        <figure class="kt-shot kt-shot--wide">
+          <img
+            src="/shots/game.webp"
+            alt="AstralGame 桌面端联机页：左侧为联机、服务器、设置导航，右下角是创建与加入按钮"
+            width="940"
+            height="553"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span class="kt-shot-idx">01</span>
+            <span>桌面端</span>
+          </figcaption>
+        </figure>
+
+        <figure class="kt-shot kt-shot--tall">
+          <img
+            src="/shots/game-phone.webp"
+            alt="AstralGame 移动端联机页：底部为联机、服务器、设置导航"
+            width="409"
+            height="769"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span class="kt-shot-idx">02</span>
+            <span>移动端</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="kt-preview">
+      <div class="kt-preview-head">
+        <h2 class="kt-preview-name">Astral 通用版</h2>
+        <span class="kt-preview-meta">流量、连接质量、内核信息</span>
+      </div>
+
+      <div class="kt-gallery">
+        <figure class="kt-shot kt-shot--wide">
+          <img
+            src="/shots/astral.webp"
+            alt="Astral 通用版桌面端面板：流量、连接质量、内核版本、日志摘要与节点信息"
+            width="924"
+            height="507"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span class="kt-shot-idx">03</span>
+            <span>桌面端</span>
+          </figcaption>
+        </figure>
+
+        <figure class="kt-shot kt-shot--tall">
+          <img
+            src="/shots/astral-phone.webp"
+            alt="Astral 通用版移动端面板：流量、连接质量、内核版本与快捷入口"
+            width="471"
+            height="1024"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>
+            <span class="kt-shot-idx">04</span>
+            <span>移动端</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kt-preview + .kt-preview {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .kt-preview-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--kt-line);
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .kt-preview-name {
+    margin: 0;
+    font-family: var(--kt-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--kt-bone);
+  }
+
+  .kt-preview-meta {
+    font-family: var(--kt-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--kt-faint);
+  }
+
+  .kt-gallery {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  @media (min-width: 60rem) {
+    .kt-gallery {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.8fr);
+    }
+  }
+
+  .kt-shot {
+    margin: 0;
+    border: 1px solid rgba(244, 241, 235, 0.18);
+    background: #111212;
+    transition: border-color 0.4s var(--kt-ease);
+  }
+
+  .kt-shot:hover {
+    border-color: var(--kt-signal);
+  }
+
+  .kt-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .kt-shot figcaption {
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    padding: 0.8rem 0.95rem;
+    border-top: 1px solid rgba(244, 241, 235, 0.18);
+    font-family: var(--kt-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--kt-dim);
+  }
+
+  .kt-shot-idx {
+    color: var(--kt-signal);
+  }
+
+  .kt-shot--tall {
+    width: 100%;
+    max-width: 22rem;
+    justify-self: center;
+  }
+</style>

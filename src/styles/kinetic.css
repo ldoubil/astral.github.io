@@ -939,6 +939,17 @@ dialog.dl-dialog::backdrop {
   }
 }
 
+/* ---------- 预览页 ---------- */
+
+main:has(.kt-preview) > .content-panel {
+  padding: 0;
+  border-top: 0;
+}
+
+main:has(.kt-preview) > .content-panel:has(h1#_top) {
+  display: none;
+}
+
 /* ---------- 无障碍：全部落到静态终态 ---------- */
 
 @media (prefers-reduced-motion: reduce) {
